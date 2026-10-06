@@ -20,3 +20,6 @@
 
 ## V. Continuity
 * [Operations Runbook](09-Operations-Runbook.md)
+
+## VI. Prototypes
+* [Prototype Manual](10-Prototype-Manual.md)

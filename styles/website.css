@@ -1,0 +1,72 @@
+/* TTK_SSoT Custom Design Language for GitBook */
+
+.book {
+    background-color: #08090D !important;
+    color: #E9ECF2 !important;
+    font-family: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Sidebar Navigation */
+.book .book-summary {
+    background: #11141B !important;
+    border-right: 1px solid #242A36 !important;
+}
+.book .book-summary ul.summary li a {
+    color: #79828F !important;
+}
+.book .book-summary ul.summary li.active>a {
+    color: #E9ECF2 !important;
+    background: #171B24 !important;
+    border-left: 3px solid #21E0DC !important;
+}
+.book .book-summary ul.summary li a:hover {
+    color: #21E0DC !important;
+}
+
+/* Headers and Body Text */
+.markdown-section h1, .markdown-section h2, .markdown-section h3 {
+    color: #E9ECF2 !important;
+    border-bottom: 1px solid #242A36 !important;
+}
+.markdown-section a {
+    color: #21E0DC !important;
+}
+.markdown-section p, .markdown-section li {
+    color: #E9ECF2 !important;
+}
+
+/* Code Blocks and Tables */
+.markdown-section code {
+    background: #171B24 !important;
+    color: #21E0DC !important;
+    border: 1px solid #242A36 !important;
+    font-family: 'SF Mono', Menlo, Consolas, monospace !important;
+}
+.markdown-section table th {
+    color: #79828F !important;
+    border: none !important;
+    border-bottom: 1px solid #39414F !important;
+    font-size: 11.5px;
+    letter-spacing: 0.8px;
+}
+.markdown-section table td {
+    border: none !important;
+    border-bottom: 1px solid #242A36 !important;
+    color: #E9ECF2 !important;
+}
+
+/* Callouts / Blockquotes (Mapped to Pink/Warning) */
+.markdown-section blockquote {
+    border-left: 3px solid #F0245C !important;
+    background: #11141B !important;
+    color: #E9ECF2 !important;
+}
+
+/* Top Header Bar */
+.book-header {
+    background-color: #08090D !important;
+    border-bottom: 1px solid #242A36 !important;
+}
+.book-header .btn {
+    color: #79828F !important;
+}
