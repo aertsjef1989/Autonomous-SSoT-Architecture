@@ -1,0 +1,35 @@
+name: Deploy GitBook to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12' # GitBook CLI strictly requires Node 10-12 to compile successfully
+
+      - name: Install dependencies and build HTML
+        run: |
+          npm install -g gitbook-cli
+          gitbook install
+          gitbook build
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_book
+          publish_branch: gh-pages
+          commit_message: "Automated deployment: ${{ github.sha }}"
