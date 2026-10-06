@@ -1,0 +1,546 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Self-Healing Loop & Fault Taxonomy · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="06-Bot-Command-Reference.html" />
+    
+    
+    <link rel="prev" href="04-Relational-Database-Schema.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.2" data-path="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                    
+                    Self-Healing Loop & Fault Taxonomy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="06-Bot-Command-Reference.html">
+            
+                <a href="06-Bot-Command-Reference.html">
+            
+                    
+                    Bot & API Command Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">VI. Prototypes</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="10-Prototype-Manual.html">
+            
+                <a href="10-Prototype-Manual.html">
+            
+                    
+                    Prototype Manual
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Self-Healing Loop & Fault Taxonomy</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="v-self-healing-loop-and-fault-taxonomy">V. Self-Healing Loop and Fault Taxonomy</h1>
+<p><strong>Document ID:</strong> <code>05-Self-Healing-Loop-and-Fault-Taxonomy.md</code><br></br><strong>Focus:</strong> Automated Governance, Fault Tolerance, and Self-Healing Control Loops  </p>
+<h2 id="1-architectural-philosophy-of-the-loop">1. Architectural Philosophy of the Loop</h2>
+<p>A system without an automated governance loop will inevitably decay. Manual auditing fails because it scales linearly with content volume while rot compounds exponentially. </p>
+<p>To maintain 100% data integrity across 3,386+ nodes without human micromanagement, the architecture operates a continuous, autonomous 5-phase control loop.</p>
+<pre><code>DETECT   --&gt; Scanners and detectors write a fault to the audit log
+CLASSIFY --&gt; Assign category, severity (P1–P4), and correction tier
+CORRECT  --&gt; Tier 1 (Automatic) through Tier 4 (Executive Escalation)
+VERIFY   --&gt; Re-scan at T+24h. Only then is the fault marked "Resolved"
+LEARN    --&gt; Recurring faults trigger systemic configuration changes, not just record patches
+</code></pre><p><em>Critical Principle:</em> <strong>Verification is separate from correction.</strong> A correction applied and logged as done is untested. The automated re-scan at T+24 hours is what confirms whether the fix held.</p>
+<hr></hr>
+<h2 id="2-optimized-execution-the-single-daily-scan">2. Optimized Execution: The Single Daily Scan</h2>
+<p>Early iterations of the architecture utilized per-record date automations, which would have fired roughly 1,700 automation runs per month. </p>
+<h3 id="the-run-budget--enterprise-ceiling">The Run Budget &amp; Enterprise Ceiling</h3>
+<p>Evaluating the platform's constraints against full-suite enterprise entitlements established a ceiling of <strong>500,000 automation runs per month</strong>. </p>
+<p>Rather than running per-record triggers, the architecture employs a <strong>Single Daily Scan</strong> running at 07:30.</p>
+<ul>
+<li><strong>Efficiency:</strong> The daily scan consumes roughly <strong>30 automation runs per month</strong>—a 98% reduction that preserves massive headroom while centralizing escalation logic into testable server code.</li>
+<li><strong>Native Date Dependency:</strong> Because database automations cannot reliably trigger off formula-derived dates, the Bot copies calculated review dates into a native date field (<code>Review Due (native)</code>) on every write. This is the only date the daily scan reads.</li>
+</ul>
+<h3 id="the-escalation-ladder">The Escalation Ladder</h3>
+<p>When a file reaches its review threshold, the daily scan triggers an automated escalation sequence:</p>
+<ul>
+<li><strong>Days 1–13:</strong> Automated direct message card sent to the content owner ("Verify or Update").</li>
+<li><strong>Days 14–29:</strong> Escalation card sent to the Owner, the Space Owner, and the Market First Line Manager (FLM).</li>
+<li><strong>Day 30:</strong> <strong>Automatic Deprecation.</strong> If unaddressed, the node is automatically moved to the archive branch, and its state changes to <code>Archived</code>. Leaving unverified policy or operational files in active circulation is a compliance liability worse than an empty folder.</li>
+</ul>
+<p><em>Exemption:</em> High-velocity, record-class internal areas (Meeting Notes, Escalations, Internal Updates) carry a <code>Review Exempt</code> flag. Feeding 720 dated records a year into a review scan creates noise; they are governed via strict retention periods instead.</p>
+<hr></hr>
+<h2 id="3-scanners--event-detectors">3. Scanners &amp; Event Detectors</h2>
+<p>The loop relies on scheduled scanners (pull-based polling) and event detectors (push-based triggers).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Name &amp; Schedule / Trigger</th>
+<th style="text-align:left">Function / Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Metadata Integrity Scanner</strong> (Daily 07:00)</td>
+<td style="text-align:left">Catches missing owners, cadences, descriptions, and tag violations.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Expected Run Audit Scanner</strong> (Daily 07:30)</td>
+<td style="text-align:left"><strong>Audits the other scanners.</strong> Checks for the absence of expected audit log rows in the last 25 hours. If a scanner fails silently, this raises an alarm.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>State Reconciliation Scanner</strong> (Nightly 02:00)</td>
+<td style="text-align:left"><strong>Resolves the Async Publish Gap.</strong> Because wiki node moves are asynchronous and emit no webhooks, the Database and the Wiki can diverge. <em>Forward Check:</em> Asserts Published records live in the correct folder. <em>Reverse Check:</em> Asserts live wiki nodes have a valid database record.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Audit Failure Detector</strong> (Audit Log Write Error)</td>
+<td style="text-align:left">Immediate <strong>P1 Alert</strong>. If the audit log stops accepting writes, the platform is unaudited and halts execution.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>The Mover Protocol Detector</strong> (User Scope Update)</td>
+<td style="text-align:left">Detects when an agent changes markets/scopes in the user directory but retains file ownership in their old market. Prevents cross-market permission leaks.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="4-fault-taxonomy-summary-categories">4. Fault Taxonomy (Summary Categories)</h2>
+<p>The taxonomy classifies operational and governance failures across five strict categories, mapping them directly to automated correction tiers (Tier 1 = Fully automated; Tier 4 = Executive escalation).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Category</th>
+<th style="text-align:left">Description</th>
+<th style="text-align:left">Representative Faults</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>A. Metadata</strong></td>
+<td style="text-align:left">Register hygiene failures</td>
+<td style="text-align:left">Missing owners, missing cadences, insufficient tags.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>B. Structural</strong></td>
+<td style="text-align:left">Tree and navigation integrity</td>
+<td style="text-align:left">Broken links, dead URLs, duplicate titles, orphaned nodes.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>C. Data Integrity</strong></td>
+<td style="text-align:left">Systemic state synchronization</td>
+<td style="text-align:left">Formula errors, Database-vs-Wiki state divergence.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>D. Operational</strong></td>
+<td style="text-align:left">Infrastructure health</td>
+<td style="text-align:left">Missing job runs, API timeouts, audit write failures.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>E. Access &amp; Security</strong></td>
+<td style="text-align:left">Permission and scoping breaches</td>
+<td style="text-align:left">Unauthorized commands, privilege drift, retention violations, Mover leakage.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Severity SLA Enforcement:</em> <strong>P1 Faults</strong> (such as audit failure or incorrect restricted node access) carry a strict <strong>2-hour resolution SLA</strong> and automatically escalate to Tier 4.</p>
+<hr></hr>
+<h2 id="5-systemic-learning--operational-readiness">5. Systemic Learning &amp; Operational Readiness</h2>
+<p>Correction without learning is just manual maintenance with extra steps. </p>
+<h3 id="the-3-strike-rule">The 3-Strike Rule</h3>
+<p>If the exact same fault ID occurs <strong>3 or more times within 30 days</strong>, the loop halts minor patching and triggers a mandatory <strong>Configuration Review</strong>. For example, repeated metadata failures in a specific market indicate a provisioning failure in that market's onboarding workflow, not a series of individual author errors.</p>
+<h3 id="operational-exit-criteria">Operational Exit Criteria</h3>
+<p>The self-healing architecture was not assumed to work; it was proven via rigorous verification. The loop was declared officially operational only after holding the following criteria for <strong>14 consecutive days</strong>:</p>
+<ol>
+<li>Zero missing scheduled scanner runs.</li>
+<li>100% of "Resolved" faults successfully passing their T+24h verification re-scan.</li>
+<li>Zero P1 faults open past their 2-hour SLA.</li>
+<li><strong>Zero state divergence (Reconciliation returning clean).</strong></li>
+<li>Successful execution of an injected test fault across every category to prove the detection-to-verification pipeline end-to-end.</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="04-Relational-Database-Schema.html" class="navigation navigation-prev " aria-label="Previous page: Relational Database Schema">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="06-Bot-Command-Reference.html" class="navigation navigation-next " aria-label="Next page: Bot & API Command Reference">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Self-Healing Loop & Fault Taxonomy","level":"4.2","depth":1,"next":{"title":"Bot & API Command Reference","level":"4.3","depth":1,"path":"06-Bot-Command-Reference.md","ref":"06-Bot-Command-Reference.md","articles":[]},"previous":{"title":"Relational Database Schema","level":"4.1","depth":1,"path":"04-Relational-Database-Schema.md","ref":"04-Relational-Database-Schema.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","mtime":"2026-10-06T22:04:39.046Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T22:04:51.343Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+

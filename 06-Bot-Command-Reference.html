@@ -1,0 +1,568 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Bot & API Command Reference · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="07-Role-Based-Access-Matrix.html" />
+    
+    
+    <link rel="prev" href="05-Self-Healing-Loop-and-Fault-Taxonomy.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                    
+                    Self-Healing Loop & Fault Taxonomy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.3" data-path="06-Bot-Command-Reference.html">
+            
+                <a href="06-Bot-Command-Reference.html">
+            
+                    
+                    Bot & API Command Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">VI. Prototypes</li>
+        
+        
+    
+        <li class="chapter " data-level="7.1" data-path="10-Prototype-Manual.html">
+            
+                <a href="10-Prototype-Manual.html">
+            
+                    
+                    Prototype Manual
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Bot & API Command Reference</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="vi-conversational-interface--api-specification">VI. Conversational Interface &amp; API Specification</h1>
+<p><strong>Document ID:</strong> <code>06-Bot-Command-Reference.md</code><br></br><strong>Focus:</strong> Conversational Operations, Bot Architecture, Scopes, and Event Handling  </p>
+<h2 id="1-architectural-philosophy-of-the-bot">1. Architectural Philosophy of the Bot</h2>
+<p>The conversational application (<code>Bot</code>) serves as the primary operational surface for agents during live client engagements. To maintain enterprise security and ensure data integrity, the Bot is not merely a search wrapper; it is an authenticated, auditable execution engine.</p>
+<p><strong>Core Execution Flow:</strong></p>
+<pre><code>message.receive_v1 event
+  --&gt; Authenticate sender against the User Access Register (T4)
+  --&gt; Parse command, parameters, and enforce strict Market Scoping
+  --&gt; Execute operation (Query, State Change, or Gap Generation)
+  --&gt; Format interactive response card (Card Kit v2.0)
+  --&gt; Deliver payload and write an immutable transaction to the Audit Log (T10)
+</code></pre><p><em>Operating Parameters:</em> </p>
+<ul>
+<li><strong>Response SLA:</strong> Under 10 seconds end-to-end.</li>
+<li><strong>Authentication:</strong> Senders must have an <code>Active</code> account status in the access register. Deprovisioned senders are instantly blocked and logged.</li>
+<li><strong>Auditability:</strong> Every single invocation writes to the immutable audit log—including rejected commands and out-of-scope queries.</li>
+</ul>
+<hr></hr>
+<h2 id="2-api-permissions--scope-architecture">2. API Permissions &amp; Scope Architecture</h2>
+<p>To execute its duties without violating enterprise boundaries, the Bot operates under a strict, minimal scope profile using a <code>tenant_access_token</code> (approximately 2-hour lifetime, auto-refreshed by the SDK) to support unattended background operations.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Scope</th>
+<th style="text-align:left">Operational Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>im:message:send_as_bot</code></td>
+<td style="text-align:left">Transmitting direct messages and channel responses.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>im:message:receive_v2</code></td>
+<td style="text-align:left">Command reception.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>cardkit:card:write</code></td>
+<td style="text-align:left">Rendering interactive response cards (Schema 2.0).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>wiki:wiki</code></td>
+<td style="text-align:left">Node read, search, <strong>and the physical node move operations</strong> required during publish and archive sequences.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>drive:drive</code></td>
+<td style="text-align:left">Permission container grants and file statistics collection.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>bitable:app</code></td>
+<td style="text-align:left">Read and write access across all operational and audit tables.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>contact:user.base:readonly</code></td>
+<td style="text-align:left">Sender lookup and supervisor/escalation path resolution.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Crucial Implementation Note:</em> Holding API scopes is insufficient on its own. The application must additionally be explicitly added as a <strong>Base Collaborator</strong> on both the Data Layer and Audit Layer applications. Furthermore, while early iterations of enterprise bots relied on read-only wiki scopes, this architecture requires full <code>wiki:wiki</code> access because the Bot actively executes node relocations during document publication.</p>
+<hr></hr>
+<h2 id="3-the-23-conversational-commands">3. The 23 Conversational Commands</h2>
+<p>Agents operate the knowledge architecture via natural language commands (<code>@Bot [command] [parameter]</code>). The command set is divided into core operational utilities and custom enterprise-specific extensions.</p>
+<h3 id="31-core-commands-14-inherited-utilities">3.1 Core Commands (14 Inherited Utilities)</h3>
+<ul>
+<li><code>find [topic]</code> — Returns top 3 pages, appending staleness flags if out of date.</li>
+<li><code>my pages</code> — Lists files owned by the sender with live status icons.</li>
+<li><code>health [title]</code> — Computes and returns the 0-100 health score and review metrics.</li>
+<li><code>gap [question]</code> — Autonomously writes a record to the Gap Tracker (T3) and notifies the market lead.</li>
+<li><code>review [title]</code> — <strong>Load-bearing for the Agent Lockdown.</strong> Because agents are barred from direct table editing, this command is their sole mechanism to log a self-review and reset their freshness clock.</li>
+<li><code>admin faults</code> / <code>admin users</code> — System-level administrative dumps.</li>
+</ul>
+<h3 id="32-enterprise-extensions-9-custom-ttk-commands">3.2 Enterprise Extensions (9 Custom TTK Commands)</h3>
+<p>Standard enterprise wiki bots lack context regarding geographic markets, industries, or campaign structures. These nine custom commands close that gap:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Command</th>
+<th style="text-align:left">Syntax</th>
+<th style="text-align:left">Target Functionality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong><code>ask</code></strong></td>
+<td style="text-align:left"><code>@Bot ask [plain question]</code></td>
+<td style="text-align:left"><strong>The Quick-Answer Engine.</strong> Facet-extracts the query, queries the register, and returns the single best file link plus a 2-line text extract.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>check</code></strong></td>
+<td style="text-align:left"><code>@Bot check [vertical] [CC]</code></td>
+<td style="text-align:left"><strong>The Commercial Screen.</strong> Instantly returns policy tiers, gating requirements, and known blockers before an agent commits to a prospect.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>find</code> (Faceted)</strong></td>
+<td style="text-align:left"><code>@Bot find market:[CC] vertical:[name] objective:[type]</code></td>
+<td style="text-align:left">Exact facet query against specific relational table fields.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>policy</code></strong></td>
+<td style="text-align:left"><code>@Bot policy [category] [CC]</code></td>
+<td style="text-align:left">Returns the exact policy file plus the open, gated, or prohibited verdict for that market.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>market</code> / <code>vertical</code></strong></td>
+<td style="text-align:left"><code>@Bot market [CC]</code></td>
+<td style="text-align:left">Returns the master market file alongside deep-links to all 73 sibling files for that country.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>reconcile</code></strong></td>
+<td style="text-align:left"><code>@Bot reconcile [CC]</code></td>
+<td style="text-align:left">Admin-only trigger for manual, on-demand state and permission reconciliation.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="4-key-behavioral-safeguards">4. Key Behavioral Safeguards</h2>
+<h3 id="41-the-staleness-warning">4.1 The Staleness Warning</h3>
+<p>For every file returned by a search or query, the Bot checks the <code>Days Overdue</code> field. If a file is past its review date, the Bot injects a mandatory warning:</p>
+<blockquote>
+<p><em>This file is 23 days past review. Verify facts before relying on it.</em></p>
+</blockquote>
+<p>An agent handed a stale file without warning is worse off than one receiving no file at all, as they will act upon obsolete operational rules with misplaced confidence.</p>
+<h3 id="42-strict-market-scoping">4.2 Strict Market Scoping</h3>
+<p>Market scoping is enforced at the code level for <em>every single command</em>:</p>
+<pre><code>function inScope(user, marketCode) {
+  if (user.scope === 'ALL') return true;
+  return user.scope.split(',').map(s =&gt; s.trim()).includes(marketCode);
+}
+</code></pre><p>If an NL-scoped agent queries a MENA market file, the Bot intercepts the request, returns a scope-rejection message, and logs the attempt. <strong>The Bot never returns content the caller could not reach by manually navigating the workspace.</strong></p>
+<hr></hr>
+<h2 id="5-interactive-card-architecture--platform-constraints">5. Interactive Card Architecture &amp; Platform Constraints</h2>
+<h3 id="51-the-3-second-rule">5.1 The 3-Second Rule</h3>
+<p>The platform expects an HTTP 200 acknowledgement within <strong>3 seconds</strong> of an interactive card callback. Exceeding this triggers automatic delivery retries, resulting in duplicate database transactions.</p>
+<ul>
+<li><p><strong>The Design Pattern:</strong> Acknowledge first, process asynchronously after:</p>
+<p>app.post('/card', express.json(), async (req, res) =&gt; {
+  res.status(200).json({ toast: { type: 'info', content: 'Processing...' } });
+  // Asynchronous execution handled downstream
+});</p>
+</li>
+</ul>
+<h3 id="52-card-validity-windows">5.2 Card Validity Windows</h3>
+<p>Under Card JSON Schema 2.0, interactive card validity is unified to <strong>14 days</strong> (both for user interaction and programmatic content updates). 
+Because approval cards sent to reviewers who take leave will quietly expire, Console’s publishing interface surfaces any pending approval older than 14 days, prompting the system to issue a fresh card rather than relying on stale states.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html" class="navigation navigation-prev " aria-label="Previous page: Self-Healing Loop & Fault Taxonomy">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="07-Role-Based-Access-Matrix.html" class="navigation navigation-next " aria-label="Next page: Role-Based Access Matrix">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Bot & API Command Reference","level":"4.3","depth":1,"next":{"title":"Role-Based Access Matrix","level":"5.1","depth":1,"path":"07-Role-Based-Access-Matrix.md","ref":"07-Role-Based-Access-Matrix.md","articles":[]},"previous":{"title":"Self-Healing Loop & Fault Taxonomy","level":"4.2","depth":1,"path":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","ref":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"06-Bot-Command-Reference.md","mtime":"2026-10-06T22:04:39.046Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T22:04:51.343Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+
