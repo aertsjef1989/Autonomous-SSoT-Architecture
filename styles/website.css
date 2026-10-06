@@ -1,13 +1,20 @@
 /* ==========================================================================
-   TTK_SSoT High-Contrast Dark Mode Theme for GitBook
-   Palette: Void (#08090D), Panel (#11141B), Cyan (#21E0DC), Pink (#F0245C)
+   TTK_SSoT High-Contrast Dark Mode Theme for GitBook (Forced Inheritance)
    ========================================================================== */
 
 /* Global Book Layout */
-.book {
+.book, 
+.book .book-body, 
+.book .book-body .body-inner,
+.markdown-section {
     background-color: #08090D !important;
     color: #E9ECF2 !important;
     font-family: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Force ALL text inside the document body to be crisp and visible */
+.markdown-section * {
+    color: #E9ECF2 !important;
 }
 
 /* Sidebar Navigation Area */
@@ -15,11 +22,12 @@
     background: #11141B !important;
     border-right: 1px solid #242A36 !important;
 }
-.book .book-summary ul.summary li a {
-    color: #A0AAB8 !important;
+.book .book-summary ul.summary li a,
+.book .book-summary ul.summary li span {
+    color: #E9ECF2 !important; /* Force sidebar text bright */
 }
 .book .book-summary ul.summary li.active > a {
-    color: #E9ECF2 !important;
+    color: #21E0DC !important;
     background: #171B24 !important;
     border-left: 3px solid #21E0DC !important;
     font-weight: 700;
@@ -33,18 +41,7 @@
     margin: 12px 0 !important;
 }
 
-/* Main Content Body and Typography */
-.book .book-body {
-    background-color: #08090D !important;
-    color: #E9ECF2 !important;
-}
-.book .book-body .body-inner {
-    background-color: #08090D !important;
-}
-.markdown-section {
-    color: #E9ECF2 !important;
-    background-color: #08090D !important;
-}
+/* Headings */
 .markdown-section h1, 
 .markdown-section h2, 
 .markdown-section h3, 
@@ -55,19 +52,14 @@
     border-bottom: 1px solid #242A36 !important;
     font-weight: 700;
 }
+
+/* Links */
 .markdown-section a {
     color: #21E0DC !important;
     text-decoration: none;
 }
 .markdown-section a:hover {
     text-decoration: underline;
-}
-.markdown-section p, 
-.markdown-section li, 
-.markdown-section span,
-.markdown-section strong,
-.markdown-section em {
-    color: #E9ECF2 !important;
 }
 
 /* Inline Code and Code Blocks */
@@ -98,7 +90,7 @@
     margin: 20px 0;
 }
 .markdown-section table th {
-    color: #A0AAB8 !important;
+    color: #21E0DC !important;
     background: #11141B !important;
     border: none !important;
     border-bottom: 1px solid #39414F !important;
@@ -127,9 +119,9 @@
     margin: 20px 0;
     border-radius: 0 5px 5px 0;
 }
-.markdown-section blockquote p {
+.markdown-section blockquote p,
+.markdown-section blockquote * {
     color: #E9ECF2 !important;
-    margin: 0;
 }
 
 /* Top Navigation / Header Bar */
@@ -139,7 +131,7 @@
     color: #E9ECF2 !important;
 }
 .book-header .btn {
-    color: #A0AAB8 !important;
+    color: #E9ECF2 !important;
 }
 .book-header h1 {
     color: #E9ECF2 !important;
