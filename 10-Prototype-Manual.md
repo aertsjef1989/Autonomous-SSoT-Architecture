@@ -25,7 +25,6 @@ Nothing here touches a platform. Every flow, dashboard and diagram runs on illus
 | [`ttk_flows_advanced.html`](PROTOTYPES/ttk_flows_advanced.html) | Flows 06 to 13 | Break the ones with real failure branches |
 | [`ttk_dashboards.html`](PROTOTYPES/ttk_dashboards.html) | Ten Console dashboards | Judge layout, density and what each role sees |
 | [`ttk_kb_interface.html`](PROTOTYPES/ttk_kb_interface.html) | Agent Knowledge Base | See the frontline view with health badges and bot |
-| `VISUALS/` | Fifty-four images, 2400px | Slides, printing, reference |
 
 ---
 
