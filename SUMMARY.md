@@ -3,20 +3,20 @@
 * [Executive Summary](README.md)
 
 ## I. The Mandate
-* [Executive One-Pager](LW-OP-017_Executive_One-Pager.md)
+* [Business Case & ROI](01-Business-Case-and-ROI.md)
 
 ## II. The Blueprint
-* [System Architecture](00_SYSTEM_ARCHITECTURE.md)
-* [Design Methodology (DMADV)](20_DMADV_PUBLIC_LAYER.md)
+* [System Architecture](02-System-Architecture.md)
+* [Design Methodology (DMADV)](03-Design-Methodology-DMADV.md)
 
 ## III. The Engine
-* [Base Schema Specification](LW-BS-011_Base_Schema_Specification.md)
-* [Bot Command Reference & API](LW-BR-012_Bot_Command_Reference.md)
+* [Relational Database Schema](04-Relational-Database-Schema.md)
+* [API & Bot Interface](05-API-and-Bot-Interface.md)
 
 ## IV. Governance & Security
-* [Self-Healing Loop Specification](LW-SH-016_Self_Healing_Loop_Spec.md)
-* [Content Governance & Access Matrix](LW-GV-007_Content_Governance_Manual.md)
-* [Security Architecture](LW-SA-014_Security_Architecture.md)
+* [Automated Governance Engine (Self-Healing Loop)](06-Automated-Governance-Engine.md)
+* [Role-Based Access Matrix](07-Role-Based-Access-Matrix.md)
+* [Security & Compliance](08-Security-and-Compliance.md)
 
 ## V. Continuity
-* [Administrator Operations Runbook](LW-LA-035_Administrator_Operations_Runbook.md)
+* [Operations Runbook](09-Operations-Runbook.md)
