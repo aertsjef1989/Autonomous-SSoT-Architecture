@@ -344,3 +344,31 @@ code {
 .bot-input input:focus { 
   border-color: #21E0DC; 
 }
+/* --- Global Prototype Navigation Bar --- */
+.ssot-nav-bar {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  background: #11141B;
+  border: 1px solid #242A36;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  gap: 12px;
+  z-index: 9999;
+  font-family: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.ssot-nav-bar a {
+  color: #79828F;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.ssot-nav-bar a:hover, .ssot-nav-bar a.active {
+  color: #21E0DC;
+}
+.ssot-nav-bar span {
+  color: #242A36;
+}

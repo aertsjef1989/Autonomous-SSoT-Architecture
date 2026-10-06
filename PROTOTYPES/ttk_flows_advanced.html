@@ -78,5 +78,24 @@ react/cjs/react-jsx-runtime.production.js:
 */
 </script>
 <script>document.getElementById('boot').remove();</script>
+<!-- Global In-App Navigation Injector -->
+  <script>
+    (function() {
+      const nav = document.createElement('div');
+      nav.className = 'ssot-nav-bar';
+      nav.innerHTML = `
+        <a href="index.html">Hub</a>
+        <span>/</span>
+        <a href="ttk_dashboards.html">Dashboards</a>
+        <span>/</span>
+        <a href="ttk_flow_prototype.html">Flows 1-5</a>
+        <span>/</span>
+        <a href="ttk_flows_advanced.html">Flows 6-13</a>
+        <span>/</span>
+        <a href="ttk_kb_interface.html">Agent KB</a>
+      `;
+      document.body.appendChild(nav);
+    })();
+  </script>
 </body>
 </html>
