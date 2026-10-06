@@ -18,12 +18,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Modern, stable Node version
+          node-version: '20'
 
       - name: Install dependencies and build HTML
         run: |
           npm install -g honkit
           honkit build
+          mkdir -p _book/styles
+          cp styles/website.css _book/styles/website.css
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
