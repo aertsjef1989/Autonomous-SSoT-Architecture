@@ -4,9 +4,7 @@
   "language": "en",
   "plugins": [
     "-sharing",
-    "-fontsettings",
-    "search",
-    "theme-default"
+    "-fontsettings"
   ],
   "pluginsConfig": {
     "theme-default": {
