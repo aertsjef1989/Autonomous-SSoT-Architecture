@@ -1,6 +1,6 @@
 # Enterprise Knowledge Architecture (SSoT)
 
-**Architected & Compiled by:** [Your Name]
+**Architected & Compiled by:** Jef Aerts
 **Methodology:** AI-Augmented Systems Architecture (Claude/LLM Orchestration)
 
 ## The Constraint
