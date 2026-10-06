@@ -17,8 +17,12 @@ Based on Eurostat labor data, the system targets an estimated **€1.89M to €2
 ## The Engine (Autonomous Governance)
 To prevent data decay without manual oversight, the system runs a 14-detector Self-Healing Loop. It enforces container-level permission inheritance via a strict 6-tier Access Matrix, and executes a 30-day autonomous archive "kill switch" on unverified data. This maintains structural integrity across 3,386 nodes while utilizing batched scanning to reduce automation budget consumption by 98%.
 
-## Live Prototypes (JSX/HTML)
-*You can interact with the functional UI prototypes here:*
-* [Link to Bot Interface Prototype (Vercel/GitHub Pages)]
-* [Link to Admin Console / Dashboard Prototype]
-* [Link to Access Matrix Prototype]
+## Interactive UI Prototypes
+
+You can explore and interact with the functional UI prototypes directly:
+
+* [Access the Prototype Hub & Menu](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/index.html)
+* [Agent Knowledge Base Interface](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_kb_interface.html)
+* [Admin Console / Ten Dashboards](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_dashboards.html)
+* [Core Flows (01 to 05)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_flow_prototype.html)
+* [Advanced Flows (06 to 13)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_flows_advanced.html)
