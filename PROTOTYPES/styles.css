@@ -1,0 +1,159 @@
+* { 
+  box-sizing: border-box; 
+}
+body {
+  margin: 0;
+  background: #08090D;
+  color: #E9ECF2;
+  font-family: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: 48px 32px;
+}
+.wrap {
+  max-width: 940px;
+  margin: 0 auto;
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #242A36;
+  margin-bottom: 34px;
+}
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: block;
+}
+.dots i:first-child { background: #F0245C; }
+.dots i:last-child { background: #21E0DC; }
+
+h1 {
+  font-size: 19px;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+.sub {
+  font-size: 12.5px;
+  color: #79828F;
+  margin-top: 2px;
+}
+.note {
+  font-size: 12px;
+  color: #4E5764;
+  margin-left: auto;
+}
+
+a.card {
+  display: block;
+  text-decoration: none;
+  background: #11141B;
+  border: 1px solid #242A36;
+  border-left: 3px solid #21E0DC;
+  border-radius: 5px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  transition: all .15s;
+}
+a.card:hover {
+  background: #171B24;
+  border-color: #21E0DC;
+}
+a.card.hot {
+  border-left-color: #F0245C;
+}
+a.card.hot:hover {
+  border-color: #F0245C;
+}
+
+.t {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #E9ECF2;
+}
+.d {
+  font-size: 13px;
+  color: #79828F;
+  margin-top: 5px;
+  line-height: 1.55;
+}
+.k {
+  font-size: 11.5px;
+  color: #21E0DC;
+  margin-top: 9px;
+  font-weight: 700;
+}
+.k.p { color: #F0245C; }
+
+.foot {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid #242A36;
+  font-size: 12.5px;
+  color: #79828F;
+  line-height: 1.7;
+}
+.foot b { color: #E9ECF2; }
+code {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: #21E0DC;
+}
+/* --- React App specific styles --- */
+#root {
+  min-height: 100vh;
+}
+#boot {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  background: #08090D;
+  z-index: 9;
+}
+#boot .dots {
+  display: flex;
+  gap: 7px;
+}
+#boot .dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+#boot .dots i:first-child { background: #F0245C; }
+#boot .dots i:last-child { background: #21E0DC; }
+#boot p {
+  margin: 0;
+  font-size: 13px;
+  color: #79828F;
+}
+
+::selection {
+  background: #21E0DC;
+  color: #08090D;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #11141B;
+}
+::-webkit-scrollbar-thumb {
+  background: #39414F;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4E5764;
+}
