@@ -1,0 +1,743 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Operations Runbook · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="08-Security-and-Compliance.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="05-API-and-Bot-Interface.md">
+            
+                <span>
+            
+                    
+                    API & Bot Interface
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="06-Automated-Governance-Engine.md">
+            
+                <span>
+            
+                    
+                    Automated Governance Engine (Self-Healing Loop)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter active" data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Operations Runbook</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="viii-administrator-operations-runbook">VIII. Administrator Operations Runbook</h1>
+<p><strong>Document ID:</strong> <code>08-Operations-Runbook.md</code><br></br><strong>Focus:</strong> Continuity, Incident Response, Mover/Leaver Procedures, and Backup Validation<br></br><strong>Format Tier:</strong> <em>Working Reference with PDF rendering. Intended to be accessible offline during P1 incidents.</em></p>
+<hr></hr>
+<h2 id="1-access-and-secrets-management">1. Access and Secrets Management</h2>
+<p><strong>Critical Rule:</strong> Never write the Application Secret in this document. Record only where it is stored.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">System</th>
+<th style="text-align:left">Authentication Vector</th>
+<th style="text-align:left">Recovery Protocol if Access is Lost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Admin Console</strong></td>
+<td style="text-align:left">Platform SSO (Requires System Admin Role)</td>
+<td style="text-align:left">Engage secondary administrator or Executive Sponsor.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Application ID</strong></td>
+<td style="text-align:left">Developer Console</td>
+<td style="text-align:left">Visible in console. Not classified as sensitive.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Application Secret</strong></td>
+<td style="text-align:left">Developer Console (Credentials)</td>
+<td style="text-align:left"><strong>Only held in Developer Console and one server environment variable.</strong> If lost/compromised: Regenerate and update server immediately.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Relational Database</strong></td>
+<td style="text-align:left">Inherited via Admin Console / Base</td>
+<td style="text-align:left">Access via Admin Console application panel.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Wiki Administration</strong></td>
+<td style="text-align:left">Inherited via Admin Console / Wiki</td>
+<td style="text-align:left">Admin panel role management.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="2-daily-standup-5-minute-protocol">2. Daily Standup (5-Minute Protocol)</h2>
+<p>Execute at the start of each working day.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">#</th>
+<th style="text-align:left">Inspection Target</th>
+<th style="text-align:left">Dashboard Surface</th>
+<th style="text-align:left">Required Action on Failure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><strong>Overview Tiles</strong></td>
+<td style="text-align:left">Console S1</td>
+<td style="text-align:left">Escalate any red-status metrics to their respective surfaces.</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><strong>Failed Deliveries</strong></td>
+<td style="text-align:left">Audit Log (Last 24h)</td>
+<td style="text-align:left">Retry transmission or explain failure to sender.</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left"><strong>Open P1 Faults</strong></td>
+<td style="text-align:left">Console S4</td>
+<td style="text-align:left"><strong>2-Hour SLA. Begin resolution immediately.</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><strong>Archive Queue</strong></td>
+<td style="text-align:left">Console S7</td>
+<td style="text-align:left"><strong>Time Sensitive:</strong> Any file reaching Day 30 is automatically archived tonight. Today is the final window for intervention.</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><strong>Job Executions</strong></td>
+<td style="text-align:left">Console S5</td>
+<td style="text-align:left">A missing automated run triggers Fault F-011.</td>
+</tr>
+<tr>
+<td style="text-align:left">6</td>
+<td style="text-align:left"><strong>State Divergence</strong></td>
+<td style="text-align:left">Console S1</td>
+<td style="text-align:left">Any F-027 (Stuck Publish) or F-028 (Orphan Node) must be investigated same-day.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="3-the-mover-protocol-cross-market-transfers">3. The Mover Protocol (Cross-Market Transfers)</h2>
+<p>The most frequent lifecycle event, and the most dangerous vector for permission drift. When an agent changes markets but keeps ownership of files in their old market, they can edit content outside their new scope while locking out the incoming owner.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">#</th>
+<th style="text-align:left">Execution Step</th>
+<th style="text-align:left">Actor</th>
+<th style="text-align:left">Timing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Trigger: User scope or role changed. Fault F-029 opens.</td>
+<td style="text-align:left">System Admin</td>
+<td style="text-align:left">Immediate</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><strong>Revoke First:</strong> Strip all branch tokens for departing markets.</td>
+<td style="text-align:left">Script</td>
+<td style="text-align:left">Same day</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left"><strong>Grant Second:</strong> Standard provisioning for the new markets.</td>
+<td style="text-align:left">Script</td>
+<td style="text-align:left">Same day</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">Inventory records owned in the departing scope.</td>
+<td style="text-align:left">Console S2</td>
+<td style="text-align:left">Same day</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left">Present inventory to departing market's Team Lead for reassignment.</td>
+<td style="text-align:left">Console S2</td>
+<td style="text-align:left">Same day</td>
+</tr>
+<tr>
+<td style="text-align:left">6</td>
+<td style="text-align:left">Reassign ownership. (Defaults to Team Lead if left unassigned).</td>
+<td style="text-align:left">Bulk Edit</td>
+<td style="text-align:left">≤ 5 working days</td>
+</tr>
+<tr>
+<td style="text-align:left">7</td>
+<td style="text-align:left">Hand over or finish in-flight drafts.</td>
+<td style="text-align:left">Mover</td>
+<td style="text-align:left">≤ 10 working days</td>
+</tr>
+<tr>
+<td style="text-align:left">8</td>
+<td style="text-align:left">Verify clean sweep on the next nightly reconciliation job.</td>
+<td style="text-align:left">Automatic</td>
+<td style="text-align:left">Next night</td>
+</tr>
+</tbody>
+</table>
+<p><em>Security Principle:</em> <strong>Revoke before grant, never the reverse.</strong> Granting first creates a vulnerability window where the user holds both scopes.</p>
+<hr></hr>
+<h2 id="4-offboarding-the-leaver-protocol">4. Offboarding (The Leaver Protocol)</h2>
+<p>Must be completed <strong>before</strong> the final working day. Failure to deprovision an account cleanly triggers a P1 incident (F-023).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">#</th>
+<th style="text-align:left">Execution Step</th>
+<th style="text-align:left">System</th>
+<th style="text-align:left">Timing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">List all records owned by the departing person.</td>
+<td style="text-align:left">Console S2</td>
+<td style="text-align:left">Before last day</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">Manager assigns new owners.</td>
+<td style="text-align:left">Human</td>
+<td style="text-align:left">3+ days prior</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">Update ownership for all affected records.</td>
+<td style="text-align:left">Console S2</td>
+<td style="text-align:left">Before last day</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left">Status set to <code>Deprovisioned</code>.</td>
+<td style="text-align:left">Access Register</td>
+<td style="text-align:left">On or before last day</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left">Revoke wiki access &amp; platform channels.</td>
+<td style="text-align:left">Admin Console</td>
+<td style="text-align:left">Within 24 hours</td>
+</tr>
+<tr>
+<td style="text-align:left">6</td>
+<td style="text-align:left"><strong>Transfer personal workspace to their manager.</strong></td>
+<td style="text-align:left">Wiki</td>
+<td style="text-align:left"><strong>Within 48 hours</strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>Data Integrity Rule:</em> Because the platform only offers a 30-day restore window, and transferred data does not restore automatically, <strong>resources must transfer before the account is deleted.</strong></p>
+<hr></hr>
+<h2 id="5-backup-rpo-and-rto">5. Backup, RPO, and RTO</h2>
+<p>"The vendor probably backs it up" is not a recovery plan for a governed system of record.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Element</th>
+<th style="text-align:left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Database Export</strong></td>
+<td style="text-align:left">Nightly. All tables to spreadsheet format.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Document Export</strong></td>
+<td style="text-align:left">Weekly. Every <code>Published</code> node content.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Structure Export</strong></td>
+<td style="text-align:left">Weekly. Branch map and permission grants.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Destination</strong></td>
+<td style="text-align:left">EU-region storage outside the vendor platform.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Recovery Time Objective (RTO)</strong></td>
+<td style="text-align:left"><strong>8 hours</strong> for the database register; <strong>48 hours</strong> for full document restoration.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Recovery Point Objective (RPO)</strong></td>
+<td style="text-align:left"><strong>24 hours.</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Restore Validation</strong></td>
+<td style="text-align:left"><strong>Monthly:</strong> Restore 5 documents and 50 rows into a sandbox. An untested backup is merely a hypothesis.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="6-p1-incident-response-sla">6. P1 Incident Response SLA</h2>
+<p>A P1 requires a <strong>2-hour SLA</strong> from detection to resolution.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Time Window</th>
+<th style="text-align:left">Response Phase</th>
+<th style="text-align:left">Expected Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>0 - 15 min</strong></td>
+<td style="text-align:left">Identify: Read Audit Log fault row, classify F-001 to F-029.</td>
+<td style="text-align:left">Fault ID &amp; Severity Confirmed</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>15 - 30 min</strong></td>
+<td style="text-align:left">Contain: Revoke access, disable bot, or alert Data Contact.</td>
+<td style="text-align:left">Threat Contained</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>30 - 60 min</strong></td>
+<td style="text-align:left">Resolve: Execute fault playbook.</td>
+<td style="text-align:left">Root Cause Mitigated</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>60 - 90 min</strong></td>
+<td style="text-align:left">Verify: Manually re-run the failed scanner.</td>
+<td style="text-align:left">Fix Confirmed</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>90 - 120 min</strong></td>
+<td style="text-align:left">Document: Log resolution notes, notify Project Lead.</td>
+<td style="text-align:left">Audit Trail Closed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-three-p1-faults">The Three P1 Faults</h3>
+<ol>
+<li><strong>F-013 (Audit Log Write Failure):</strong> The audit trail is down. Treat the entire platform as down.</li>
+<li><strong>F-019 (Restricted Content Breach):</strong> Revoke immediately, trigger 72-hour breach assessment clock.</li>
+<li><strong>F-023 (Deprovisioning Incomplete):</strong> Revoke immediately, execute offboarding protocol.</li>
+</ol>
+<hr></hr>
+<h2 id="7-operational-troubleshooting-guide">7. Operational Troubleshooting Guide</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Symptom</th>
+<th style="text-align:left">Diagnostic Vector</th>
+<th style="text-align:left">Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Every Bot call fails, but credentials are correct.</strong></td>
+<td style="text-align:left">Check client domain configuration.</td>
+<td style="text-align:left">Hardcode the international API domain instead of relying on default routing.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Published file is missing from its branch.</strong></td>
+<td style="text-align:left">Check Console S7 (Stuck Publishes).</td>
+<td style="text-align:left"><strong>Move failed after the state write.</strong> Re-issue the move, then debug the publish handler order.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Interactive Card does nothing on click.</strong></td>
+<td style="text-align:left">Server logs (Check callback speed).</td>
+<td style="text-align:left">The platform requires an HTTP 200 within 3 seconds. Acknowledge immediately, process asynchronously.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Interactive Card stopped working after 2 weeks.</strong></td>
+<td style="text-align:left">Card age logic.</td>
+<td style="text-align:left">Under JSON Schema 2.0, cards have a hard 14-day update window. Issue a fresh card.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Batch import lost 500 rows.</strong></td>
+<td style="text-align:left">Import report (All-or-Nothing failure).</td>
+<td style="text-align:left">One bad row failed the entire chunk. Validate data locally before chunking.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit Log not receiving rows.</strong></td>
+<td style="text-align:left"><strong>P1 Alert.</strong></td>
+<td style="text-align:left">Permission or token failure. Fix immediately.</td>
+</tr>
+</tbody>
+</table>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="08-Security-and-Compliance.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Security & Compliance">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Operations Runbook","level":"6.1","depth":1,"previous":{"title":"Security & Compliance","level":"5.3","depth":1,"path":"08-Security-and-Compliance.md","ref":"08-Security-and-Compliance.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"09-Operations-Runbook.md","mtime":"2026-10-06T20:10:11.703Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T20:10:23.759Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+

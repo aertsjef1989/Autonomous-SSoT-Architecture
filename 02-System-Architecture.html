@@ -1,0 +1,969 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>System Architecture · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="03-Design-Methodology-DMADV.html" />
+    
+    
+    <link rel="prev" href="01-Business-Case-and-ROI.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter active" data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="05-API-and-Bot-Interface.md">
+            
+                <span>
+            
+                    
+                    API & Bot Interface
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="06-Automated-Governance-Engine.md">
+            
+                <span>
+            
+                    
+                    Automated Governance Engine (Self-Healing Loop)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >System Architecture</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="ii-system-architecture-schema-and-build-specification">II. System Architecture, Schema and Build Specification</h1>
+<p><strong>Document ID:</strong> <code>02-System-Architecture.md</code><br></br><strong>Status:</strong> Approved. Master reference for the Architecture suite.<br></br><strong>Track:</strong> Engineering &amp; Infrastructure  </p>
+<h2 id="1-purpose-and-scope">1. Purpose and Scope</h2>
+<p>This is the master specification for the Autonomous Knowledge Architecture: an enterprise advertising knowledge library of 3,386 public files plus a governed internal layer, deployed in a workspace wiki space, governed by a custom relational database, and operated by a custom conversational application (<code>Bot</code>).</p>
+<p><strong>Two different starting states.</strong> The public layer is greenfield: nothing exists, and files are generated with AI assistance then verified by a human. The internal layer is not: the content already exists as legacy docs spread across multiple owners, cross-linked, with inconsistent permissions. There, the work is triage, consolidation, and permission repair.</p>
+<hr></hr>
+<h2 id="2-platform-prerequisites">2. Platform Prerequisites</h2>
+<p>Established before any build work. Two are hard gates.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Prerequisite</th>
+<th>Status</th>
+<th>Architectural Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td><strong>Enterprise Plan Tier</strong></td>
+<td><strong>CLOSED</strong></td>
+<td>Requires 50,000 rows per table, unlimited Basic API calls, full advanced permission depth, and 500,000 automation runs per month.</td>
+</tr>
+<tr>
+<td>P2</td>
+<td><strong>Data Residency</strong></td>
+<td><strong>CLOSED</strong></td>
+<td>Operation is Lisbon-based. EU server residency is a hard legal requirement.</td>
+</tr>
+<tr>
+<td>P3</td>
+<td><strong>Advanced Permissions</strong></td>
+<td><strong>CLOSED</strong></td>
+<td>Requires full depth: record-level conditions, field-level restrictions, and dynamic role assignment.</td>
+</tr>
+<tr>
+<td>P4</td>
+<td><strong>Agent Lockdown</strong></td>
+<td><strong>GATE</strong></td>
+<td>Database tables strictly read-only for agents. Write operations forced through the Bot layer.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="3-content-architecture--topology">3. Content Architecture &amp; Topology</h2>
+<h3 id="31-space-topology">3.1 Space Topology</h3>
+<p>One private team space, two root nodes.</p>
+<ul>
+<li><strong>Visibility:</strong> Private. Nodes are invisible to the tenant until access is explicitly granted. Foundation of the "deny-by-default" access model.</li>
+<li><strong>Root node 1:</strong> <code>Public_Information_Layer</code> (Greenfield, 3,386 nodes).</li>
+<li><strong>Root node 2:</strong> <code>Internal_Operations_Layer</code> (Legacy, ~1,200 nodes).</li>
+</ul>
+<p><em>A second space would double the administration surface and break cross-linking between an internal SOP and the public file it governs. Hence, two root nodes within one space.</em></p>
+<h3 id="32-folder-tree--file-limits">3.2 Folder Tree &amp; File Limits</h3>
+<p>Deepest public content path is 5 levels. The structure spans 45 markets across 3 regions (EMEA, MENA, LATAM).</p>
+<pre><code>Enterprise_WikiSpace/                                  
+│
+├── Public_Information_Layer/                          
+│   ├── 00_INDEX.md                                    
+│   ├── 01_Campaigns/ (12 files/country)               
+│   │   ├── EMEA/{NL,BE,DE,FR...}/
+│   │   ├── MENA/{SA,AE,EG...}/
+│   │   └── LATAM/{BR,MX,CO...}/
+│   ├── 02_Verticals/ (31 files/country)               
+│   ├── 03_Policy/ (15 files/country)                  
+│   ├── 04_Markets/ (1 file/country)                   
+│   ├── 05_Formats_and_Tools/GLB/ (35 files, Global)   
+│   ├── 06_Templates/GLB/ (20 files, Global)           
+│   ├── 07_Lifecycle/ (8 files/country)                
+│   └── 08_Onboarding/ (7 files/country)               
+│
+└── Internal_Operations_Layer/                         
+    └── 15 areas, 6 access tiers, 3 naming patterns   
+</code></pre><h3 id="33-strict-naming-convention">3.3 Strict Naming Convention</h3>
+<p><code>ENT_[FOLDER]_[CC]_[COUNTER]_[TOPIC].md</code></p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Rule</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENT</code></td>
+<td>Fixed prefix</td>
+<td>Always <code>ENT</code> (Enterprise)</td>
+</tr>
+<tr>
+<td><code>FOLDER</code></td>
+<td>Three-letter folder code</td>
+<td><code>CAM</code>, <code>VRT</code>, <code>POL</code>, <code>MKT</code>, <code>FMT</code>, <code>TPL</code>, <code>LIF</code>, <code>ONB</code></td>
+</tr>
+<tr>
+<td><code>CC</code></td>
+<td>ISO country code, or <code>GLB</code></td>
+<td>Any of the 45 ISO codes, or <code>GLB</code></td>
+</tr>
+<tr>
+<td><code>COUNTER</code></td>
+<td>Zero-padded 3 digits. Resets per country/folder</td>
+<td><code>001</code> to <code>031</code></td>
+</tr>
+<tr>
+<td><code>TOPIC</code></td>
+<td>Title case, underscores</td>
+<td>e.g., <code>Financial_Services</code></td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="4-the-internal-operations-layer">4. The Internal Operations Layer</h2>
+<p>The internal layer is roughly a third of the total file count at launch and scales to half by year three. </p>
+<h3 id="41-migration-via-scripted-discovery">4.1 Migration via Scripted Discovery</h3>
+<p>Migration is a scanner problem before it is a content problem.</p>
+<ol>
+<li><strong>D1:</strong> Enumerate every legacy doc via the Drive API.</li>
+<li><strong>D2:</strong> Read current permission state per document (identifying broken ACLs).</li>
+<li><strong>D3:</strong> Extract inbound/outbound link graph to identify "Link Hubs". Moving a hub without mapping its inbound links breaks navigation silently.</li>
+<li><strong>D4:</strong> Cluster by title similarity for deduplication.</li>
+</ol>
+<h3 id="42-the-15-governance-areas--access-tiers">4.2 The 15 Governance Areas &amp; Access Tiers</h3>
+<p>Every internal file inherits its read/write tier directly from the container area. <strong>Per-document ACLs are strictly stripped during migration.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Code</th>
+<th>Read Tier</th>
+<th>Write Tier</th>
+<th>Growth</th>
+<th>Review Cadence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01_SOPs</code></td>
+<td>SOP</td>
+<td>I-1 (All)</td>
+<td>I-3 (Reviewer)</td>
+<td>Slow</td>
+<td>Bi-Annual</td>
+</tr>
+<tr>
+<td><code>03_Internal_Updates</code></td>
+<td>UPD</td>
+<td>I-1</td>
+<td>I-3</td>
+<td>High</td>
+<td><strong>None. Archive/Retention instead</strong></td>
+</tr>
+<tr>
+<td><code>05_Meeting_Notes</code></td>
+<td>MTG</td>
+<td>Varies</td>
+<td>Varies</td>
+<td>Very High</td>
+<td><strong>None. Archive/Retention instead</strong></td>
+</tr>
+<tr>
+<td><code>07_Escalations</code></td>
+<td>ESC</td>
+<td>I-1</td>
+<td>I-2</td>
+<td>High</td>
+<td><strong>None. Archive/Retention instead</strong></td>
+</tr>
+<tr>
+<td><code>11_Client_Accounts</code></td>
+<td>ACC</td>
+<td>I-2 (Market Scoped)</td>
+<td>I-3 (Market Scoped)</td>
+<td>High</td>
+<td>Quarterly</td>
+</tr>
+<tr>
+<td><code>12_Compliance</code></td>
+<td>LEG</td>
+<td>I-3</td>
+<td>I-5</td>
+<td>Low</td>
+<td>Bi-Annual</td>
+</tr>
+<tr>
+<td><code>13_Confidential</code></td>
+<td>CNF</td>
+<td>I-5 (Admin Only)</td>
+<td>I-5</td>
+<td>Low</td>
+<td>Annual</td>
+</tr>
+<tr>
+<td><code>15_Personal_Space</code></td>
+<td>PER</td>
+<td>I-0 (Owner Only)</td>
+<td>I-0</td>
+<td>Medium</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="5-permission--access-model">5. Permission &amp; Access Model</h2>
+<p>Permissions attach to folder nodes using <code>perm_type: "container"</code>. Documents inherit at the moment they land. A nightly API reconciliation job keeps them correct thereafter.</p>
+<h3 id="51-operating-role-model">5.1 Operating Role Model</h3>
+<p>A user holds exactly one role and any number of market scopes.</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Scope Pattern</th>
+<th>Database Table Rights</th>
+<th>Bot Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent (AGT)</strong></td>
+<td>1 to 2 markets</td>
+<td>View Only (Exceptions for own records)</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td><strong>QA Specialist (QAS)</strong></td>
+<td>4 to 12 markets</td>
+<td>Edit (Market Scoped)</td>
+<td>Extended</td>
+</tr>
+<tr>
+<td><strong>First Line Manager (FLM)</strong></td>
+<td>2 to 12 markets</td>
+<td>Edit (Market Scoped)</td>
+<td>Extended</td>
+</tr>
+<tr>
+<td><strong>Manager (MGR)</strong></td>
+<td>Region or ALL</td>
+<td>View (Global) / Edit (Internal)</td>
+<td>Extended</td>
+</tr>
+<tr>
+<td><strong>Upper Mgmt (UPM)</strong></td>
+<td>ALL</td>
+<td>Full Access</td>
+<td>Extended</td>
+</tr>
+<tr>
+<td><strong>Administrator (ADM)</strong></td>
+<td>ALL</td>
+<td>Full CRUD &amp; Schema Rights</td>
+<td>Admin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-the-state-gate-market-scope-override">5.2 The State Gate (Market Scope Override)</h3>
+<p>Effective access to a document is the narrowest of three things: (1) Role Capability, (2) Node Location Grant, (3) Publication State.</p>
+<table>
+<thead>
+<tr>
+<th>Publication State</th>
+<th>Node Location</th>
+<th>Who Can Open It</th>
+<th>Market Scope Applies?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Draft / WIP</strong></td>
+<td><code>_STAGING/[Region]/[CC]/</code></td>
+<td>Owner + Scoped Reviewers/Admins</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Awaiting Approval</strong></td>
+<td><code>_STAGING/[Region]/[CC]/</code></td>
+<td>Owner + Scoped Reviewers/Admins</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Published</strong></td>
+<td>Live Market Branch</td>
+<td>Everyone scoped to that market</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Archived</strong></td>
+<td><code>_ARCHIVE/</code></td>
+<td>Administrators only</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="6-relational-database-schema-the-engine">6. Relational Database Schema (The Engine)</h2>
+<p>The governance architecture relies on a strict build order. </p>
+<p><code>T4 (User Access) -&gt; T1 (Page Ownership) -&gt; T5 (Onboarding) -&gt; T3 (Gap Tracker) -&gt; T2 (Build Tracker) -&gt; T10 (Bot Interaction Log)</code></p>
+<h3 id="61-t1-page-ownership-register-core-governance">6.1 T1: Page Ownership Register (Core Governance)</h3>
+<p><em>Selected critical fields out of 42 total.</em></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Values / Formula / Logic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Page Title</code></td>
+<td>Text</td>
+<td>Yes</td>
+<td>Exact wiki page title.</td>
+</tr>
+<tr>
+<td><code>Owner</code></td>
+<td>Text</td>
+<td>Yes</td>
+<td>Handle. Must validate against T4.</td>
+</tr>
+<tr>
+<td><code>Next Review Due</code></td>
+<td>Formula</td>
+<td>Auto</td>
+<td><code>IF(Cadence='Monthly', Last+30, IF(Cadence='Quarterly', Last+90...))</code></td>
+</tr>
+<tr>
+<td><code>Health Score</code></td>
+<td>Formula</td>
+<td>Auto</td>
+<td><code>100 - (IF(Owner='',20,0)) - (IF(Tags&lt;2,20,0)) - (IF(DaysOverdue&gt;0,MIN(40,DaysOverdue),0))</code></td>
+</tr>
+<tr>
+<td><code>Publication State</code></td>
+<td>Select</td>
+<td>Yes</td>
+<td>Draft, WIP, Awaiting Approval, Published, Archived.</td>
+</tr>
+<tr>
+<td><code>Market (CC)</code></td>
+<td>Select</td>
+<td>Yes</td>
+<td>Routes the branch grant.</td>
+</tr>
+<tr>
+<td><strong><code>Review Due (native)</code></strong></td>
+<td><strong>Date</strong></td>
+<td><strong>Bot</strong></td>
+<td><strong>Mirrors computed Next Review Due. Trigger fields must be native dates, not formulas.</strong></td>
+</tr>
+<tr>
+<td><code>Permission Last Asserted</code></td>
+<td>Date</td>
+<td>Auto</td>
+<td>Written by the nightly reconciliation job.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-t4-user-access-register-matrix-engine">6.2 T4: User Access Register (Matrix Engine)</h3>
+<p>Dictates exact systemic permissions. </p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Database App Access</code></td>
+<td>Select</td>
+<td>Enforces the Agent Lockdown (View Only).</td>
+</tr>
+<tr>
+<td><code>Bot Command Access</code></td>
+<td>Select</td>
+<td>Standard, Extended, Admin.</td>
+</tr>
+<tr>
+<td><strong><code>Market Scope</code></strong></td>
+<td><strong>Multi-Select</strong></td>
+<td><strong>Drives every branch grant. Values: The 45 ISO codes or ALL.</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-t10-bot-interaction-log-immutable-audit">6.3 T10: Bot Interaction Log (Immutable Audit)</h3>
+<p>Every API operation writes here. Grows unboundedly.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Interaction ID</code></td>
+<td>Auto</td>
+<td><code>BOT-YYYYMMDD-HHMMSS-NNN</code></td>
+</tr>
+<tr>
+<td><code>Command / Workflow</code></td>
+<td>Text</td>
+<td>e.g. <code>PUBLISH</code>, <code>ARCHIVE</code>, <code>RECONCILE</code>, <code>SCAN_REVIEW</code></td>
+</tr>
+<tr>
+<td><code>Input Parameters</code></td>
+<td>Text</td>
+<td>Sanitised command parameters</td>
+</tr>
+<tr>
+<td><code>Fault ID</code></td>
+<td>Text</td>
+<td>F-001 to F-029 (Identifies systemic breakdowns)</td>
+</tr>
+<tr>
+<td><code>Error Code</code></td>
+<td>Text</td>
+<td>API error code if failed (e.g., 429 Rate Limit)</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="7-document-lifecycle--state-machine">7. Document Lifecycle &amp; State Machine</h2>
+<h3 id="71-asynchronous-publish-sequence">7.1 Asynchronous Publish Sequence</h3>
+<p>Publishing is a physical node move, not a permission change. It is executed asynchronously to prevent API timeout race conditions.</p>
+<ol>
+<li>Reviewer approves via interactive webhook card.</li>
+<li>Server ACKs the callback within 3 seconds to satisfy platform timeout limits.</li>
+<li>Bot queries the API for the target node token.</li>
+<li>Bot executes the document move operation.</li>
+<li><strong>Critical Verification:</strong> Bot polls the async task ID. Once complete, it queries the node again to assert <code>parent_node_token</code> matches the intended market folder.</li>
+<li><strong>Commit:</strong> ONLY upon verification does the Bot write <code>Publication State = Published</code> to T1.</li>
+<li>Document dynamically inherits the market branch permissions.</li>
+<li>Bot writes <code>PUBLISH</code> transaction to T10.</li>
+</ol>
+<hr></hr>
+<h2 id="8-bot--api-layer-operations">8. Bot &amp; API Layer Operations</h2>
+<h3 id="81-api-throttling--fault-tolerance">8.1 API Throttling &amp; Fault Tolerance</h3>
+<ul>
+<li><strong>Batch Writes:</strong> T1 and T2 updates are chunked at 500 records per batch call with whole-chunk rollback handling.</li>
+<li><strong>429 Backoff:</strong> The system detects HTTP 429 (Rate Limit Exceeded) responses, reads the suggested wait-time header, and implements an exponential backoff sequence (Max 5 retries before logging F-011 Fault).</li>
+</ul>
+<h3 id="82-core-conversational-commands">8.2 Core Conversational Commands</h3>
+<p>Agents operate the library via DM or channel commands.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Action / Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Bot ask [query]</code></td>
+<td>Quick-answer endpoint. Facet-extracts the query, searches T1, returns the single best file link plus a 2-line text extract.</td>
+</tr>
+<tr>
+<td><code>@Bot check [vertical] [market]</code></td>
+<td>Fast compliance screen. Returns policy tier and gating requirements.</td>
+</tr>
+<tr>
+<td><code>@Bot gap [question]</code></td>
+<td>Autonomously writes a T3 Gap Tracker record and notifies the market lead for content creation.</td>
+</tr>
+<tr>
+<td><code>@Bot reconcile [CC]</code></td>
+<td>Admin-only. Triggers manual on-demand state and permission reconciliation.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="9-operational-integrity-self-healing-sub-routines">9. Operational Integrity (Self-Healing Sub-Routines)</h2>
+<h3 id="91-database-vs-wiki-state-reconciliation-sc-006">9.1 Database vs. Wiki State Reconciliation (<code>SC-006</code>)</h3>
+<p>Because wiki node moves are asynchronous and emit no webhooks, the Database and the Wiki can diverge silently. </p>
+<ul>
+<li><strong>Forward Check:</strong> Queries all T1 rows marked <code>Published</code>, fetches the actual wiki node via API, and asserts the parent node matches the expected folder. Detects F-027 (Published in Database, stuck in Staging).</li>
+<li><strong>Reverse Check:</strong> Enumerates children of every live market folder. Asserts each has a corresponding <code>Published</code> T1 row. Detects F-028 (Live in Wiki, missing from Database).</li>
+</ul>
+<h3 id="92-the-mover-protocol-dt-007">9.2 The Mover Protocol (<code>DT-007</code>)</h3>
+<p>When a user changes market scopes in T4, the system must sever old access to prevent privilege accumulation.</p>
+<ol>
+<li><strong>Revoke First:</strong> Script enumerates departing market branch tokens and executes permission-member delete.</li>
+<li><strong>Grant Second:</strong> Standard provisioning script runs for the new market scope.</li>
+<li><strong>Reassign Ownership:</strong> Bot queries T1 for records owned by the mover in the old scope and triggers an interactive card to the FLM to reassign file ownership. </li>
+</ol>
+<hr></hr>
+<h2 id="10-console-custom-application-interface">10. Console (Custom Application Interface)</h2>
+<p>Console is the administrative operating surface for the platform, built as a custom frontend application loading directly inside the database interface via a native JS SDK.</p>
+<p><strong>Architectural Decision: Why a native JS SDK instead of a Standalone Web App?</strong>
+A standalone web app writing via a service token attributes every system change to "The Bot". A native JS SDK loads client-side and runs under the signed-in user's identity. This preserves human attribution in the record history—a strict requirement for enterprise auditability.</p>
+<p><strong>Console Capabilities:</strong></p>
+<ul>
+<li><strong>Batch Import &amp; Dry Run:</strong> Chunked 500-record bulk imports with full rollback handling. Validates every row locally before attempting API writes.</li>
+<li><strong>Permission Inspection:</strong> Reverse lookup mapping showing effective access limits for any user, resolving the delta between Role, Branch Grant, and Publication State.</li>
+<li><strong>Publish Queue Management:</strong> Surfacing orphaned nodes (F-028) and stuck publishes (F-027) with 1-click re-issue capabilities.</li>
+</ul>
+<hr></hr>
+<h2 id="11-measurement--declarative-kpis">11. Measurement &amp; Declarative KPIs</h2>
+<p>Database tables hold current state, not history. The platform requires a snapshot engine to track trends. </p>
+<p><strong>The Version Trap Mitigation:</strong>
+If a KPI definition (e.g., "Files overdue") changes its filter criteria, historical trend lines silently corrupt because they compare two different measurements. </p>
+<ul>
+<li><strong>Solution:</strong> KPIs are defined declaratively as JSON data in <code>T-KPI-03</code>. Any change to a KPI's filter logic automatically increments the <code>Definition Version</code>. Trend charts spanning a version change show a physical break marker on the UI, preventing confident but factually wrong reporting.</li>
+</ul>
+<hr></hr>
+<h2 id="12-disaster-recovery--rollback">12. Disaster Recovery &amp; Rollback</h2>
+<p>The platform relies on external extraction to satisfy enterprise RTO/RPO limits, as native vendor restoration is limited to 90 days.</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Database Export</strong></td>
+<td>Nightly. All operational tables export to CSV/XLSX via the export-task API.</td>
+</tr>
+<tr>
+<td><strong>Document Export</strong></td>
+<td>Weekly. Full document content exported to DOCX/PDF.</td>
+</tr>
+<tr>
+<td><strong>Structural Map</strong></td>
+<td>Weekly. Full branch map (Node tokens, paths, permission grants) exported to JSON.</td>
+</tr>
+<tr>
+<td><strong>Destination</strong></td>
+<td>EU-region external object store (preserves residency outside the vendor tenant).</td>
+</tr>
+<tr>
+<td><strong>RPO / RTO</strong></td>
+<td><strong>RPO:</strong> 24 hours. <strong>RTO:</strong> 8 hours for Database, 48 hours for document corpus.</td>
+</tr>
+<tr>
+<td><strong>Pre-Destructive Rule</strong></td>
+<td>Any bulk deletion or state rollback requires a fresh, verified export before the script executes.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="13-deployment-rollout-sequence">13. Deployment Rollout Sequence</h2>
+<p>Deployed via an 8-stage sequence to isolate failure early.</p>
+<ol>
+<li><strong>Stage 0-1 (Sandbox):</strong> Platform limits stress-tested using synthetic data to establish true child-node and tree-depth ceilings.</li>
+<li><strong>Stage 2-3 (Schema &amp; Permissions):</strong> T1-T10 tables deployed. User matrix (T4) seeded with the 200-person active roster.</li>
+<li><strong>Stage 4-5 (Automations):</strong> Webhooks, interactive cards, and 429 rate-limit backoff harnesses deployed.</li>
+<li><strong>Stage 6 (Single-Market Pilot):</strong> 74 files published for a single test market to establish a baseline for AI-generation verification effort. </li>
+<li><strong>Stage 7 (Scale &amp; Discovery):</strong> Scaled to the remaining 44 markets. <strong>Parallel execution:</strong> Drive API discovery script enumerates all legacy tenant documents, extracting inbound/outbound link graphs to identify "link hubs" prior to internal migration.</li>
+<li><strong>Stage 8 (Internal Layer):</strong> Per-document ACLs stripped from legacy files, moving them into the 15 governed areas to inherit the new tier permissions.</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="01-Business-Case-and-ROI.html" class="navigation navigation-prev " aria-label="Previous page: Business Case & ROI">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="03-Design-Methodology-DMADV.html" class="navigation navigation-next " aria-label="Next page: Design Methodology (DMADV)">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"System Architecture","level":"3.1","depth":1,"next":{"title":"Design Methodology (DMADV)","level":"3.2","depth":1,"path":"03-Design-Methodology-DMADV.md","ref":"03-Design-Methodology-DMADV.md","articles":[]},"previous":{"title":"Business Case & ROI","level":"2.1","depth":1,"path":"01-Business-Case-and-ROI.md","ref":"01-Business-Case-and-ROI.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"02-System-Architecture.md","mtime":"2026-10-06T20:10:11.703Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T20:10:23.759Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+

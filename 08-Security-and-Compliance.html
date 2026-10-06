@@ -1,0 +1,600 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Security & Compliance · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="09-Operations-Runbook.html" />
+    
+    
+    <link rel="prev" href="07-Role-Based-Access-Matrix.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="05-API-and-Bot-Interface.md">
+            
+                <span>
+            
+                    
+                    API & Bot Interface
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="06-Automated-Governance-Engine.md">
+            
+                <span>
+            
+                    
+                    Automated Governance Engine (Self-Healing Loop)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="5.3" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Security & Compliance</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="viii-security--compliance-legal--gdpr-package">VIII. Security &amp; Compliance (Legal &amp; GDPR Package)</h1>
+<p><strong>Document ID:</strong> <code>08-Security-and-Compliance.md</code><br></br><strong>Focus:</strong> Data Residency, GDPR Subject Rights, P1 Breach Protocols, and Internal Layer Retention<br></br><strong>Format Tier:</strong> <em>Presented. This document does not constitute legal advice. Placeholder values must be replaced with the organization's actual arrangements before operational use.</em></p>
+<hr></hr>
+<h2 id="1-compliance-position--governance-context">1. Compliance Position &amp; Governance Context</h2>
+<p>The system processes personal data across two distinct vectors with differing risk profiles:</p>
+<ol>
+<li><strong>System Governance Data:</strong> Telemetry and identity data regarding team members operating the system.</li>
+<li><strong>Internal Layer Data (Area 11):</strong> Information about client organizations and individuals within them.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Element</th>
+<th style="text-align:left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Data Controller</strong></td>
+<td style="text-align:left">The Organization.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Data Contact</strong></td>
+<td style="text-align:left">Named individual. Primary contact for all system compliance matters.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Data Processor</strong></td>
+<td style="text-align:left">The Platform Vendor, operating under a signed Data Processing Agreement (DPA).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal Framework</strong></td>
+<td style="text-align:left">EU General Data Protection Regulation (GDPR - Regulation 2016/679).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Lawful Basis (Primary)</strong></td>
+<td style="text-align:left">Art. 6(1)(b) Contractual Necessity &amp; Art. 6(1)(f) Legitimate Interests.</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="2-data-residency-vs-sovereignty">2. Data Residency vs. Sovereignty</h2>
+<h3 id="21-the-distinction">2.1 The Distinction</h3>
+<p><strong>Residency and Sovereignty must be answered separately and accurately.</strong> Conflating them produces a compliance narrative that fails at the first informed audit.</p>
+<ul>
+<li><strong>Data Residency (Where the data is stored):</strong> A configuration and contract term. This operation is EU-based and physically resides on EU servers.</li>
+<li><strong>Data Sovereignty (Who can compel access):</strong> A function of corporate structure and applicable law. A narrative that presents residency as though it resolves sovereignty fails instantly in enterprise procurement.</li>
+</ul>
+<h3 id="22-evidentiary-requirements-audit-preparedness">2.2 Evidentiary Requirements (Audit Preparedness)</h3>
+<p>Evidence is what survives an audit. It is assembled proactively, not reconstructed under pressure.</p>
+<ol>
+<li><strong>The Residency Setting:</strong> Dated screenshot from the administrative console (stored as a regulated file).</li>
+<li><strong>The Signed DPA:</strong> Registered and accessible within 5 minutes.</li>
+<li><strong>Processor Certifications:</strong> Verified annually against the active register. <em>(Note: The certifying legal entity of the Data Privacy Framework is frequently not the same as the product-developing entity).</em></li>
+</ol>
+<p><em>Recognized Certifications:</em> ISO 27001, ISO 27017, ISO 27018, ISO 27701, ISO 42001, and SOC 2 Type II.</p>
+<hr></hr>
+<h2 id="3-personal-data-inventory--lawful-basis">3. Personal Data Inventory &amp; Lawful Basis</h2>
+<p>This inventory is the primary reference for Subject Access Requests (SARs) and must be updated whenever a new personal data field is introduced.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Table / Area</th>
+<th style="text-align:left">Fields</th>
+<th style="text-align:left">Category</th>
+<th style="text-align:left">Lawful Basis</th>
+<th style="text-align:left">Retention Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>T4 User Access</strong></td>
+<td style="text-align:left">Name, handle, email, role, access tiers</td>
+<td style="text-align:left">Identity</td>
+<td style="text-align:left">Art. 6(1)(b) &amp; (f)</td>
+<td style="text-align:left">30 days post-employment.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>T5 Onboarding</strong></td>
+<td style="text-align:left">Satisfaction score, champion, manager</td>
+<td style="text-align:left">Wellbeing</td>
+<td style="text-align:left">Art. 6(1)(a) Consent</td>
+<td style="text-align:left">Scores anonymized at 90 days.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Operational Tables</strong></td>
+<td style="text-align:left">Owner handle, assigned writer</td>
+<td style="text-align:left">Governance</td>
+<td style="text-align:left">Art. 6(1)(f)</td>
+<td style="text-align:left">Anonymized on departure.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Area 11</strong></td>
+<td style="text-align:left">Client contact names, relationship context</td>
+<td style="text-align:left">3rd-Party</td>
+<td style="text-align:left">Art. 6(1)(f)</td>
+<td style="text-align:left">Duration of commercial relationship.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Area 15</strong></td>
+<td style="text-align:left">Personal workspace contents</td>
+<td style="text-align:left">Unknown</td>
+<td style="text-align:left">Art. 6(1)(b)</td>
+<td style="text-align:left">Transfers to manager on offboarding.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>T10 Audit Log</strong></td>
+<td style="text-align:left">Actor ID, Event Timestamp</td>
+<td style="text-align:left">Audit</td>
+<td style="text-align:left">Art. 6(1)(c) Legal Obligation</td>
+<td style="text-align:left"><strong>Cannot be erased during retention period.</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="31-the-audit-log-t10-erasure-exception">3.1 The Audit Log (T10) Erasure Exception</h3>
+<p>The T10 Audit Log carries the longest retention in the system. Because it is governed by Art. 6(1)(c) Legal Obligation, <strong>it cannot be erased upon request.</strong> This limitation must be explicitly disclosed to any data subject making an Art. 17 erasure request. It is the only data set in the system where erasure is legally refused.</p>
+<hr></hr>
+<h2 id="4-breach-response-protocol-the-72-hour-clock">4. Breach Response Protocol (The 72-Hour Clock)</h2>
+<p><strong>Art. 33 Requirement:</strong> 72 hours from awareness to supervisory authority notification. The clock starts the moment <em>anyone</em> in the organization becomes aware, not when the Data Contact is informed.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Hour Window</th>
+<th style="text-align:left">Required Action</th>
+<th style="text-align:left">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>0 to 2</strong></td>
+<td style="text-align:left">Assess whether a personal data breach has occurred.</td>
+<td style="text-align:left">Data Contact</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>0 to 4</strong></td>
+<td style="text-align:left">Document scope, affected subjects, likely consequences, and cause.</td>
+<td style="text-align:left">Data Contact / Admin</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>4 to 12</strong></td>
+<td style="text-align:left"><strong>Containment:</strong> Revoke access, isolate accounts, prevent exposure.</td>
+<td style="text-align:left">System Admin</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>12 to 24</strong></td>
+<td style="text-align:left">Notify affected subjects if there is a high risk to rights and freedoms.</td>
+<td style="text-align:left">Data Contact</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>24 to 48</strong></td>
+<td style="text-align:left">Prepare the supervisory authority notification.</td>
+<td style="text-align:left">Project Lead</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>48 to 72</strong></td>
+<td style="text-align:left"><strong>Submit official notification.</strong></td>
+<td style="text-align:left">Data Contact</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-tracked-breach-scenarios">4.1 Tracked Breach Scenarios</h3>
+<p>These are not hypothetical failure modes; they are explicit fault events tracked by the system's Self-Healing Loop:</p>
+<ul>
+<li><strong>F-019 (Permission Drift):</strong> Exposes restricted internal areas (Areas 11, 12, or 13).</li>
+<li><strong>F-023 (Failed Deprovisioning):</strong> A departed employee retains platform access.</li>
+<li><strong>Block C1 Violation:</strong> Client contact details inappropriately placed in a public-layer file.</li>
+</ul>
+<hr></hr>
+<h2 id="5-internal-layer-specific-obligations">5. Internal Layer Specific Obligations</h2>
+<h3 id="51-area-11-client-accounts">5.1 Area 11: Client Accounts</h3>
+<p>This area holds third-party personal data. Market scoping here is a strict data protection control, limiting access only to individuals with a legitimate commercial reason to view it. <strong>Special category data (Art. 9) is strictly prohibited.</strong></p>
+<h3 id="52-area-15-personal-workspaces-the-continuity-not-privacy-rule">5.2 Area 15: Personal Workspaces (The "Continuity, Not Privacy" Rule)</h3>
+<p>Because contents are unknown by design, Area 15 is the most delicate tier in the system.</p>
+<ul>
+<li><strong>Purpose:</strong> Work-in-progress organizational continuity, <em>not</em> personal privacy.</li>
+<li><strong>Access:</strong> Tier I-0 (The individual only).</li>
+<li><strong>Offboarding Protocol:</strong> The folder <strong>transfers to the manager within 48 hours</strong> of departure; it is not erased.</li>
+<li><strong>Mandatory Disclosure:</strong> This transfer policy <em>must</em> be disclosed at the time of provisioning. A person told at creation that the folder transfers can choose what to put in it; a person told at offboarding has had a reasonable expectation of privacy defeated.</li>
+</ul>
+<hr></hr>
+<h2 id="6-the-annual-compliance-tabletop-exercise">6. The Annual Compliance Tabletop Exercise</h2>
+<p>The organization must prove operational readiness annually via a timed tabletop simulation:</p>
+<ul>
+<li>[ ] Data Contact can explain Art. 33 (72-hour rule) and identify the supervisory authority from memory.</li>
+<li>[ ] System Admin can successfully revoke a specific user's access across all tiers within 30 minutes.</li>
+<li>[ ] A specific T10 incident record can be located and exported within 10 minutes.</li>
+<li>[ ] Signed DPA is accessible within 5 minutes.</li>
+<li>[ ] End-to-end timing confirms a 72-hour breach submission is operationally achievable.</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="07-Role-Based-Access-Matrix.html" class="navigation navigation-prev " aria-label="Previous page: Role-Based Access Matrix">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="09-Operations-Runbook.html" class="navigation navigation-next " aria-label="Next page: Operations Runbook">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Security & Compliance","level":"5.3","depth":1,"next":{"title":"Operations Runbook","level":"6.1","depth":1,"path":"09-Operations-Runbook.md","ref":"09-Operations-Runbook.md","articles":[]},"previous":{"title":"Role-Based Access Matrix","level":"5.2","depth":1,"path":"07-Role-Based-Access-Matrix.md","ref":"07-Role-Based-Access-Matrix.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"08-Security-and-Compliance.md","mtime":"2026-10-06T20:10:11.703Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T20:10:23.759Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+

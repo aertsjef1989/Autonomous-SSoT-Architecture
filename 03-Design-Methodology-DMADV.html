@@ -1,0 +1,585 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>Design Methodology (DMADV) · Autonomous SSoT Architecture</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="04-Relational-Database-Schema.html" />
+    
+    
+    <link rel="prev" href="02-System-Architecture.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">I. The Mandate</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">II. The Blueprint</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.2" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">III. The Engine</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="05-API-and-Bot-Interface.md">
+            
+                <span>
+            
+                    
+                    API & Bot Interface
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">IV. Governance & Security</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="06-Automated-Governance-Engine.md">
+            
+                <span>
+            
+                    
+                    Automated Governance Engine (Self-Healing Loop)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">V. Continuity</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Design Methodology (DMADV)</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="iii-design-methodology-dmadv">III. Design Methodology (DMADV)</h1>
+<p><strong>Document ID:</strong> <code>03-Design-Methodology-DMADV.md</code><br></br><strong>Methodology:</strong> Lean Six Sigma (Design for Six Sigma / DFSS)<br></br><strong>Scope:</strong> Greenfield Architecture (Public-Information Layer)  </p>
+<h2 id="1-methodology-selection-why-dmadv">1. Methodology Selection: Why DMADV?</h2>
+<p>The public-information layer of the architecture had no incumbent. There was no existing process producing the required market documentation, no defect rate to measure, and no baseline to improve against. </p>
+<p>Applying the standard <strong>DMAIC</strong> (Define, Measure, Analyze, Improve, Control) methodology here would have required inventing a baseline, and an invented baseline produces an invented improvement. </p>
+<p>Because we were designing a system that did not previously exist, the project utilized <strong>DMADV</strong> (Define, Measure, Analyze, Design, Verify)—the core methodology of Design for Six Sigma (DFSS).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Aspect</th>
+<th style="text-align:left">Public Layer (Greenfield)</th>
+<th style="text-align:left">Internal Layer (Legacy)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Current State</strong></td>
+<td style="text-align:left">Does not exist</td>
+<td style="text-align:left">Exists (~1,200 scattered documents)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Defect Rate</strong></td>
+<td style="text-align:left">Not measurable</td>
+<td style="text-align:left">Measurable</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Selected Methodology</strong></td>
+<td style="text-align:left"><strong>DMADV</strong></td>
+<td style="text-align:left"><strong>DMAIC</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Output</strong></td>
+<td style="text-align:left">A designed, autonomous system</td>
+<td style="text-align:left">A repaired, governed estate</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Verification</strong></td>
+<td style="text-align:left">Does the design meet its CTQs?</td>
+<td style="text-align:left">Did the defect rate fall?</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<h2 id="2-voice-of-the-customer-voc--ctq-translation">2. Voice of the Customer (VOC) &amp; CTQ Translation</h2>
+<p>A system designed to optimize for management will fail the end-user. The primary customer is the operational agent; a library that satisfies QA but goes unused by agents is a silent failure.</p>
+<p>We translated the conflicting needs of three distinct customer groups into measurable <strong>Critical-to-Quality (CTQ)</strong> parameters.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">#</th>
+<th style="text-align:left">Customer Need</th>
+<th style="text-align:left">CTQ Parameter</th>
+<th style="text-align:left">Measurement Strategy</th>
+<th style="text-align:left">Target Tolerance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>CTQ-1</strong></td>
+<td style="text-align:left">Find it fast (Agent)</td>
+<td style="text-align:left">Time to correct file</td>
+<td style="text-align:left">Clicks or commands from query</td>
+<td style="text-align:left">90% resolution in ≤3 clicks or 1 command</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CTQ-2</strong></td>
+<td style="text-align:left">Trust the answer (QA)</td>
+<td style="text-align:left">Source Verification Currency</td>
+<td style="text-align:left">Days since <code>Last Source Verification</code></td>
+<td style="text-align:left">100% of published files verified within cadence</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CTQ-3</strong></td>
+<td style="text-align:left">Answer is specific (Agent)</td>
+<td style="text-align:left">Market Specificity</td>
+<td style="text-align:left">Passes the "swap-the-country-name" test</td>
+<td style="text-align:left">100% pass rate at review</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CTQ-5</strong></td>
+<td style="text-align:left">Complete coverage (Mgmt)</td>
+<td style="text-align:left">Publish vs. Planned</td>
+<td style="text-align:left">Percent of 3,386 total nodes</td>
+<td style="text-align:left">No market below 90% completion while others are at 100%</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CTQ-7</strong></td>
+<td style="text-align:left">Stays correct (QA/Mgmt)</td>
+<td style="text-align:left">Governance decay</td>
+<td style="text-align:left">Files past review + 30 days</td>
+<td style="text-align:left"><strong>Zero</strong> (Any occurrence is a systemic defect)</td>
+</tr>
+</tbody>
+</table>
+<p><em>Defect Definition: The design target was set at <strong>4.5 sigma</strong> (roughly 1,350 defects per million opportunities). Claiming 6 sigma on a body of work involving human authorship and quarterly platform changes is statistically dishonest.</em></p>
+<hr></hr>
+<h2 id="3-risk-mitigation-fmea">3. Risk Mitigation (FMEA)</h2>
+<p>Failure modes were ranked by their Risk Priority Number (RPN), calculated as <code>Severity × Occurrence × Detection</code> (each scored 1 to 10). </p>
+<p><strong>The highest risk to the architecture was the use of AI for content generation.</strong> </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Failure Mode</th>
+<th style="text-align:left">Effect</th>
+<th style="text-align:left">S</th>
+<th style="text-align:left">O</th>
+<th style="text-align:left">D</th>
+<th style="text-align:left">RPN</th>
+<th style="text-align:left">Mitigation Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Generated content is plausible but wrong</strong></td>
+<td style="text-align:left">Agent acts on false advice</td>
+<td style="text-align:left">10</td>
+<td style="text-align:left">7</td>
+<td style="text-align:left">8</td>
+<td style="text-align:left"><strong>560</strong></td>
+<td style="text-align:left"><strong>Mandatory Research Verification Protocol:</strong> Perishable claims identified <em>before</em> drafting. (See Section 4)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Counter drift between markets</strong></td>
+<td style="text-align:left">Cross-market comparisons break silently</td>
+<td style="text-align:left">7</td>
+<td style="text-align:left">5</td>
+<td style="text-align:left">9</td>
+<td style="text-align:left"><strong>315</strong></td>
+<td style="text-align:left">Lists locked in blueprint before the first market is built. Post-lock changes require renumbering all 45 markets.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Publish writes DB but node does not move</strong></td>
+<td style="text-align:left">Database claims a file exists where it does not</td>
+<td style="text-align:left">8</td>
+<td style="text-align:left">5</td>
+<td style="text-align:left">7</td>
+<td style="text-align:left"><strong>280</strong></td>
+<td style="text-align:left">Move-then-confirm sequence, plus nightly state reconciliation scans.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Permission drift after publication</strong></td>
+<td style="text-align:left">Wrong audience sees a file</td>
+<td style="text-align:left">9</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">7</td>
+<td style="text-align:left"><strong>252</strong></td>
+<td style="text-align:left">Nightly permission reconciliation; re-assert on divergence.</td>
+</tr>
+</tbody>
+</table>
+<p><em>F1 dominates the risk profile. Severity is 10 because false advice is the worst possible outcome. Detection is 8 because a plausible AI hallucination reads exactly like a correct fact. The mitigation strategy attacked the Detection score.</em></p>
+<hr></hr>
+<h2 id="4-the-verification-protocol-attacking-f1">4. The Verification Protocol (Attacking F1)</h2>
+<p>To mitigate the RPN 560 risk of AI hallucination, the architecture strictly separated generation from verification.</p>
+<p><strong>The Rule: Never write a perishable claim from memory or AI output.</strong>
+A perishable claim is anything that could change or varies by source (e.g., UI paths, API limits, policy thresholds, compliance rules). Confidence from an AI model during generation is not evidence of current accuracy.</p>
+<ol>
+<li>Identify every perishable claim <em>before</em> writing a draft. Writing first anchors the author to the generated text, even against a contradicting result.</li>
+<li>Search each claim individually against primary sources.</li>
+<li>If primary sources conflict, document the conflict. Do not silently pick the one that sounds more confident.</li>
+<li>If a claim cannot be verified, explicitly flag it as unverifiable. An honest "could not confirm as of [date]" is worth more than a confident, wrong answer.</li>
+</ol>
+<hr></hr>
+<h2 id="5-verification-phase-the-pilot">5. Verification Phase (The Pilot)</h2>
+<p>The design was verified not through a "soft launch," but through a controlled experiment: <strong>The NL (Netherlands) Pilot.</strong> 74 files across all 8 domains were generated, reviewed, and published.</p>
+<p><strong>Verification Results against CTQs:</strong></p>
+<ul>
+<li><strong>V1 (CTQ-1):</strong> 30-query set run by an external assessor achieved the 90% resolution target within 3 clicks/1 command.</li>
+<li><strong>V2 (CTQ-3):</strong> Measurement System Analysis (MSA) conducted on Market Specificity. Three reviewers achieved &gt;80% agreement on the "swap-the-country-name" test before the standard was considered operational.</li>
+<li><strong>V3 (Cost Model):</strong> Hours per file from the pilot timesheet validated the baseline assumption of 0.25 person-days per generated file.</li>
+<li><strong>V6 (CTQ-7 &amp; 8):</strong> Self-healing scanners and permission reconciliation scripts ran for 14 consecutive nights with zero unexplained faults and zero permission divergence.</li>
+</ul>
+<p>Upon passing V1 through V6, the design was mathematically verified, and scale-out to the remaining 44 markets was authorized.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="02-System-Architecture.html" class="navigation navigation-prev " aria-label="Previous page: System Architecture">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="04-Relational-Database-Schema.html" class="navigation navigation-next " aria-label="Next page: Relational Database Schema">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Design Methodology (DMADV)","level":"3.2","depth":1,"next":{"title":"Relational Database Schema","level":"4.1","depth":1,"path":"04-Relational-Database-Schema.md","ref":"04-Relational-Database-Schema.md","articles":[]},"previous":{"title":"System Architecture","level":"3.1","depth":1,"path":"02-System-Architecture.md","ref":"02-System-Architecture.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Autonomous SSoT Architecture","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"03-Design-Methodology-DMADV.md","mtime":"2026-10-06T20:10:11.703Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-10-06T20:10:23.759Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+
