@@ -51,5 +51,27 @@
     </div>
 
   </div>
+  <!-- SSoT Unified Prototype Navigation Injector -->
+  <script>
+    (function() {
+      if (document.querySelector('.ssot-nav-bar')) return; // Prevent duplicate injection
+      const nav = document.createElement('div');
+      nav.className = 'ssot-nav-bar';
+      nav.innerHTML = `
+        <a href="https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/" style="color: #21E0DC; font-weight: 700;">← Docs Home</a>
+        <span>/</span>
+        <a href="index.html">Hub</a>
+        <span>/</span>
+        <a href="ttk_dashboards.html">Dashboards</a>
+        <span>/</span>
+        <a href="ttk_flow_prototype.html">Flows 1-5</a>
+        <span>/</span>
+        <a href="ttk_flows_advanced.html">Flows 6-13</a>
+        <span>/</span>
+        <a href="ttk_kb_interface.html">Agent KB</a>
+      `;
+      document.body.appendChild(nav);
+    })();
+  </script>
 </body>
 </html>
