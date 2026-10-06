@@ -87,12 +87,15 @@
       </div>
     </div>
   </div>
-  <!-- Global In-App Navigation Injector -->
+ <!-- SSoT Unified Prototype Navigation Injector -->
   <script>
     (function() {
+      if (document.querySelector('.ssot-nav-bar')) return; // Prevent duplicate injection
       const nav = document.createElement('div');
       nav.className = 'ssot-nav-bar';
       nav.innerHTML = `
+        <a href="https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/" style="color: #21E0DC; font-weight: 700;">← Docs Home</a>
+        <span>/</span>
         <a href="index.html">Hub</a>
         <span>/</span>
         <a href="ttk_dashboards.html">Dashboards</a>
