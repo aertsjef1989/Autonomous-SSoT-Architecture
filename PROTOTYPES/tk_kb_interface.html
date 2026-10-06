@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTK_SSoT Agent Knowledge Base</title>
+  <meta name="description" content="Frontline interface with health badges and Bot overlay.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="kb-layout">
+    <!-- Sidebar Navigation -->
+    <div class="kb-sidebar">
+      <div class="nav-label">BRANCHES</div>
+      <div class="nav-item">01_Campaigns</div>
+      <div class="nav-item">02_Verticals</div>
+      <div class="nav-item">03_Policy <span style="font-size: 10px; color: #F0A824; float: right; font-weight: 700; margin-top: 2px;">READ</span></div>
+      <div class="nav-item active">04_Markets</div>
+      <div class="nav-item">07_Lifecycle</div>
+      
+      <div class="nav-label" style="margin-top: 34px;">MARKET: DE</div>
+      <div class="nav-item active" style="padding-left: 24px;">Gambling Guidelines</div>
+      <div class="nav-item" style="padding-left: 24px;">Automotive</div>
+      <div class="nav-item" style="padding-left: 24px;">Finance & Crypto</div>
+    </div>
+
+    <!-- Main Document Stage -->
+    <div class="kb-main">
+      <div class="kb-header">
+        <div>
+          <div class="kb-meta" style="margin-bottom: 12px; color: #21E0DC;">04_Markets / EMEA / DE</div>
+          <h1 class="kb-title">Gambling & Real Money Games</h1>
+          <div class="kb-meta">Owner: QA · DACH &nbsp;|&nbsp; Last modified: 2026-07-12</div>
+        </div>
+        <div class="health-badge">
+          HEALTH: 64/100<br>
+          <span style="font-size: 11px; font-weight: 400; color: #79828F;">34 days past review</span>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <div style="color: #F0245C; font-weight: 700; font-size: 12px; letter-spacing: 1px; margin-bottom: 6px;">PERISHABLE CLAIM STALENESS</div>
+        <div style="color: #E9ECF2; font-size: 13.5px;">This document contains regulatory thresholds that are overdue for verification. Proceed with caution.</div>
+      </div>
+
+      <div class="content-block">
+        <strong>1. General Prohibition</strong><br>
+        The promotion of unlicensed gambling, real money games, and simulated casino games is strictly prohibited in the DE market. 
+      </div>
+      <div class="content-block">
+        <strong>2. Licensed Operators</strong><br>
+        Entities holding a valid license from the <em>Gemeinsame Glücksspielbehörde der Länder (GGL)</em> may advertise, subject to strict targeting restrictions (18+ only, no targeting of vulnerable groups).
+      </div>
+      <div class="content-block">
+        <strong>3. Pre-Approval SLA</strong><br>
+        All gambling creatives require manual compliance review. Pre-approval takes 15 to 20 working days. Campaigns must not be scheduled to launch before written approval is attached to the ticket.
+      </div>
+    </div>
+
+    <!-- Interactive Bot Overlay -->
+    <button class="bot-fab" onclick="document.getElementById('bot').classList.toggle('open')">
+      Ask SSoT Bot
+    </button>
+
+    <div class="bot-panel" id="bot">
+      <div class="bot-header">
+        <span>SSoT Assistant</span>
+        <span style="cursor:pointer; color:#79828F" onclick="document.getElementById('bot').classList.remove('open')">✕</span>
+      </div>
+      <div class="bot-body">
+        <div class="msg bot">
+          <div style="font-size: 10px; color: #21E0DC; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px;">SYSTEM</div>
+          I can read the entire KB and check your access scope. What do you need?
+        </div>
+        <div class="msg user">
+          What is the SLA for getting a betting ad approved in Germany?
+        </div>
+        <div class="msg bot">
+          <div style="font-size: 10px; color: #21E0DC; font-weight: 700; margin-bottom: 6px; letter-spacing: 1px;">VERDICT: GATED</div>
+          Pre-approval takes <strong>15 to 20 working days</strong> for licensed operators.
+          <div style="margin-top: 10px; font-size: 11.5px; color: #F0245C; font-weight: 700;">⚠️ WARNING: Source file is 34 days past review.</div>
+          <div style="margin-top: 6px; font-size: 11px; color: #79828F; font-family: 'SF Mono', Consolas, monospace;">Source: TTK_POL_DE_009_Gambling.md</div>
+        </div>
+      </div>
+      <div class="bot-input">
+        <input type="text" placeholder="Ask a question..." disabled>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
