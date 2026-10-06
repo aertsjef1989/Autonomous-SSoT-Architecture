@@ -1,0 +1,16 @@
+{
+  "title": "Autonomous SSoT Architecture",
+  "description": "Principal-level technical documentation for the Single Source of Truth (SSoT) architecture.",
+  "language": "en",
+  "plugins": [
+    "-sharing",
+    "-fontsettings",
+    "search",
+    "theme-default"
+  ],
+  "pluginsConfig": {
+    "theme-default": {
+      "showLevel": false
+    }
+  }
+}
