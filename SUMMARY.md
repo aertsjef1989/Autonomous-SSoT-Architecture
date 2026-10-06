@@ -11,10 +11,10 @@
 
 ## III. The Engine
 * [Relational Database Schema](04-Relational-Database-Schema.md)
-* [API & Bot Interface](06-API-and-Bot-Interface.md)
+* [Self-Healing Loop & Fault Taxonomy](05-Self-Healing-Loop-and-Fault-Taxonomy.md)
+* [Bot & API Command Reference](06-Bot-Command-Reference.md)
 
-### IV. Governance & Security
-* [Automated Governance Engine](04-Automated-Governance-Engine.md)
+## IV. Governance & Security
 * [Role-Based Access Matrix](07-Role-Based-Access-Matrix.md)
 * [Security & Compliance](08-Security-and-Compliance.md)
 
