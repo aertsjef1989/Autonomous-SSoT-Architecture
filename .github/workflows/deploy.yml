@@ -18,13 +18,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '12' # GitBook CLI strictly requires Node 10-12 to compile successfully
+          node-version: '20' # Modern, stable Node version
 
       - name: Install dependencies and build HTML
         run: |
-          npm install -g gitbook-cli
-          gitbook install
-          gitbook build
+          npm install -g honkit
+          honkit build
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
