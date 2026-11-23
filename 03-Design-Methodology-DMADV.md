@@ -77,3 +77,14 @@ The design was verified not through a "soft launch," but through a controlled ex
 *   **V6 (CTQ-7 & 8):** Self-healing scanners and permission reconciliation scripts ran for 14 consecutive nights with zero unexplained faults and zero permission divergence.
 
 Upon passing V1 through V6, the design was mathematically verified, and scale-out to the remaining 44 markets was authorized.
+
+---
+
+## 6. Parallel Track: DMAIC for the Legacy Internal Estate
+While the greenfield public layer required **DMADV**, the ~1,200 scattered legacy internal documents already existed with measurable defects (broken ACLs, orphaned hubs, duplicate SOPs). That estate is governed via **DMAIC**:
+
+1. **Define:** Scope the ~1,200 legacy documents across 15 operational areas and 6 discrete read/write access tiers.
+2. **Measure:** Execute scripted discovery (`D1`–`D4`) via API to baseline broken per-document ACLs, inbound/outbound link hubs, and title duplication clusters.
+3. **Analyze:** Isolate high-risk link hubs (where moving a document silently breaks downstream navigation) and classify record-class areas (Meeting Notes, Escalations) for retention rather than review cycles.
+4. **Improve:** Strip all per-document ACLs during migration and relocate documents into container-governed folders so permissions inherit cleanly.
+5. **Control:** Lock the migrated estate into the nightly permission reconciliation scanner (`SC-006`) and enforce retention-based archiving.

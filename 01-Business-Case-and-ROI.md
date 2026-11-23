@@ -63,3 +63,12 @@ The waste denominator (€1.89M to €2.81M) is derived from the 200-person live
 3.  *The waste is specific and already scoped exactly to the 200-person Lisbon population:* The €1.89M figure stands precisely as written.
 
 *This interrogation was forced at Stage 0, ensuring the financial model, scaling logic, and synthetic testing assumptions were validated by executives before a single line of production code was written.*
+
+## 7. Conservative Recovery Scenarios (v3.0 Re-Anchoring)
+Early enterprise knowledge business cases frequently overstate recovery (30%–70%) and rely on aging productivity studies. This architecture re-anchors on modern empirical evidence—specifically a large-scale field experiment across 5,179 workers demonstrating a **14% net productivity recovery**—and models three conservative scenarios stated in net figures rather than multiples:
+
+| Scenario | Assumed Waste Recovery | Annual Net Value Recovered | Strategic Posture |
+| :--- | :--- | :--- | :--- |
+| **Conservative** | **10%** | €189,000 – €281,000 | Break-even inside Year 1–2 even under minimal adoption |
+| **Baseline (Anchored)** | **20%** | €378,000 – €562,000 | Covers full Year 1 build outlay with margin |
+| **High Adoption** | **35%** | €661,500 – €983,500 | Full-scale operational return across all 45 markets |

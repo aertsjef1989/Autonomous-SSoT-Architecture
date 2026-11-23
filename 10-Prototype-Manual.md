@@ -165,7 +165,7 @@ Stated so nobody assumes otherwise.
 | The strings the system actually says | String catalogue, separate |
 | Whether the depth standard is achievable | The golden set, and it needs research |
 
-The prototypes show **what the system does**. They do not yet state **what correct means in testable terms**, and that is the next gap to close.
+The prototypes show **what the system does**. The testable specifications—Acceptance Criteria, API Contract, Deterministic Fixtures, String Catalogue, and Reviewer Calibration—are documented in **Chapter XIII (Contracts, Testability & Readiness)**.
 
 ---
 
