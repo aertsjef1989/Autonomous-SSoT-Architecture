@@ -17,9 +17,9 @@ Based on Eurostat labor data, the system targets an estimated **€1.89M to €2
 ## The Engine (Autonomous Governance)
 To prevent data decay without manual oversight, the system runs a 14-detector Self-Healing Loop. It enforces container-level permission inheritance via a strict 6-tier Access Matrix, and executes a 30-day autonomous archive "kill switch" on unverified data. This maintains structural integrity across 3,386 nodes while utilizing batched scanning to reduce automation budget consumption by 98%.
 
-## Interactive UI Prototypes
+## Live Design System (Signal Studio)
 
-You can explore and interact with the functional UI prototypes directly:
+Explore the standalone visual language and browser-based slide studio built for this architecture:
 
 * [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-studio.html)
 * [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-gallery.html)

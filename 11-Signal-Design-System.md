@@ -1,4 +1,4 @@
-# Signal Design System
+# XI. Signal Design System
 
 **Signal** is the standalone visual language, token architecture, and browser-based slide studio built to render this architecture suite consistently across slides, technical diagrams, documentation, and internal wikis.
 

@@ -1,4 +1,4 @@
-# Prototype Manual
+# X. Failure-Mode Rehearsals & Interface Specifications
 
 **How to run the prototypes, and what each one is for**
 

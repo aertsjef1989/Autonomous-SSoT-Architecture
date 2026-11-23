@@ -22,7 +22,7 @@ The system operates across three distinct logic layers, scaling to nearly 4,000 
 | Layer | Implementation | Strategic Value |
 | :--- | :--- | :--- |
 | **Content (Public)** | 3,386 aggregated files (8 domains, 45 markets). AI-generated, human-verified. | The right answer physically exists. |
-| **Content (Internal)** | ~500 NDA-restricted operational files ("internal kitchen"). | Complex procedures are documented securely. |
+| **Content (Internal)** | ~1,200 legacy docs triaged into ~500 governed NDA-restricted files ("internal kitchen"). | Complex procedures are documented securely. |
 | **Governance** | 12 register tables, 8 scanners, 7 detectors, 29 fault types. | The answer stays right, autonomously, without manual auditing. |
 | **Delivery** | 23 conversational bot commands, 11 trigger workflows. | The answer reaches the agent mid-workflow in under a minute. |
 
