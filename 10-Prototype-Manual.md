@@ -1,14 +1,8 @@
 # X. Failure-Mode Rehearsals & Interface Specifications
 
-**How to run the prototypes, and what each one is for**
-
-| Field | Value |
-|---|---|
-| Document ID | `PROTOTYPE_MANUAL` |
-| Version | 1.0 |
-| Covers | Four React artifacts, fifty-four images |
-| Date | 23 July 2026 |
-| Status | Prototypes, not documentation. These are rehearsals of the system, not descriptions of it |
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `10-Prototype-Manual.md` | VI. Interfaces & Design System | 13 Failure-Mode Rehearsals, 10 Console Views & Colour Semantics |
 
 ---
 

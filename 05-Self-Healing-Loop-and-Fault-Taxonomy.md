@@ -1,6 +1,10 @@
 # V. Self-Healing Loop and Fault Taxonomy
-**Document ID:** `05-Self-Healing-Loop-and-Fault-Taxonomy.md`  
-**Focus:** Automated Governance, Fault Tolerance, and Self-Healing Control Loops  
+
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `05-Self-Healing-Loop-and-Fault-Taxonomy.md` | III. The Engine | Single Daily Scan, Scanners, Detectors & 29-Fault Taxonomy |
+
+---
 
 ## 1. Architectural Philosophy of the Loop
 A system without an automated governance loop will inevitably decay. Manual auditing fails because it scales linearly with content volume while rot compounds exponentially. 

@@ -1,138 +1,158 @@
-/* ==========================================================================
-   TTK_SSoT High-Contrast Dark Mode Theme for GitBook (Forced Inheritance)
-   ========================================================================== */
+:root {
+  --sig-ground: #08090D;
+  --sig-panel: #11141B;
+  --sig-panel-alt: #171B24;
+  --sig-border: #232836;
+  --sig-ink: #F2F5F9;
+  --sig-muted: #8B95A5;
+  --sig-cyan: #21E0DC;
+  --sig-pink: #F0245C;
+}
 
-/* Global Book Layout */
-.book, 
-.book .book-body, 
-.book .book-body .body-inner,
+body, .book, .book-body, .body-inner, .page-wrapper {
+  background: var(--sig-ground) !important;
+  color: var(--sig-ink) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+/* Sidebar */
+.book-summary {
+  background: var(--sig-panel) !important;
+  border-right: 1px solid var(--sig-border) !important;
+}
+.book-summary ul.summary li a,
+.book-summary ul.summary li span {
+  color: var(--sig-muted) !important;
+  font-size: 13.5px;
+}
+.book-summary ul.summary li.header {
+  color: var(--sig-cyan) !important;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-size: 11px;
+  padding-top: 16px;
+}
+.book-summary ul.summary li.active > a,
+.book-summary ul.summary li a:hover {
+  color: #FFFFFF !important;
+  border-left: 2px solid var(--sig-cyan);
+  background: rgba(33, 224, 220, 0.06);
+}
+
+/* Header bar */
+.book-header {
+  background: var(--sig-panel) !important;
+  border-bottom: 1px solid var(--sig-border) !important;
+}
+.book-header h1, .book-header a, .book-header .btn {
+  color: var(--sig-ink) !important;
+}
+
+/* Uniform Reading Container */
+.page-inner {
+  max-width: 920px !important;
+  margin: 0 auto !important;
+  padding: 28px 36px 72px !important;
+}
+
+/* Typography */
 .markdown-section {
-    background-color: #08090D !important;
-    color: #E9ECF2 !important;
-    font-family: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  color: var(--sig-ink) !important;
+  line-height: 1.68 !important;
+  font-size: 15px !important;
 }
-
-/* Force ALL text inside the document body to be crisp and visible */
-.markdown-section * {
-    color: #E9ECF2 !important;
+.markdown-section h1 {
+  color: #FFFFFF !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid var(--sig-cyan) !important;
+  padding-bottom: 10px !important;
+  margin-bottom: 20px !important;
 }
-
-/* Sidebar Navigation Area */
-.book .book-summary {
-    background: #11141B !important;
-    border-right: 1px solid #242A36 !important;
+.markdown-section h2 {
+  color: var(--sig-cyan) !important;
+  font-size: 1.35rem !important;
+  border-bottom: 1px solid var(--sig-border) !important;
+  padding-bottom: 6px !important;
+  margin-top: 36px !important;
 }
-.book .book-summary ul.summary li a,
-.book .book-summary ul.summary li span {
-    color: #E9ECF2 !important; /* Force sidebar text bright */
+.markdown-section h3 {
+  color: #FFFFFF !important;
+  font-size: 1.08rem !important;
+  margin-top: 24px !important;
 }
-.book .book-summary ul.summary li.active > a {
-    color: #21E0DC !important;
-    background: #171B24 !important;
-    border-left: 3px solid #21E0DC !important;
-    font-weight: 700;
-}
-.book .book-summary ul.summary li a:hover {
-    color: #21E0DC !important;
-}
-.book .book-summary ul.summary li.divider {
-    background: #242A36 !important;
-    height: 1px !important;
-    margin: 12px 0 !important;
-}
-
-/* Headings */
-.markdown-section h1, 
-.markdown-section h2, 
-.markdown-section h3, 
-.markdown-section h4,
-.markdown-section h5,
-.markdown-section h6 {
-    color: #E9ECF2 !important;
-    border-bottom: 1px solid #242A36 !important;
-    font-weight: 700;
-}
-
-/* Links */
 .markdown-section a {
-    color: #21E0DC !important;
-    text-decoration: none;
+  color: var(--sig-cyan) !important;
+  text-decoration: none;
 }
 .markdown-section a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
+}
+.markdown-section hr {
+  background-color: var(--sig-border) !important;
+  height: 1px !important;
+  margin: 24px 0 !important;
 }
 
-/* Inline Code and Code Blocks */
-.markdown-section code {
-    background: #171B24 !important;
-    color: #21E0DC !important;
-    border: 1px solid #242A36 !important;
-    border-radius: 3px;
-    padding: 2px 6px;
-    font-family: 'SF Mono', Menlo, Consolas, monospace !important;
-    font-size: 12.5px;
-}
-.markdown-section pre {
-    background: #11141B !important;
-    border: 1px solid #242A36 !important;
-    border-radius: 5px;
-}
-.markdown-section pre code {
-    background: transparent !important;
-    border: none !important;
-    color: #E9ECF2 !important;
-}
-
-/* Tables */
+/* Uniform Tables */
 .markdown-section table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+  width: 100% !important;
+  display: table !important;
+  border-collapse: collapse !important;
+  background: var(--sig-panel) !important;
+  border: 1px solid var(--sig-border) !important;
+  margin: 18px 0 24px !important;
 }
 .markdown-section table th {
-    color: #21E0DC !important;
-    background: #11141B !important;
-    border: none !important;
-    border-bottom: 1px solid #39414F !important;
-    font-size: 11.5px;
-    letter-spacing: 0.8px;
-    text-align: left;
-    padding: 10px 12px;
+  background: var(--sig-panel-alt) !important;
+  color: var(--sig-cyan) !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--sig-border) !important;
+  padding: 10px 12px !important;
 }
 .markdown-section table td {
-    border: none !important;
-    border-bottom: 1px solid #242A36 !important;
-    color: #E9ECF2 !important;
-    padding: 10px 12px;
-    background: #08090D !important;
+  border: 1px solid var(--sig-border) !important;
+  padding: 9px 12px !important;
+  color: var(--sig-ink) !important;
+  background: transparent !important;
 }
-.markdown-section table tr:hover td {
-    background: #11141B !important;
+.markdown-section table tr:nth-child(2n) {
+  background: rgba(255, 255, 255, 0.02) !important;
 }
 
-/* Blockquotes / Callout Panels */
+/* Code & Callouts */
+.markdown-section code {
+  background: var(--sig-panel-alt) !important;
+  color: var(--sig-cyan) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+}
+.markdown-section pre {
+  background: #050609 !important;
+  border: 1px solid var(--sig-border) !important;
+  border-radius: 6px !important;
+  padding: 14px 16px !important;
+}
+.markdown-section pre code {
+  background: transparent !important;
+  color: #D8E0EA !important;
+  padding: 0 !important;
+}
 .markdown-section blockquote {
-    border-left: 3px solid #F0245C !important;
-    background: #11141B !important;
-    color: #E9ECF2 !important;
-    padding: 14px 18px;
-    margin: 20px 0;
-    border-radius: 0 5px 5px 0;
+  background: rgba(33, 224, 220, 0.06) !important;
+  border-left: 3px solid var(--sig-cyan) !important;
+  color: var(--sig-ink) !important;
+  padding: 12px 16px !important;
+  border-radius: 0 6px 6px 0 !important;
+  margin: 18px 0 !important;
 }
-.markdown-section blockquote p,
-.markdown-section blockquote * {
-    color: #E9ECF2 !important;
+.navigation {
+  color: var(--sig-muted) !important;
 }
-
-/* Top Navigation / Header Bar */
-.book-header {
-    background-color: #08090D !important;
-    border-bottom: 1px solid #242A36 !important;
-    color: #E9ECF2 !important;
-}
-.book-header .btn {
-    color: #E9ECF2 !important;
-}
-.book-header h1 {
-    color: #E9ECF2 !important;
+.navigation:hover {
+  color: var(--sig-cyan) !important;
 }

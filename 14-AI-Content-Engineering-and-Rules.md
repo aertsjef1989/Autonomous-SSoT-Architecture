@@ -1,6 +1,10 @@
 # XIV. AI Content Engineering & Verification Rules
-**Document ID:** `14-AI-Content-Engineering-and-Rules.md`  
-**Focus:** Two Writing Depth Standards, 15 Mechanical Linting Rules, 5 Semantic QA Gates, and Anti-Anchoring Protocol  
+
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `14-AI-Content-Engineering-and-Rules.md` | V. Continuity & Readiness | Two Writing Standards, 15 Mechanical Checks & 5 Semantic Gates |
+
+---
 
 ## 1. The Two Writing Depth Standards
 Scaling 3,386 files across 45 markets requires rigid structural blueprints so every file answers its operational question without fluff. Every domain maps to one of two formal standards:

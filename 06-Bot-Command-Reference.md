@@ -1,6 +1,10 @@
 # VI. Conversational Interface & API Specification
-**Document ID:** `06-Bot-Command-Reference.md`  
-**Focus:** Conversational Operations, Bot Architecture, Scopes, and Event Handling  
+
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `06-Bot-Command-Reference.md` | III. The Engine | 23 Conversational Commands, API Scopes & Card Kit Safeguards |
+
+---
 
 ## 1. Architectural Philosophy of the Bot
 The conversational application (`Bot`) serves as the primary operational surface for agents during live client engagements. To maintain enterprise security and ensure data integrity, the Bot is not merely a search wrapper; it is an authenticated, auditable execution engine.

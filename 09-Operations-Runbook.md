@@ -1,7 +1,8 @@
 # IX. Administrator Operations Runbook
-**Document ID:** `09-Operations-Runbook.md`  
-**Focus:** Continuity, Incident Response, Mover/Leaver Procedures, and Backup Validation  
-**Format Tier:** *Working Reference with PDF rendering. Intended to be accessible offline during P1 incidents.*
+
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `09-Operations-Runbook.md` | V. Continuity & Readiness | 5-Min Daily Standup, P1 2-Hour SLA, Backups & Troubleshooting |
 
 ---
 

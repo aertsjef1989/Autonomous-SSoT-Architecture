@@ -1,7 +1,8 @@
 # VIII. Security & Compliance (Legal & GDPR Package)
-**Document ID:** `08-Security-and-Compliance.md`  
-**Focus:** Data Residency, GDPR Subject Rights, P1 Breach Protocols, and Internal Layer Retention  
-**Format Tier:** *Presented. This document does not constitute legal advice. Placeholder values must be replaced with the organization's actual arrangements before operational use.*
+
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `08-Security-and-Compliance.md` | IV. Governance & Security | GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA |
 
 ---
 

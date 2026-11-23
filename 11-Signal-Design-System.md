@@ -1,8 +1,14 @@
 # XI. Signal Design System
 
+| Document ID | Pillar | Focus |
+| :--- | :--- | :--- |
+| `11-Signal-Design-System.md` | VI. Interfaces & Design System | Visual Language, Token Architecture & Live Browser Studio |
+
+---
+
 **Signal** is the standalone visual language, token architecture, and browser-based slide studio built to render this architecture suite consistently across slides, technical diagrams, documentation, and internal wikis.
 
-## Launch Live (GitHub Pages)
+## 1. Launch Live (GitHub Pages)
 
 Both applications are zero-install, standalone HTML builds running directly in your browser:
 
@@ -11,7 +17,7 @@ Both applications are zero-install, standalone HTML builds running directly in y
 
 ---
 
-## Core Architecture
+## 2. Core Architecture
 
 | Layer | Path | Purpose |
 | :--- | :--- | :--- |
@@ -22,7 +28,7 @@ Both applications are zero-install, standalone HTML builds running directly in y
 | **Templates & Devices** | `DESIGN_SYSTEM_Signal/04_templates/` & `05_devices/` | 41 slide templates across 6 groups + 56 SVG device drawings |
 | **Design Tokens** | `DESIGN_SYSTEM_Signal/06_tokens/` | Palette and geometry tokens in 6 formats (including `console` and `print` variants) |
 
-## Colour Semantics
+## 3. Colour Semantics
 
 | Token | Hex | Meaning |
 | :--- | :--- | :--- |
