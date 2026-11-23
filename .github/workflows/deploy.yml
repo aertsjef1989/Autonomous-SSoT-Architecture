@@ -29,6 +29,9 @@ jobs:
           if [ -d "DESIGN_SYSTEM_Signal" ]; then
             cp -r DESIGN_SYSTEM_Signal _book/signal
           fi
+          if [ -d "DEMO" ]; then
+            cp -r DEMO _book/demo
+          fi
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4

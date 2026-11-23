@@ -21,6 +21,7 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 
 Explore the standalone visual language and browser-based slide studio built for this architecture:
 
+* [Launch Interactive SSoT Architecture Demo (Workspace, Automations & Metrics)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
 * [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-studio.html)
 * [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-gallery.html)
 * [Signal Design System Specification](11-Signal-Design-System.md)
