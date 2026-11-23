@@ -1,0 +1,1419 @@
+[
+  {
+    "id": "H01",
+    "name": "Fractured Funnel",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the old, broken state",
+    "params": {
+      "bands": {
+        "default": 6,
+        "min": 3,
+        "max": 10
+      },
+      "severity": {
+        "default": 6,
+        "min": 0,
+        "max": 14
+      },
+      "leaders": {
+        "default": 5,
+        "min": 0,
+        "max": 8
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H11",
+    "name": "Leaking Vessel",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "loss as physics",
+    "params": {
+      "leaks": {
+        "default": 3,
+        "min": 1,
+        "max": 5
+      },
+      "welded": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H19",
+    "name": "Bottleneck",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "everything is fine except this one place",
+    "params": {
+      "inLanes": {
+        "default": 16,
+        "min": 6,
+        "max": 24
+      },
+      "outLanes": {
+        "default": 3,
+        "min": 1,
+        "max": 10
+      },
+      "gap": {
+        "default": 40,
+        "min": 20,
+        "max": 200
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H20",
+    "name": "Keystone",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "pull this and everything falls",
+    "params": {
+      "voussoirs": {
+        "default": 9,
+        "min": 5,
+        "max": 15
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H22",
+    "name": "Decay",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "it degrades silently unless maintained",
+    "params": {
+      "stages": {
+        "default": 5,
+        "min": 3,
+        "max": 7
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H23",
+    "name": "Backlog Hopper",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "work piling up faster than it clears",
+    "params": {
+      "pile": {
+        "default": 40,
+        "min": 10,
+        "max": 70
+      },
+      "outlet": {
+        "default": 30,
+        "min": 20,
+        "max": 140
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H47",
+    "name": "Treadmill",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "effort that never accumulates",
+    "params": {
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H48",
+    "name": "Standoff",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "two forces cancelling out",
+    "params": {
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H02",
+    "name": "Signal Converter",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "messy inputs unified into one accelerating output",
+    "params": {
+      "inputs": {
+        "default": 4,
+        "min": 2,
+        "max": 8
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H06",
+    "name": "Hub-and-Spoke Key",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "one thing everything depends on",
+    "params": {
+      "spokes": {
+        "default": 4,
+        "min": 3,
+        "max": 6
+      },
+      "ruleBar": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H12",
+    "name": "Exploded Layer Stack",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "architecture and dependency at once",
+    "params": {
+      "plates": {
+        "default": 3,
+        "min": 2,
+        "max": 5
+      },
+      "ghostTop": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H17",
+    "name": "Broadcast Fan-Out",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "one source, many destinations",
+    "params": {
+      "targets": {
+        "default": 12,
+        "min": 4,
+        "max": 20
+      },
+      "priority": {
+        "default": 0,
+        "min": 0,
+        "max": 5
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H18",
+    "name": "Dependency Chain",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "nothing moves until the thing before it moves",
+    "params": {
+      "links": {
+        "default": 5,
+        "min": 3,
+        "max": 7
+      },
+      "broken": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H21",
+    "name": "Vault Rack",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "everything has an address",
+    "params": {
+      "cols": {
+        "default": 4,
+        "min": 2,
+        "max": 6
+      },
+      "rows": {
+        "default": 5,
+        "min": 2,
+        "max": 6
+      },
+      "openBay": {
+        "default": 6,
+        "min": -1,
+        "max": 20
+      },
+      "ungoverned": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H24",
+    "name": "Mesh Network",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "everything connects to everything",
+    "params": {
+      "nodes": {
+        "default": 20,
+        "min": 8,
+        "max": 30
+      },
+      "hubs": {
+        "default": 3,
+        "min": 0,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H27",
+    "name": "Assembly Line",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "built in stages, to a standard",
+    "params": {
+      "stations": {
+        "default": 4,
+        "min": 2,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H28",
+    "name": "Adapter Plate",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "two systems that should not fit, made to fit",
+    "params": {
+      "maps": {
+        "default": 9,
+        "min": 3,
+        "max": 12
+      },
+      "deadEnd": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H52",
+    "name": "The Jig",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "a template that makes every output identical",
+    "params": {
+      "parts": {
+        "default": 3,
+        "min": 1,
+        "max": 5
+      },
+      "malformed": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H03",
+    "name": "Convergence Rivers",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "run two paths in parallel, then reconcile",
+    "params": {
+      "rivers": {
+        "default": 2,
+        "min": 1,
+        "max": 3
+      },
+      "tributaries": {
+        "default": 6,
+        "min": 0,
+        "max": 10
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H25",
+    "name": "Refinery Column",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "raw input, separated into grades of value",
+    "params": {
+      "outputs": {
+        "default": 4,
+        "min": 2,
+        "max": 6
+      },
+      "trays": {
+        "default": 8,
+        "min": 4,
+        "max": 14
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H26",
+    "name": "Switchboard",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "every request routed to exactly one destination",
+    "params": {
+      "lanes": {
+        "default": 8,
+        "min": 4,
+        "max": 12
+      },
+      "pinkRoutes": {
+        "default": 2,
+        "min": 0,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H29",
+    "name": "Load Balance",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "weight distributed, nothing overloaded",
+    "params": {
+      "pans": {
+        "default": 3,
+        "min": 2,
+        "max": 5
+      },
+      "tilt": {
+        "default": 0,
+        "min": -12,
+        "max": 12
+      },
+      "blocks": {
+        "default": 4,
+        "min": 1,
+        "max": 7
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H33",
+    "name": "Triage Sorter",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "incoming work classified before it is touched",
+    "params": {
+      "chutes": {
+        "default": 3,
+        "min": 2,
+        "max": 5
+      },
+      "fill": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H49",
+    "name": "The Bridge",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "migration from the old estate to the new one",
+    "params": {
+      "progress": {
+        "default": 5,
+        "min": 0,
+        "max": 14
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H05",
+    "name": "Self-Loop",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "this system now decides for itself",
+    "params": {
+      "arrows": {
+        "default": 4,
+        "min": 3,
+        "max": 6
+      },
+      "sealed": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H13",
+    "name": "Closed Control Loop",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "self-correction, whether anyone is watching or not",
+    "params": {
+      "stages": {
+        "default": 5,
+        "min": 3,
+        "max": 8
+      },
+      "brokenArc": {
+        "default": -1,
+        "min": -1,
+        "max": 7
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H30",
+    "name": "Kill Switch",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "it can be stopped instantly, by design",
+    "params": {
+      "tripped": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H31",
+    "name": "Turnstile",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "permission is checked at every entry, not once",
+    "params": {
+      "queue": {
+        "default": 6,
+        "min": 0,
+        "max": 10
+      },
+      "lockdown": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H32",
+    "name": "Audit Trail",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "everything that happened is recorded, in order",
+    "params": {
+      "checkpoints": {
+        "default": 3,
+        "min": 1,
+        "max": 6
+      },
+      "torn": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H34",
+    "name": "Guardrails",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "freedom to move, but only inside the safe corridor",
+    "params": {
+      "width": {
+        "default": 1,
+        "min": 0.5,
+        "max": 1.6
+      },
+      "posts": {
+        "default": 8,
+        "min": 3,
+        "max": 14
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H53",
+    "name": "Airlock",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "a controlled transition, one door at a time",
+    "params": {
+      "outerOpen": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H04",
+    "name": "Crossed-Out Legacy",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "discontinued, do not use",
+    "params": {
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H08",
+    "name": "Mirror Access Gate",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "a binary gate, one path blocked, one flowing",
+    "params": {
+      "lanes": {
+        "default": 10,
+        "min": 4,
+        "max": 14
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H35",
+    "name": "Failover Pair",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "if this dies, that takes over, automatically",
+    "params": {
+      "liveLeft": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "outage": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H36",
+    "name": "Radar Sweep",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "continuous detection, nothing gets past",
+    "params": {
+      "sweep": {
+        "default": 40,
+        "min": 0,
+        "max": 359
+      },
+      "contacts": {
+        "default": 3,
+        "min": 0,
+        "max": 8
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H37",
+    "name": "Black Box and Glass Box",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "opaque versus inspectable",
+    "params": {
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H38",
+    "name": "Iceberg",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the visible part is a fraction of the whole",
+    "params": {
+      "ratio": {
+        "default": 5,
+        "min": 2,
+        "max": 9
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H39",
+    "name": "Tipping Point",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "it holds, until suddenly it does not",
+    "params": {
+      "tilt": {
+        "default": 12,
+        "min": -20,
+        "max": 30
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H07",
+    "name": "Ascension Staircase",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "a mandatory, gated climb where height is capability",
+    "params": {
+      "steps": {
+        "default": 3,
+        "min": 2,
+        "max": 5
+      },
+      "unlocked": {
+        "default": -1,
+        "min": -1,
+        "max": 4
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H09",
+    "name": "Journey Spine",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "one continuous connected path, no gaps",
+    "params": {
+      "phases": {
+        "default": 6,
+        "min": 3,
+        "max": 8
+      },
+      "zigzag": {
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H15",
+    "name": "Escalation Ramp",
+    "edition": "light",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "proportional response, height is severity",
+    "params": {
+      "treads": {
+        "default": 4,
+        "min": 3,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H16",
+    "name": "Flywheel",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "compounding, each turn makes the next easier",
+    "params": {
+      "stages": {
+        "default": 6,
+        "min": 4,
+        "max": 8
+      },
+      "accel": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H40",
+    "name": "Version Tree",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "one lineage, branching, but with one main line",
+    "params": {
+      "branches": {
+        "default": 5,
+        "min": 2,
+        "max": 8
+      },
+      "abandoned": {
+        "default": 2,
+        "min": 0,
+        "max": 4
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H41",
+    "name": "Ratchet",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "progress that cannot slip backwards",
+    "params": {
+      "teeth": {
+        "default": 16,
+        "min": 8,
+        "max": 26
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H42",
+    "name": "Sync Handshake",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "two systems agreeing, continuously",
+    "params": {
+      "drift": {
+        "default": 0,
+        "min": 0,
+        "max": 90
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H43",
+    "name": "Compounding Spiral",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the same loop, but each turn is bigger",
+    "params": {
+      "turns": {
+        "default": 4,
+        "min": 2,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H44",
+    "name": "The Press",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "pressure applied deliberately, producing value",
+    "params": {
+      "ram": {
+        "default": 60,
+        "min": 0,
+        "max": 160
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H45",
+    "name": "Launch Rail",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "everything is built, all that remains is release",
+    "params": {
+      "released": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H46",
+    "name": "North Star",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "one metric everything else serves",
+    "params": {
+      "nodes": {
+        "default": 18,
+        "min": 6,
+        "max": 30
+      },
+      "misaligned": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H50",
+    "name": "Cadence Wheel",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "it happens on a rhythm, not on a whim",
+    "params": {
+      "pulses": {
+        "default": 14,
+        "min": 5,
+        "max": 20
+      },
+      "missed": {
+        "default": -1,
+        "min": -1,
+        "max": 19
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H10",
+    "name": "Cutaway Engine",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the whole system as one serviceable machine",
+    "params": {
+      "gears": {
+        "default": 3,
+        "min": 1,
+        "max": 5
+      },
+      "failing": {
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H14",
+    "name": "Concentric Shield",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "defence in depth",
+    "params": {
+      "rings": {
+        "default": 3,
+        "min": 2,
+        "max": 5
+      },
+      "gapRing": {
+        "default": -1,
+        "min": -1,
+        "max": 4
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H51",
+    "name": "The Lever",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the whole decision is one physical act",
+    "params": {
+      "angle": {
+        "default": 0,
+        "min": -30,
+        "max": 30
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H54",
+    "name": "Countdown Gantry",
+    "edition": "light",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "encodes": "the sequence has already started",
+    "params": {
+      "arms": {
+        "default": 4,
+        "min": 2,
+        "max": 6
+      },
+      "connected": {
+        "default": 1,
+        "min": 0,
+        "max": 6
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H55",
+    "name": "Control Tower",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "one place where the whole system is visible",
+    "params": {
+      "panels": {
+        "default": 6,
+        "min": 3,
+        "max": 8
+      },
+      "alert": {
+        "default": 2,
+        "min": -1,
+        "max": 7
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  },
+  {
+    "id": "H56",
+    "name": "Dashboard Wall",
+    "edition": "dark",
+    "canvas": [
+      1024,
+      576
+    ],
+    "encodes": "from today, this is all visible, daily",
+    "params": {
+      "cols": {
+        "default": 4,
+        "min": 2,
+        "max": 5
+      },
+      "rows": {
+        "default": 2,
+        "min": 1,
+        "max": 3
+      },
+      "alert": {
+        "default": 5,
+        "min": -1,
+        "max": 14
+      },
+      "detail": {
+        "default": 1,
+        "min": 0,
+        "max": 2
+      }
+    }
+  }
+]

@@ -20,17 +20,17 @@ Nothing here touches a platform. Every flow, dashboard and diagram runs on illus
 
 | Artifact | Contains | Use it to |
 |---|---|---|
-| [**`index.html`**](PROTOTYPES/index.html) | **The menu, linked** | **Start here. Open it** |
-| [`ttk_flow_prototype.html`](PROTOTYPES/ttk_flow_prototype.html) | Flows 01 to 05 | Walk the core sequences |
-| [`ttk_flows_advanced.html`](PROTOTYPES/ttk_flows_advanced.html) | Flows 06 to 13 | Break the ones with real failure branches |
-| [`ttk_dashboards.html`](PROTOTYPES/ttk_dashboards.html) | Ten Console dashboards | Judge layout, density and what each role sees |
-| [`ttk_kb_interface.html`](PROTOTYPES/ttk_kb_interface.html) | Agent Knowledge Base | See the frontline view with health badges and bot |
+| **Prototype Hub** *(excluded from public repo)* | **The menu, linked** | **Start here. Open it** |
+| **Core Flows Prototype** | Flows 01 to 05 | Walk the core sequences |
+| **Advanced Flows Prototype** | Flows 06 to 13 | Break the ones with real failure branches |
+| **Admin Console Dashboards** | Ten Console dashboards | Judge layout, density and what each role sees |
+| **Agent Knowledge Base Interface** | Agent Knowledge Base | See the frontline view with health badges and bot |
 
 ---
 
 ## 2. Running them
 
-**Open `PROTOTYPES/index.html`.** That is the whole instruction.
+*Note: Interactive HTML/React prototype bundles are proprietary and excluded from this public architecture repository. The specifications and failure-mode rehearsals below remain documented in full.*
 
 | | |
 |---|---|

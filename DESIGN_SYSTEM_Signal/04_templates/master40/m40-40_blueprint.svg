@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1376 768" width="1376" height="768"><rect width="1376" height="768" fill="#F3F3EB"/><defs>
+    <pattern id="egrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0 L0 0 0 24" fill="none" stroke="#E3E5DF" stroke-width="0.9"/></pattern>
+    <pattern id="ehatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#DCE0E3" stroke-width="1.3"/></pattern>
+    <filter id="eglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="currentColor" flood-opacity="0.85"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="currentColor" flood-opacity="0.45"/></filter>
+    <filter id="esoft" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/></filter>
+    <pattern id="tone0" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="3" stroke="#DCE0E3" stroke-width="1.40"/></pattern><pattern id="tone1" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#DCE0E3" stroke-width="1.28"/></pattern><pattern id="tone2" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#DCE0E3" stroke-width="1.16"/></pattern><pattern id="tone3" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#DCE0E3" stroke-width="1.04"/></pattern><pattern id="tone4" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="14" stroke="#DCE0E3" stroke-width="0.92"/></pattern><pattern id="tone5" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#DCE0E3" stroke-width="0.80"/></pattern><pattern id="toneX" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="6" stroke="#DCE0E3" stroke-width="1.2"/>
+    <line x1="0" y1="0" x2="6" y2="0" stroke="#DCE0E3" stroke-width="1.2"/></pattern><radialGradient id="formLight" cx="32%" cy="30%" r="78%">
+    <stop offset="0%" stop-color="#F3F3EB" stop-opacity="0.55"/>
+    <stop offset="55%" stop-color="#F3F3EB" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#273D55" stop-opacity="0.16"/></radialGradient>
+  </defs><defs><radialGradient id="bg0hero">
+      <stop offset="0%" stop-color="#C0504A" stop-opacity="0.055"/>
+      <stop offset="100%" stop-color="#C0504A" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="261" cy="561" rx="468" ry="374" fill="url(#bg0hero)"/><defs><radialGradient id="bg1hero">
+      <stop offset="0%" stop-color="#1F8C62" stop-opacity="0.050"/>
+      <stop offset="100%" stop-color="#1F8C62" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="1170" cy="161" rx="413" ry="330" fill="url(#bg1hero)"/><ellipse cx="105.94" cy="96.585" rx="9.62" ry="9.675" fill="#1F8C62" stroke="none" stroke-width="1.2"/><ellipse cx="136.25" cy="96.585" rx="9.62" ry="9.675" fill="#C0504A" stroke="none" stroke-width="1.2"/><text x="159.64" y="104.0" fill="#1F8C62" font-family="Carlito, Calibri, sans-serif" font-size="21.4" font-weight="700" text-anchor="start" letter-spacing="0">CLOSING / CTA</text><text x="96.32" y="276.0" fill="#273D55" font-family="Carlito, Calibri, sans-serif" font-size="64.3" font-weight="700" text-anchor="start" letter-spacing="0">Your closing statement goes here.</text><text x="99.11" y="490.3" fill="#A8423C" font-family="Carlito, Calibri, sans-serif" font-size="33.9" font-weight="700" text-anchor="start" letter-spacing="0">Benefit line. Benefit line. Benefit line.</text><path d="M106.32 551.74 L1269.6799999999998 551.74 L1279.6799999999998 561.74 L1279.6799999999998 665.89 L1269.6799999999998 675.89 L106.32 675.89 L96.32 665.89 L96.32 561.74 Z" fill="#FFFFFF" stroke="#E3E5DF" stroke-width="1"/><text x="130.77" y="574.8" fill="#273D55" font-family="Carlito, Calibri, sans-serif" font-size="26.8" font-weight="400" text-anchor="start" letter-spacing="0">A final supporting sentence or offer goes here.</text></svg>

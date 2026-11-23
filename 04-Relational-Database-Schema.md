@@ -119,4 +119,4 @@ The schema was designed around rigid vendor constraints.
 
 1. **500 Records Per API Call:** Reads and writes are strictly chunked. Wide scans are pre-aggregated via the snapshot engine.
 2. **All-or-Nothing Batch Writes:** A single bad row loses the 500-record payload. Validation executes locally *before* chunking.
-3. **Agent Lockdown (`TTK Contributor` Role):** Agents are strictly View-Only on all base tables. Agents trigger updates exclusively via conversational Bot commands (e.g., `@Bot review`), utilizing the Bot's service token to execute the table write on their behalf.
+3. **Agent Lockdown (`SSoT Contributor` Role):** Agents are strictly View-Only on all base tables. Agents trigger updates exclusively via conversational Bot commands (e.g., `@Bot review`), utilizing the Bot's service token to execute the table write on their behalf.

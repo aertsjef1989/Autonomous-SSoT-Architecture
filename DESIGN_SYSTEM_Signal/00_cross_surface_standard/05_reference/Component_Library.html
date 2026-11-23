@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Design System - Component Library</title>
+<style>
+  :root{
+    --bg:#FFFFFF; --surface:#F5F6F8; --text:#14161C; --text-muted:#5B6270; --border:#E1E4EA;
+    --pink:#F0245C; --pink-text:#C71048; --cyan:#21E0DC; --cyan-text:#0E8A86;
+    --callout1-bg:#FDE7EE; --callout1-bd:#F0245C; --callout1-text:#C71048;
+    --callout2-bg:#E4FAF9; --callout2-bd:#21E0DC; --callout2-text:#0E8A86;
+    --card-bg:#FFFFFF; --statement-bg:#F5F6F8; --header-fill:#14161C;
+    --radius:8px; --pad:16px; --gap:20px;
+    --font:"Calibri",system-ui,Arial,sans-serif;
+  }
+  body.dark{
+    --bg:#0B0C10; --surface:#15171F; --text:#FFFFFF; --text-muted:#B9C0CE; --border:#2A2E3A;
+    --pink-text:#FF5C86; --cyan-text:#7BF0EE;
+    --callout1-bg:#1E2230; --callout1-text:#FF5C86;
+    --callout2-bg:#1E2230; --callout2-text:#7BF0EE;
+    --card-bg:#15171F; --statement-bg:#15171F; --header-fill:#000000;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
+    font-size:15px;line-height:1.5;transition:background .25s,color .25s;}
+  @media (prefers-reduced-motion:reduce){body,*{transition:none!important;}}
+  .wrap{max-width:1060px;margin:0 auto;padding:40px 28px 96px;}
+  a{color:var(--pink-text);}
+
+  /* header */
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding-bottom:24px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+  .dots{display:flex;gap:7px;margin-bottom:12px;}
+  .dots span{width:12px;height:12px;border-radius:50%;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan-text);}
+  h1{font-size:38px;font-weight:700;margin:8px 0 6px;letter-spacing:-.01em;}
+  .lede{color:var(--text-muted);max-width:52ch;margin:0;}
+  .toggle{border:1px solid var(--border);background:var(--surface);color:var(--text);
+    font-family:var(--font);font-size:13px;font-weight:700;border-radius:999px;padding:9px 16px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+  .toggle:hover{border-color:var(--pink);}
+  .toggle:focus-visible{outline:2px solid var(--pink);outline-offset:2px;}
+  .toggle .tdot{width:9px;height:9px;border-radius:50%;background:var(--pink);}
+  body.dark .toggle .tdot{background:var(--cyan);}
+
+  /* section scaffold */
+  section{margin-top:56px;}
+  .sec-eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--pink-text);}
+  h2{font-size:24px;font-weight:700;margin:6px 0 4px;}
+  .sec-note{color:var(--text-muted);margin:0 0 22px;max-width:60ch;font-size:14px;}
+  .grid{display:grid;gap:var(--gap);}
+  .cols-2{grid-template-columns:repeat(2,1fr);}
+  .cols-3{grid-template-columns:repeat(3,1fr);}
+  .cols-4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:760px){.cols-2,.cols-3,.cols-4{grid-template-columns:1fr;}.top h1{font-size:30px;}}
+
+  /* swatches */
+  .sw{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;background:var(--card-bg);}
+  .sw:focus-visible{outline:2px solid var(--pink);outline-offset:2px;}
+  .sw .chip{height:64px;border-bottom:1px solid var(--border);}
+  .sw .meta{padding:9px 11px;}
+  .sw .nm{font-weight:700;font-size:13px;}
+  .sw .hx{font-size:12px;color:var(--text-muted);font-variant-numeric:tabular-nums;}
+  .pal-title{font-size:13px;font-weight:700;margin:2px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;}
+
+  /* type specimens */
+  .type-row{display:flex;align-items:baseline;gap:18px;padding:12px 0;border-bottom:1px solid var(--border);}
+  .type-row .lbl{width:150px;flex:none;color:var(--text-muted);font-size:12px;}
+  .t-title{font-size:32px;font-weight:700;}
+  .t-h1{font-size:20px;font-weight:700;}
+  .t-h2{font-size:15px;font-weight:700;}
+  .t-body{font-size:13px;}
+  .t-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan-text);}
+
+  /* spacing bars */
+  .space-row{display:flex;align-items:center;gap:14px;margin-bottom:9px;}
+  .space-row .lbl{width:150px;flex:none;font-size:13px;}
+  .space-bar{height:14px;background:var(--pink);border-radius:3px;}
+
+  /* card */
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:var(--pad);
+    box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .card h3{margin:0 0 6px;font-size:15px;}
+  .card p{margin:0;color:var(--text-muted);font-size:13px;}
+
+  /* chip + card header row */
+  .chip-row{display:flex;align-items:center;gap:11px;margin-bottom:8px;}
+  .num{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:14px;color:#fff;}
+  .num.cy{background:var(--cyan);color:#14161C;}
+  .num.pk{background:var(--pink);}
+
+  /* callouts */
+  .callout{border:1px solid;border-radius:var(--radius);padding:13px 15px;margin-bottom:12px;}
+  .callout .clab{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+  .callout p{margin:0;font-size:13px;color:var(--text);}
+  .co-key{background:var(--callout1-bg);border-color:var(--callout1-bd);}
+  .co-key .clab{color:var(--callout1-text);}
+  .co-tip{background:var(--callout2-bg);border-color:var(--callout2-bd);}
+  .co-tip .clab{color:var(--callout2-text);}
+  .co-ctx{background:var(--surface);border-color:var(--border);}
+  .co-ctx .clab{color:var(--text-muted);}
+
+  /* steps */
+  .step{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--border);}
+  .step:last-child{border-bottom:0;}
+  .step .st-title{font-weight:700;font-size:14px;}
+  .step .st-desc{color:var(--text-muted);font-size:13px;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  thead th{background:var(--header-fill);color:#fff;text-align:left;font-weight:700;padding:10px 12px;}
+  tbody td{padding:9px 12px;border-top:1px solid var(--border);}
+  tbody tr:nth-child(even){background:var(--surface);}
+  .val-key{color:var(--pink-text);font-weight:700;}
+
+  /* tags */
+  .tag{display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:700;}
+  .tag.ok{background:var(--callout2-bg);color:var(--callout2-text);}
+  .tag.risk{background:var(--callout1-bg);color:var(--callout1-text);}
+  .tag.done{background:var(--surface);color:var(--text-muted);}
+
+  /* statement */
+  .statement{background:var(--statement-bg);border:1px solid var(--border);border-radius:var(--radius);
+    padding:34px 28px;text-align:center;font-size:22px;font-weight:700;}
+
+  /* buttons */
+  .btn{font-family:var(--font);font-weight:700;font-size:14px;border-radius:var(--radius);padding:10px 18px;
+    border:1px solid transparent;cursor:pointer;}
+  .btn-primary{background:var(--pink);color:#fff;}
+  .btn-secondary{background:transparent;color:var(--pink-text);border-color:var(--border);}
+  .btn:focus-visible{outline:2px solid var(--pink);outline-offset:2px;}
+
+  .divider{height:1px;background:var(--border);border:0;margin:20px 0;}
+
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:var(--header-fill);color:#fff;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:700;
+    pointer-events:none;transition:opacity .2s,transform .2s;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="dots"><span style="background:#F0245C"></span><span style="background:#21E0DC"></span></div>
+      <div class="eyebrow">Signal design system</div>
+      <h1>Component library</h1>
+      <p class="lede">The whole system, live. Toggle the edition to see how tokens remap. Click any swatch to copy its hex.</p>
+    </div>
+    <button class="toggle" id="themeBtn" aria-label="Toggle light and dark edition">
+      <span class="tdot"></span><span id="themeLabel">Dark edition</span>
+    </button>
+  </header>
+
+  <!-- COLOUR -->
+  <section id="colour">
+    <div class="sec-eyebrow">01 · Colour</div>
+    <h2>Palette</h2>
+    <p class="sec-note">One palette on two surfaces. Pink is the loud accent, cyan the quiet one. Use the deep variants for coloured text on white.</p>
+
+    <div class="pal-title">Light edition</div>
+    <div class="grid cols-4" id="palLight"></div>
+    <div class="pal-title" style="margin-top:26px">Dark edition</div>
+    <div class="grid cols-4" id="palDark"></div>
+  </section>
+
+  <!-- TYPE -->
+  <section id="type">
+    <div class="sec-eyebrow">02 · Typography</div>
+    <h2>Type scale</h2>
+    <p class="sec-note">Calibri throughout. Hierarchy comes from size and weight, never from switching fonts or colouring text.</p>
+    <div>
+      <div class="type-row"><span class="lbl">Title · 32 / bold</span><span class="t-title">A single design system</span></div>
+      <div class="type-row"><span class="lbl">Heading 1 · 20 / bold</span><span class="t-h1">A major section</span></div>
+      <div class="type-row"><span class="lbl">Heading 2 · 15 / bold</span><span class="t-h2">A sub-section</span></div>
+      <div class="type-row"><span class="lbl">Body · 11-13 / regular</span><span class="t-body">Default paragraph text, set for easy reading and skimming.</span></div>
+      <div class="type-row"><span class="lbl">Eyebrow · 9 / caps</span><span class="t-eyebrow">Section label</span></div>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section id="spacing">
+    <div class="sec-eyebrow">03 · Spacing</div>
+    <h2>Scale · 4px base</h2>
+    <p class="sec-note">Every gap is a multiple of the 4px base unit, which keeps rhythm consistent everywhere.</p>
+    <div id="spaceBars"></div>
+  </section>
+
+  <!-- MOTIF -->
+  <section id="motif">
+    <div class="sec-eyebrow">04 · Motif</div>
+    <h2>The numbered chip</h2>
+    <p class="sec-note">One repeating element signs every surface: a numbered chip in pink or cyan, alternated down a list.</p>
+    <div class="chip-row">
+      <span class="num pk">1</span><span class="num cy">2</span><span class="num pk">3</span><span class="num cy">4</span>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section id="components">
+    <div class="sec-eyebrow">05 · Components</div>
+    <h2>Building blocks</h2>
+    <p class="sec-note">Everything below adapts to the active edition through the same tokens.</p>
+
+    <h3 style="margin:26px 0 12px;font-size:16px">Cards</h3>
+    <div class="grid cols-3">
+      <div class="card"><div class="chip-row"><span class="num pk">1</span><h3>Card title</h3></div><p>One or two lines of supporting text sit here.</p></div>
+      <div class="card"><div class="chip-row"><span class="num cy">2</span><h3>Card title</h3></div><p>Alternate the chip colour down a row.</p></div>
+      <div class="card"><div class="chip-row"><span class="num pk">3</span><h3>Card title</h3></div><p>Keep each card to a single idea.</p></div>
+    </div>
+
+    <h3 style="margin:30px 0 12px;font-size:16px">Callouts</h3>
+    <div class="callout co-key"><div class="clab">Key point</div><p>The single thing a reader must not miss. One per section.</p></div>
+    <div class="callout co-tip"><div class="clab">Tip / note</div><p>Helpful context or an aside, lighter weight than a key point.</p></div>
+    <div class="callout co-ctx"><div class="clab">Context</div><p>Neutral background for caveats, with no accent.</p></div>
+
+    <div class="grid cols-2" style="margin-top:30px;align-items:start">
+      <div>
+        <h3 style="margin:0 0 12px;font-size:16px">Numbered steps</h3>
+        <div class="card">
+          <div class="step"><span class="num pk">1</span><div><div class="st-title">First step</div><div class="st-desc">Alternate pink and cyan chips.</div></div></div>
+          <div class="step"><span class="num cy">2</span><div><div class="st-title">Second step</div><div class="st-desc">One line each where possible.</div></div></div>
+          <div class="step"><span class="num pk">3</span><div><div class="st-title">Third step</div><div class="st-desc">Order carries meaning here.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin:0 0 12px;font-size:16px">Table</h3>
+        <table>
+          <thead><tr><th>Item</th><th>Owner</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Row one</td><td>Ana</td><td><span class="val-key">On track</span></td></tr>
+            <tr><td>Row two</td><td>Bruno</td><td><span class="val-key">At risk</span></td></tr>
+            <tr><td>Row three</td><td>Chen</td><td>Done</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 style="margin:30px 0 12px;font-size:16px">Status tags</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <span class="tag ok">On track</span><span class="tag risk">At risk</span><span class="tag done">Done</span>
+    </div>
+
+    <h3 style="margin:30px 0 12px;font-size:16px">Buttons</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary">Primary action</button>
+      <button class="btn btn-secondary">Secondary</button>
+    </div>
+
+    <h3 style="margin:30px 0 12px;font-size:16px">Statement</h3>
+    <div class="statement">A single big idea, centred, when a section deserves a pause.</div>
+
+    <h3 style="margin:30px 0 12px;font-size:16px">Divider</h3>
+    <p style="color:var(--text-muted);font-size:13px;margin:0">Above the rule.</p>
+    <hr class="divider">
+    <p style="color:var(--text-muted);font-size:13px;margin:0">Below the rule.</p>
+  </section>
+
+</div>
+<div id="toast">Copied</div>
+
+<script>
+  const LIGHT=[["Page","#FFFFFF"],["Surface","#F5F6F8"],["Ink","#14161C"],["Muted","#5B6270"],
+    ["Hairline","#E1E4EA"],["Pink","#F0245C"],["Pink deep","#C71048"],["Cyan","#21E0DC"],
+    ["Cyan deep","#0E8A86"],["Pink tint","#FDE7EE"],["Cyan tint","#E4FAF9"]];
+  const DARK=[["Background","#0B0C10"],["Card","#15171F"],["Card deep","#1E2230"],["Line","#2A2E3A"],
+    ["White","#FFFFFF"],["Mist","#B9C0CE"],["Faint","#7A828F"],["Pink","#F0245C"],["Pink soft","#FF5C86"],
+    ["Cyan","#21E0DC"],["Cyan soft","#7BF0EE"]];
+  const SPACES=[["Tight · 8",8],["Snug · 12",12],["Card padding · 16",16],["Gap · 20",20],["Section · 32",32]];
+
+  function swatch(nm,hx){
+    const el=document.createElement("button");
+    el.className="sw"; el.setAttribute("aria-label","Copy "+hx);
+    el.innerHTML='<div class="chip" style="background:'+hx+'"></div><div class="meta"><div class="nm">'+nm+'</div><div class="hx">'+hx+'</div></div>';
+    el.onclick=()=>copy(hx);
+    return el;
+  }
+  LIGHT.forEach(([n,h])=>palLight.appendChild(swatch(n,h)));
+  DARK.forEach(([n,h])=>palDark.appendChild(swatch(n,h)));
+  SPACES.forEach(([lbl,v])=>{
+    const row=document.createElement("div"); row.className="space-row";
+    row.innerHTML='<span class="lbl">'+lbl+'</span><span class="space-bar" style="width:'+(v*4)+'px"></span>';
+    spaceBars.appendChild(row);
+  });
+
+  let t;
+  function copy(txt){
+    navigator.clipboard&&navigator.clipboard.writeText(txt);
+    const el=document.getElementById("toast"); el.textContent=txt+" copied";
+    el.classList.add("show"); clearTimeout(t); t=setTimeout(()=>el.classList.remove("show"),1100);
+  }
+
+  const btn=document.getElementById("themeBtn"), lbl=document.getElementById("themeLabel");
+  btn.onclick=()=>{
+    document.body.classList.toggle("dark");
+    lbl.textContent=document.body.classList.contains("dark")?"Light edition":"Dark edition";
+  };
+</script>
+</body>
+</html>

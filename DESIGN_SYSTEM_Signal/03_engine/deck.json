@@ -1,0 +1,50 @@
+[
+ {"layout":"cover","edition":"light","detail":3,"heroScale":1.1,"texture":1,
+  "eyebrow":"Enterprise Knowledge Ops · EMEA","title":"The Fragmentation","title2":"Crisis",
+  "sub":"Your budget is not underperforming. It is leaking, in three places you can name and price.",
+  "footer":"Signal · 2026","hero":"H10"},
+
+ {"layout":"hero-callouts","edition":"light","detail":3,"hero":"H11","params":{"leaks":3},
+  "eyebrow":"The problem","title":"Where the money actually goes",
+  "callouts":[{"head":"Repeat questions","body":"The same answer, re-derived weekly, by four people who never meet."},
+              {"head":"Version confusion","body":"Two live sources, both plausible, neither owned."},
+              {"head":"Onboarding drag","body":"Every new hire rebuilds context that already existed."}],
+  "verdict":"Recoverable waste is structural, not behavioural.",
+  "sub":"You cannot train your way out of a missing system."},
+
+ {"layout":"compare","edition":"light","detail":3,
+  "eyebrow":"The shift","title":"Two ways to run the same account",
+  "leftTitle":"Ad hoc","leftHero":"H01","rightTitle":"Governed","rightHero":"H13",
+  "leftRows":["Re-drafted every quarter","Hidden in personal drives","Ownership defaults to whoever asked","Goes stale silently"],
+  "rightRows":["Permanent, authoritative reference","One searchable surface","Explicitly owned and tracked","Automated review cadence"],
+  "verdict":"Same spend. Different system. Different outcome."},
+
+ {"layout":"escalation","edition":"light","detail":3,"hero":"H15","params":{"treads":4},
+  "eyebrow":"Governance","title":"The four-tier correction ladder",
+  "tiers":[{"head":"Auto-correct","body":"The system resolves it silently. Nobody is notified."},
+           {"head":"Bot-assisted","body":"Action taken, human override offered in the same card."},
+           {"head":"Human-directed","body":"Named owner, seven-day deadline, tracked."},
+           {"head":"Executive escalation","body":"P1 faults or 30-day unresolved issues. Two-hour SLA."}],
+  "verdict":"Proportional response. Height is severity."},
+
+ {"layout":"metrics","edition":"light","detail":2,
+  "eyebrow":"The model","title":"What the change is worth",
+  "cells":[{"label":"Year 1 investment","value":"49k","unit":"to 68k, internal time only","body":"No incremental software cost. Admin, team lead and project lead hours."},
+           {"label":"Base case return","value":"945k","unit":"annual benefit","body":"Driven by a 50 percent reduction in repeat questions and version confusion."},
+           {"label":"Payback","value":"3-4","unit":"weeks","body":"Year one ROI of 16x to 25x on the base case.","accent":"#188860"}],
+  "verdict":"State it as a range. Defend the low end.",
+  "sub":"The base case survives a 60 percent haircut and still pays back inside a quarter."},
+
+ {"layout":"hero-callouts","edition":"dark","detail":3,"hero":"H16","params":{"stages":6,"accel":1},
+  "eyebrow":"The system","title":"How the engine actually runs",
+  "callouts":[{"head":"Compounding","body":"Each turn makes the next one cheaper."},
+              {"head":"Governed","body":"Every stage has an owner and a cadence."},
+              {"head":"Instrumented","body":"If it moves, it is measured."}],
+  "verdict":"A flywheel, not a treadmill."},
+
+ {"layout":"decision","edition":"light","detail":3,"hero":"H51","params":{"angle":30},
+  "eyebrow":"The close","title":"One decision, this week",
+  "options":[{"head":"Do nothing","rows":["Waste compounds quietly","Every hire pays the same tax","The gap is invisible until it is expensive"]},
+             {"head":"Commit","rows":["Pilot on one market, 30 days","Measured against today's baseline","Kill switch on day 31 if it fails"]}],
+  "verdict":"The only expensive option is the one that stays invisible."}
+]

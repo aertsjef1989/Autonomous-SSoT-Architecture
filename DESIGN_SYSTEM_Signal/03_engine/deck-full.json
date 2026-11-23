@@ -1,0 +1,89 @@
+[
+ {"layout":"cover","edition":"light","detail":3,"heroScale":1.1,"texture":1,"hero":"H10",
+  "eyebrow":"Enterprise Knowledge Ops · EMEA","title":"The Fragmentation","title2":"Crisis",
+  "sub":"Your budget is not underperforming. It is leaking, in three places you can name and price.","footer":"Signal · 2026"},
+
+ {"layout":"std-agenda","edition":"light","title":"What we will cover","eyebrow":"Agenda","active":0,
+  "items":[{"head":"The problem","body":"Where the money goes"},{"head":"The shift","body":"Ad hoc versus governed"},
+           {"head":"The ladder","body":"Four tiers of correction"},{"head":"The model","body":"Investment and return"},
+           {"head":"The plan","body":"Thirty days"},{"head":"The ask","body":"One decision"}]},
+
+ {"layout":"std-section","edition":"light","number":"01","title":"The problem","sub":"Recoverable waste, named and priced."},
+
+ {"layout":"hero-callouts","edition":"light","detail":3,"hero":"H11","params":{"leaks":3},
+  "eyebrow":"The problem","title":"Where the money actually goes",
+  "callouts":[{"head":"Repeat questions","body":"The same answer, re-derived weekly, by four people who never meet."},
+              {"head":"Version confusion","body":"Two live sources, both plausible, neither owned."},
+              {"head":"Onboarding drag","body":"Every new hire rebuilds context that already existed."}],
+  "verdict":"Recoverable waste is structural, not behavioural.","sub":"You cannot train your way out of a missing system."},
+
+ {"layout":"std-table","edition":"light","title":"The three leaks, priced","eyebrow":"Cost",
+  "columns":["Leak","Frequency","Annual cost","Owner today"],
+  "rows":[["Repeat questions","Weekly","838k","Nobody"],["Version confusion","Monthly","419k","Nobody"],
+          ["Onboarding drag","Per hire","3.5k to 8.7k","Nobody"],["Total recoverable","","1.89M to 2.81M","Nobody"]],
+  "verdict":"Every row has a number. No row has an owner."},
+
+ {"layout":"compare","edition":"light","detail":3,
+  "eyebrow":"The shift","title":"Two ways to run the same account",
+  "leftTitle":"Ad hoc","leftHero":"H01","rightTitle":"Governed","rightHero":"H13",
+  "leftRows":["Re-drafted every quarter","Hidden in personal drives","Ownership defaults to whoever asked","Goes stale silently"],
+  "rightRows":["Permanent, authoritative reference","One searchable surface","Explicitly owned and tracked","Automated review cadence"],
+  "verdict":"Same spend. Different system. Different outcome."},
+
+ {"layout":"std-checklist","edition":"light","title":"How this goes right, and wrong","eyebrow":"Governance",
+  "doHead":"Do","avoidHead":"Avoid",
+  "dos":["Name one owner per surface","Automate the review cadence","Kill the second source of truth","Measure against today's baseline"],
+  "avoids":["Train people to work around it","Add a fourth tool","Let ownership default to whoever asked","Ship without a kill switch"],
+  "verdict":"The failure mode is not effort. It is ambiguity."},
+
+ {"layout":"escalation","edition":"light","detail":3,"hero":"H15","params":{"treads":4},
+  "eyebrow":"Governance","title":"The four-tier correction ladder",
+  "tiers":[{"head":"Auto-correct","body":"The system resolves it silently. Nobody is notified."},
+           {"head":"Bot-assisted","body":"Action taken, human override offered in the same card."},
+           {"head":"Human-directed","body":"Named owner, seven-day deadline, tracked."},
+           {"head":"Executive escalation","body":"P1 faults or 30-day unresolved issues. Two-hour SLA."}],
+  "verdict":"Proportional response. Height is severity."},
+
+ {"layout":"metrics","edition":"light","detail":2,
+  "eyebrow":"The model","title":"What the change is worth",
+  "cells":[{"label":"Year 1 investment","value":"49k","unit":"to 68k, internal time only","body":"No incremental software cost."},
+           {"label":"Base case return","value":"945k","unit":"annual benefit","body":"Half the repeat questions, gone."},
+           {"label":"Payback","value":"3-4","unit":"weeks","body":"Year one ROI of 16x to 25x.","accent":"#188860"}],
+  "verdict":"State it as a range. Defend the low end."},
+
+ {"layout":"std-timeline","edition":"light","title":"Thirty days, then decide","eyebrow":"The plan",
+  "milestones":[{"head":"Week 1","body":"Baseline the three leaks","when":"Day 1"},
+                {"head":"Week 2","body":"Single source stood up","when":"Day 8"},
+                {"head":"Week 3","body":"Cadence and owners live","when":"Day 15"},
+                {"head":"Week 4","body":"Measure against baseline","when":"Day 22"},
+                {"head":"Decision","body":"Scale or kill","when":"Day 31"}],
+  "verdict":"A kill switch on day 31 is what makes day 1 cheap."},
+
+ {"layout":"std-progress","edition":"light","title":"Where the pilot stands","eyebrow":"Status",
+  "tracks":[{"head":"Baseline captured","pct":100,"body":"All three leaks measured against last quarter."},
+            {"head":"Single source stood up","pct":72,"body":"Two of three surfaces migrated."},
+            {"head":"Owners assigned","pct":45,"body":"Eleven of twenty-four pages have a named owner."},
+            {"head":"Automated cadence","pct":20,"body":"Reminder bot in test."}]},
+
+ {"layout":"std-quote","edition":"light",
+  "quote":"We did not have a training problem. We had four people answering the same question, and no place to put the answer.",
+  "who":"Team lead, pilot market","role":"After week three"},
+
+ {"layout":"hero-callouts","edition":"dark","detail":3,"hero":"H16","params":{"stages":6,"accel":1},
+  "eyebrow":"The system","title":"How the engine actually runs",
+  "callouts":[{"head":"Compounding","body":"Each turn makes the next one cheaper."},
+              {"head":"Governed","body":"Every stage has an owner and a cadence."},
+              {"head":"Instrumented","body":"If it moves, it is measured."}],
+  "verdict":"A flywheel, not a treadmill."},
+
+ {"layout":"decision","edition":"light","detail":3,"hero":"H51","params":{"angle":30},
+  "eyebrow":"The close","title":"One decision, this week",
+  "options":[{"head":"Do nothing","rows":["Waste compounds quietly","Every hire pays the same tax","The gap is invisible until it is expensive"]},
+             {"head":"Commit","rows":["Pilot on one market, 30 days","Measured against today's baseline","Kill switch on day 31 if it fails"]}],
+  "verdict":"The only expensive option is the one that stays invisible."},
+
+ {"layout":"std-closing","edition":"light","eyebrow":"The ask","title":"Thirty days.","sub":"One market, one owner, one baseline. If it does not pay back inside a quarter, we stop and you have lost a month of internal time.",
+  "asks":[{"head":"Approve the pilot","body":"One market, 30 days, internal time only"},
+          {"head":"Name the owner","body":"One person, not a committee"},
+          {"head":"Set the kill date","body":"Day 31, measured against baseline"}]}
+]

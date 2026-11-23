@@ -1,10 +1,21 @@
-# GitBook build output
+# GitBook / HonKit build output
 _book/
 
-# Node dependencies (if building locally)
+# Node dependencies
 node_modules/
 package-lock.json
+
+# Strictly excluded proprietary/working-hours code & heavy renders
+PROTOTYPES/
+TOOLING/
+PDF/
+EDITABLE_DOCX/
+*.pdf
+*.docx
+*.zip
 
 # OS generated files
 .DS_Store
 Thumbs.db
+*.pptx
+*.pptx

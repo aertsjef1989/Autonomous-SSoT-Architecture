@@ -21,8 +21,6 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 
 You can explore and interact with the functional UI prototypes directly:
 
-* [Access the Prototype Hub & Menu](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/index.html)
-* [Agent Knowledge Base Interface](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_kb_interface.html)
-* [Admin Console / Ten Dashboards](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_dashboards.html)
-* [Core Flows (01 to 05)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_flow_prototype.html)
-* [Advanced Flows (06 to 13)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/PROTOTYPES/ttk_flows_advanced.html)
+* [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-studio.html)
+* [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-gallery.html)
+* [Signal Design System Specification](11-Signal-Design-System.md)

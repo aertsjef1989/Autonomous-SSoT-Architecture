@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1376 768" width="1376" height="768"><rect width="1376" height="768" fill="#0B0C10"/><defs>
+    <pattern id="egrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0 L0 0 0 24" fill="none" stroke="#1A1D26" stroke-width="0.9"/></pattern>
+    <pattern id="ehatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#2A2E3A" stroke-width="1.3"/></pattern>
+    <filter id="eglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="currentColor" flood-opacity="0.85"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="currentColor" flood-opacity="0.45"/></filter>
+    <filter id="esoft" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/></filter>
+    <pattern id="tone0" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="3" stroke="#2A2E3A" stroke-width="1.40"/></pattern><pattern id="tone1" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#2A2E3A" stroke-width="1.28"/></pattern><pattern id="tone2" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#2A2E3A" stroke-width="1.16"/></pattern><pattern id="tone3" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#2A2E3A" stroke-width="1.04"/></pattern><pattern id="tone4" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="14" stroke="#2A2E3A" stroke-width="0.92"/></pattern><pattern id="tone5" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#2A2E3A" stroke-width="0.80"/></pattern><pattern id="toneX" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="6" stroke="#2A2E3A" stroke-width="1.2"/>
+    <line x1="0" y1="0" x2="6" y2="0" stroke="#2A2E3A" stroke-width="1.2"/></pattern><radialGradient id="formLight" cx="32%" cy="30%" r="78%">
+    <stop offset="0%" stop-color="#0B0C10" stop-opacity="0.55"/>
+    <stop offset="55%" stop-color="#0B0C10" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.16"/></radialGradient>
+  </defs><defs><radialGradient id="bg0plain">
+      <stop offset="0%" stop-color="#F0245C" stop-opacity="0.16"/>
+      <stop offset="55%" stop-color="#F0245C" stop-opacity="0.048"/>
+      <stop offset="100%" stop-color="#F0245C" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="1211" cy="614" rx="358" ry="293" fill="url(#bg0plain)"/><defs><radialGradient id="bg1plain">
+      <stop offset="0%" stop-color="#21E0DC" stop-opacity="0.13"/>
+      <stop offset="55%" stop-color="#21E0DC" stop-opacity="0.039"/>
+      <stop offset="100%" stop-color="#21E0DC" stop-opacity="0"/></radialGradient></defs>
+      <ellipse cx="193" cy="138" rx="413" ry="338" fill="url(#bg1plain)"/><text x="96.32" y="308.5" fill="#F0245C" font-family="Carlito, Calibri, sans-serif" font-size="214.4" font-weight="700" text-anchor="start" letter-spacing="0">“</text><text x="261.44" y="274.5" fill="#FFFFFF" font-family="Carlito, Calibri, sans-serif" font-size="46.5" font-weight="700" text-anchor="start" letter-spacing="0">A short, punchy quote sits here, no longer</text><text x="261.44" y="334.0" fill="#FFFFFF" font-family="Carlito, Calibri, sans-serif" font-size="46.5" font-weight="700" text-anchor="start" letter-spacing="0">than two lines for impact.</text><circle cx="299.305" cy="596.545" r="37.865" fill="#21E0DC" filter="url(#esoft)"/><text x="299.305" y="613.2056" fill="#0B0C10" font-family="Carlito, Calibri, sans-serif" font-size="43.9234" font-weight="700" text-anchor="middle">A</text><text x="357.76" y="576.1" fill="#FFFFFF" font-family="Carlito, Calibri, sans-serif" font-size="25.1" font-weight="700" text-anchor="start" letter-spacing="0">Name of the person</text><text x="357.76" y="608.2" fill="#FFFFFF" font-family="Carlito, Calibri, sans-serif" font-size="25.1" font-weight="700" text-anchor="start" letter-spacing="0">Their role or title</text></svg>

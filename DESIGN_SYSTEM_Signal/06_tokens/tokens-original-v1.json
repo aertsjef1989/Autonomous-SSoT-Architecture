@@ -1,0 +1,69 @@
+{
+  "$meta": {
+    "name": "Signal design tokens",
+    "version": "1.0",
+    "font": "Calibri",
+    "editions": ["light", "dark"]
+  },
+  "color": {
+    "light": {
+      "page": "#FFFFFF",
+      "surface": "#F5F6F8",
+      "ink": "#14161C",
+      "muted": "#5B6270",
+      "hairline": "#E1E4EA",
+      "pink": "#F0245C",
+      "pinkDeep": "#C71048",
+      "cyan": "#21E0DC",
+      "cyanDeep": "#0E8A86",
+      "pinkTint": "#FDE7EE",
+      "cyanTint": "#E4FAF9"
+    },
+    "dark": {
+      "background": "#0B0C10",
+      "card": "#15171F",
+      "cardDeep": "#1E2230",
+      "line": "#2A2E3A",
+      "white": "#FFFFFF",
+      "mist": "#B9C0CE",
+      "faint": "#7A828F",
+      "pink": "#F0245C",
+      "pinkSoft": "#FF5C86",
+      "cyan": "#21E0DC",
+      "cyanSoft": "#7BF0EE"
+    }
+  },
+  "typography": {
+    "family": "Calibri, system-ui, Arial, sans-serif",
+    "scale": {
+      "title":   { "size": 32, "slideSize": 40, "weight": 700, "case": "sentence" },
+      "h1":      { "size": 20, "slideSize": 32, "weight": 700, "case": "sentence" },
+      "h2":      { "size": 15, "slideSize": 22, "weight": 700, "case": "sentence" },
+      "h3":      { "size": 12, "slideSize": 17, "weight": 700, "case": "sentence" },
+      "body":    { "size": 11, "slideSize": 15, "weight": 400, "case": "sentence", "lineHeight": 1.3 },
+      "muted":   { "size": 10, "slideSize": 11, "weight": 400, "case": "sentence" },
+      "eyebrow": { "size": 9,  "slideSize": 12, "weight": 700, "case": "upper", "letterSpacing": 3 }
+    }
+  },
+  "spacing": {
+    "base": 4,
+    "tight": 8,
+    "snug": 12,
+    "cardPadding": 16,
+    "gap": 20,
+    "section": 32,
+    "radius": 8
+  },
+  "motif": {
+    "type": "numbered-chip",
+    "colors": ["#F0245C", "#21E0DC"],
+    "rule": "alternate pink and cyan down a list"
+  },
+  "roles": {
+    "primaryAccent": "pink",
+    "secondaryAccent": "cyan",
+    "textOnLight": "ink",
+    "textOnDark": "white",
+    "coloredTextOnLight": ["pinkDeep", "cyanDeep"]
+  }
+}

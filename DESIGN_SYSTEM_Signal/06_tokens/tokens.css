@@ -1,0 +1,50 @@
+:root {
+  --signal-light-paper: #F5F4EF;
+  --signal-light-panel: #FFFFFF;
+  --signal-light-sidebar: #C5CCD2;
+  --signal-light-grid: #E2E4E1;
+  --signal-light-ink: #203048;
+  --signal-light-mist: #8A939E;
+  --signal-light-faint: #B6BDC5;
+  --signal-light-hatch: #DCE0E3;
+  --signal-light-emerald: #188860;
+  --signal-light-orange: #F07028;
+  --signal-light-rose: #C0504A;
+  --signal-dark-ground: #0B0C10;
+  --signal-dark-panel: #15171F;
+  --signal-dark-sidebar: #1E2230;
+  --signal-dark-grid: #1A1D26;
+  --signal-dark-white: #FFFFFF;
+  --signal-dark-mist: #B9C0CE;
+  --signal-dark-faint: #7A828F;
+  --signal-dark-hatch: #2A2E3A;
+  --signal-dark-cyan: #21E0DC;
+  --signal-dark-pink: #F0245C;
+  --signal-dark-orange: #FF7A3D;
+  --signal-font-web: Carlito, Calibri, sans-serif;
+  --signal-radius: 6px;
+}
+
+/* Console: the Autonomous SSoT documentation variant.
+   Accents identical to dark. Grounds run deeper for dense technical diagrams. */
+:root[data-theme="console"] {
+  --void:   #08090D;
+  --panel:  #11141B;
+  --panel2: #171B24;
+  --line:   #242A36;
+  --line2:  #39414F;
+  --text:   #E9ECF2;
+  --muted:  #79828F;
+  --dim:    #4E5764;
+  --pink:   #F0245C;
+  --cyan:   #21E0DC;
+  --amber:  #F0A824;
+}
+
+/* Print: the light edition used for rendered documents. */
+:root[data-theme="print"] {
+  --ink:   #14161C;
+  --paper: #FFFFFF;
+  --pink:  #F0245C;
+  --cyan:  #21E0DC;
+}

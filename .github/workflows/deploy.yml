@@ -26,6 +26,9 @@ jobs:
           honkit build
           mkdir -p _book/styles
           cp styles/website.css _book/styles/website.css
+          if [ -d "DESIGN_SYSTEM_Signal" ]; then
+            cp -r DESIGN_SYSTEM_Signal _book/signal
+          fi
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4

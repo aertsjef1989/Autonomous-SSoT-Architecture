@@ -49,7 +49,7 @@ Agents operate the knowledge architecture via natural language commands (`@Bot [
 *   `review [title]` — **Load-bearing for the Agent Lockdown.** Because agents are barred from direct table editing, this command is their sole mechanism to log a self-review and reset their freshness clock.
 *   `admin faults` / `admin users` — System-level administrative dumps.
 
-### 3.2 Enterprise Extensions (9 Custom TTK Commands)
+### 3.2 Enterprise Extensions (9 Custom SSoT Commands)
 Standard enterprise wiki bots lack context regarding geographic markets, industries, or campaign structures. These nine custom commands close that gap:
 
 | Command | Syntax | Target Functionality |
