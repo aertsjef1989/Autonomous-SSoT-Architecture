@@ -5,8 +5,6 @@
 
 ---
 
-| `05-Self-Healing-Loop-and-Fault-Taxonomy.md` | III. The Engine | Single Daily Scan, Scanners, Detectors & 29-Fault Taxonomy |
-
 ## 1. Architectural Philosophy of the Loop
 A system without an automated governance loop will inevitably decay. Manual auditing fails because it scales linearly with content volume while rot compounds exponentially. 
 

@@ -5,8 +5,6 @@
 
 ---
 
-| `04-Relational-Database-Schema.md` | III. The Engine | Relational Split, T1–T10 Build Order & Algorithmic Governance |
-
 ## 1. Architectural Application Split
 The architecture relies on a custom relational database built within the enterprise workspace. To prevent unbounded system logs from polluting operational data, the schema is physically divided across two separate database applications.
 

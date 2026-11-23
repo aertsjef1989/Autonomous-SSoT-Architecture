@@ -5,9 +5,6 @@
 
 ---
 
-| `11-Signal-Design-System.md` | VI. Interfaces & Design System | Visual Language, Token Architecture & Live Browser Studio |
-**Signal** is the standalone visual language, token architecture, and browser-based slide studio built to render this architecture suite consistently across slides, technical diagrams, documentation, and internal wikis.
-
 ## 1. Launch Live (GitHub Pages)
 
 Both applications are zero-install, standalone HTML builds running directly in your browser:

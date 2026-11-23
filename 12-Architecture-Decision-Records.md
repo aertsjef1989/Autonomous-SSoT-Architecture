@@ -5,8 +5,6 @@
 
 ---
 
-| `12-Architecture-Decision-Records.md` | IV. Governance & Security | 12 Core ADRs, Governance RACI & Platform Change Watch |
-
 ## 1. The 12 Architecture Decision Records (ADRs)
 Every structural constraint in this architecture exists to prevent a specific silent failure. Each record documents the rejected alternative and the exact failure mode triggered if a future team attempts to simplify it.
 

@@ -5,8 +5,6 @@
 
 ---
 
-| `03-Design-Methodology-DMADV.md` | II. The Blueprint | Lean Six Sigma DMADV (Greenfield) & DMAIC (Legacy Estate) |
-
 ## 1. Methodology Selection: Why DMADV?
 The public-information layer of the architecture had no incumbent. There was no existing process producing the required market documentation, no defect rate to measure, and no baseline to improve against. 
 

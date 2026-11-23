@@ -5,8 +5,6 @@
 
 ---
 
-| `09-Operations-Runbook.md` | V. Continuity & Readiness | 5-Min Daily Standup, P1 2-Hour SLA, Backups & Troubleshooting |
-
 ## 1. Access and Secrets Management
 **Critical Rule:** Never write the Application Secret in this document. Record only where it is stored.
 

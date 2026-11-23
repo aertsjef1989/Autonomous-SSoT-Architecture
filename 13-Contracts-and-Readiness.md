@@ -5,8 +5,6 @@
 
 ---
 
-| `13-Contracts-and-Readiness.md` | V. Continuity & Readiness | Acceptance Criteria, API Contracts, Fixtures & Reviewer Calibration |
-
 ## 1. Engineering Readiness Suite
 Architecture documents explain *intent*; readiness contracts define **pass/fail proof** before production deployment. Five structured artifacts govern build verification:
 

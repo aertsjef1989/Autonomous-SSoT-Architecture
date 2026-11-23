@@ -5,8 +5,6 @@
 
 ---
 
-| `02-System-Architecture.md` | II. The Blueprint | Topology, Schema, Bot Operations, Console & Disaster Recovery |
-
 ## 1. Purpose and Scope
 This is the master specification for the Autonomous Knowledge Architecture: an enterprise advertising knowledge library of 3,386 public files plus a governed internal layer, deployed in a workspace wiki space, governed by a custom relational database, and operated by a custom conversational application (`Bot`).
 

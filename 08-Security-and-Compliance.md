@@ -5,8 +5,6 @@
 
 ---
 
-| `08-Security-and-Compliance.md` | IV. Governance & Security | GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA |
-
 ## 1. Compliance Position & Governance Context
 The system processes personal data across two distinct vectors with differing risk profiles:
 1.  **System Governance Data:** Telemetry and identity data regarding team members operating the system.

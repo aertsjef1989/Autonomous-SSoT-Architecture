@@ -5,8 +5,6 @@
 
 ---
 
-| `01-Business-Case-and-ROI.md` | I. The Mandate | Financial Justification, Eurostat Waste Model & v3.0 Recovery Scenarios |
-
 ## 1. The Core Vulnerability (The Cost of Asymmetry)
 Activation advice across 45 markets was being produced from individual recall, ad-hoc search, and personal notes. The same operational question yielded different answers on the same day because no central artefact governed the truth. 
 

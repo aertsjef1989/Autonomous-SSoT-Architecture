@@ -5,8 +5,6 @@
 
 ---
 
-| `15-Enablement-and-Continuity.md` | V. Continuity & Readiness | Role-Based Curriculum, Champion Rhythm & Bus-Factor-1 Elimination |
-
 ## 1. Change & Adoption Architecture
 Knowledge bases fail when they add clicks to a frontline workflow. Adoption is engineered around **friction removal** and role-scoped training rather than monolithic documentation:
 
