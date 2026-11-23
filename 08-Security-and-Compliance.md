@@ -1,10 +1,11 @@
 # VIII. Security & Compliance (Legal & GDPR Package)
 
-| Document ID | Pillar | Focus |
-| :--- | :--- | :--- |
-| `08-Security-and-Compliance.md` | IV. Governance & Security | GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA |
+**Document ID:** `08-Security-and-Compliance.md`  
+**Focus:** GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA
 
 ---
+
+| `08-Security-and-Compliance.md` | IV. Governance & Security | GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA |
 
 ## 1. Compliance Position & Governance Context
 The system processes personal data across two distinct vectors with differing risk profiles:

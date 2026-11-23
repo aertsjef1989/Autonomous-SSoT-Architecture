@@ -1,11 +1,11 @@
 # XI. Signal Design System
 
-| Document ID | Pillar | Focus |
-| :--- | :--- | :--- |
-| `11-Signal-Design-System.md` | VI. Interfaces & Design System | Visual Language, Token Architecture & Live Browser Studio |
+**Document ID:** `11-Signal-Design-System.md`  
+**Focus:** Visual Language, Token Architecture & Live Browser Studio
 
 ---
 
+| `11-Signal-Design-System.md` | VI. Interfaces & Design System | Visual Language, Token Architecture & Live Browser Studio |
 **Signal** is the standalone visual language, token architecture, and browser-based slide studio built to render this architecture suite consistently across slides, technical diagrams, documentation, and internal wikis.
 
 ## 1. Launch Live (GitHub Pages)

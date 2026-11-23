@@ -1,10 +1,11 @@
 # VII. Role-Based Access Matrix & Security Architecture
 
-| Document ID | Pillar | Focus |
-| :--- | :--- | :--- |
-| `07-Role-Based-Access-Matrix.md` | IV. Governance & Security | 4-Layer Permission Topology, Agent Lockdown & Mover/Leaver IAM |
+**Document ID:** `07-Role-Based-Access-Matrix.md`  
+**Focus:** 4-Layer Permission Topology, Agent Lockdown & Mover/Leaver IAM
 
 ---
+
+| `07-Role-Based-Access-Matrix.md` | IV. Governance & Security | 4-Layer Permission Topology, Agent Lockdown & Mover/Leaver IAM |
 
 ## 1. The Four-Layer Access Topology
 The architecture relies on a multi-layered security model. Omitting any layer from the governance strategy results in invisible permission drift.

@@ -1,11 +1,11 @@
 # X. Failure-Mode Rehearsals & Interface Specifications
 
-| Document ID | Pillar | Focus |
-| :--- | :--- | :--- |
-| `10-Prototype-Manual.md` | VI. Interfaces & Design System | 13 Failure-Mode Rehearsals, 10 Console Views & Colour Semantics |
+**Document ID:** `10-Prototype-Manual.md`  
+**Focus:** 13 Failure-Mode Rehearsals, 10 Console Views & Colour Semantics
 
 ---
 
+| `10-Prototype-Manual.md` | VI. Interfaces & Design System | 13 Failure-Mode Rehearsals, 10 Console Views & Colour Semantics |
 > **Live Clean-Room Demo:** [Launch the Interactive SSoT Workspace, Automation Simulator & Metrics Console](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
 
 ## 1. What these are
