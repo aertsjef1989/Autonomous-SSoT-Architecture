@@ -1,6 +1,5 @@
 # IV. Relational Database Schema
 
-**Document ID:** `04-Relational-Database-Schema.md`  
 **Focus:** Relational Split, T1–T10 Build Order & Algorithmic Governance
 
 ---

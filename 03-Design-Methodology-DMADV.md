@@ -1,6 +1,5 @@
 # III. Design Methodology (DMADV)
 
-**Document ID:** `03-Design-Methodology-DMADV.md`  
 **Focus:** Lean Six Sigma DMADV (Greenfield) & DMAIC (Legacy Estate)
 
 ---

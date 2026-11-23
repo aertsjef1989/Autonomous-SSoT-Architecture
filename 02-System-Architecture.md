@@ -1,6 +1,5 @@
 # II. System Architecture, Schema and Build Specification
 
-**Document ID:** `02-System-Architecture.md`  
 **Focus:** Topology, Schema, Bot Operations, Console & Disaster Recovery
 
 ---

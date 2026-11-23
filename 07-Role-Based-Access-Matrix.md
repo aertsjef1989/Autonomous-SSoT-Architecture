@@ -1,6 +1,5 @@
 # VII. Role-Based Access Matrix & Security Architecture
 
-**Document ID:** `07-Role-Based-Access-Matrix.md`  
 **Focus:** 4-Layer Permission Topology, Agent Lockdown & Mover/Leaver IAM
 
 ---

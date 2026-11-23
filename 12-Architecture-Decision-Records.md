@@ -1,6 +1,5 @@
 # XII. Architecture Decision Records & Governance
 
-**Document ID:** `12-Architecture-Decision-Records.md`  
 **Focus:** 12 Core ADRs, Governance RACI & Platform Change Watch
 
 ---

@@ -1,6 +1,5 @@
 # X. Failure-Mode Rehearsals & Interface Specifications
 
-**Document ID:** `10-Prototype-Manual.md`  
 **Focus:** 13 Failure-Mode Rehearsals, 10 Console Views & Colour Semantics
 
 ---

@@ -1,6 +1,5 @@
 # VIII. Security & Compliance (Legal & GDPR Package)
 
-**Document ID:** `08-Security-and-Compliance.md`  
 **Focus:** GDPR Lawful Basis, Residency vs. Sovereignty & 72-Hour Breach SLA
 
 ---

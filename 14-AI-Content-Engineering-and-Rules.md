@@ -1,6 +1,5 @@
 # XIV. AI Content Engineering & Verification Rules
 
-**Document ID:** `14-AI-Content-Engineering-and-Rules.md`  
 **Focus:** Two Writing Standards, 15 Mechanical Checks & 5 Semantic Gates
 
 ---

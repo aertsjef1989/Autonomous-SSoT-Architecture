@@ -1,6 +1,5 @@
 # I. Business Case & ROI
 
-**Document ID:** `01-Business-Case-and-ROI.md`  
 **Focus:** Financial Justification, Eurostat Waste Model & v3.0 Recovery Scenarios
 
 ---

@@ -1,6 +1,5 @@
 # XV. Enablement, Adoption & Continuity
 
-**Document ID:** `15-Enablement-and-Continuity.md`  
 **Focus:** Role-Based Curriculum, Champion Rhythm & Bus-Factor-1 Elimination
 
 ---

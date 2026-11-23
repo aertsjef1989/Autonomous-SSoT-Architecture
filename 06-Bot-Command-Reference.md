@@ -1,6 +1,5 @@
 # VI. Conversational Interface & API Specification
 
-**Document ID:** `06-Bot-Command-Reference.md`  
 **Focus:** 23 Conversational Commands, API Scopes & Card Kit Safeguards
 
 ---

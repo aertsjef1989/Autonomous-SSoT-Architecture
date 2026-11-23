@@ -1,6 +1,5 @@
 # IX. Administrator Operations Runbook
 
-**Document ID:** `09-Operations-Runbook.md`  
 **Focus:** 5-Min Daily Standup, P1 2-Hour SLA, Backups & Troubleshooting
 
 ---

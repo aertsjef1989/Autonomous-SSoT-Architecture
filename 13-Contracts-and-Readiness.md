@@ -1,6 +1,5 @@
 # XIII. Contracts, Testability & Readiness
 
-**Document ID:** `13-Contracts-and-Readiness.md`  
 **Focus:** Acceptance Criteria, API Contracts, Fixtures & Reviewer Calibration
 
 ---

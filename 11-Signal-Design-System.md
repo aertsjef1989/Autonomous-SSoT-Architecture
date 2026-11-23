@@ -1,6 +1,5 @@
 # XI. Signal Design System
 
-**Document ID:** `11-Signal-Design-System.md`  
 **Focus:** Visual Language, Token Architecture & Live Browser Studio
 
 ---

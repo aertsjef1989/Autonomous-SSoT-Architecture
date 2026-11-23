@@ -1,6 +1,5 @@
 # V. Self-Healing Loop and Fault Taxonomy
 
-**Document ID:** `05-Self-Healing-Loop-and-Fault-Taxonomy.md`  
 **Focus:** Single Daily Scan, Scanners, Detectors & 29-Fault Taxonomy
 
 ---
