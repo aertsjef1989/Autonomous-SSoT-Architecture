@@ -3,129 +3,493 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Balaerion v1 — Dual-Section Workspace & Checks-and-Balances</title>
+  <title>Balaerion — AI Workspace</title>
   <style>
-    :root { --bg:#08090D; --panel:#10131C; --panel2:#161A26; --border:#23293A; --text:#E8ECF4; --muted:#8C96AD; --cyan:#21E0DC; --pink:#F0245C; --green:#22C55E; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
-    header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:10px; }
-    header h1 { font-size:1rem; letter-spacing:.06em; text-transform:uppercase; }
-    .badge { font-size:.72rem; padding:3px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); font-family:monospace; }
-    .badge.cyan { border-color:var(--cyan); color:var(--cyan); }
-    .badge.pink { border-color:var(--pink); color:var(--pink); }
-    .badge.green { border-color:var(--green); color:var(--green); }
-    main { max-width:1240px; margin:20px auto; padding:0 20px 40px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-    @media (max-width:960px){ main{ grid-template-columns:1fr; } }
-    .section-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:12px; }
-    .section-head { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; }
-    .section-head h2 { font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; }
-    .pill-row { display:flex; flex-wrap:wrap; gap:6px; }
-    .pill { font-size:.75rem; padding:5px 9px; border-radius:6px; border:1px solid var(--border); background:var(--panel2); color:var(--muted); cursor:pointer; }
-    .pill.active { border-color:var(--cyan); color:var(--cyan); background:rgba(33,224,220,.12); font-weight:600; }
-    .console { background:#050609; border:1px solid var(--border); border-radius:8px; padding:12px; font-family:ui-monospace,Menlo,monospace; font-size:.79rem; white-space:pre-wrap; min-height:175px; color:#D7E2F0; }
-    .controls { display:flex; gap:8px; flex-wrap:wrap; }
-    input[type="text"] { flex:1; min-width:180px; background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:6px; font-size:.82rem; }
-    .btn { background:var(--panel2); color:var(--text); border:1px solid var(--border); padding:8px 12px; border-radius:6px; cursor:pointer; font-size:.8rem; }
-    .btn.primary { border-color:var(--cyan); color:var(--cyan); background:rgba(33,224,220,.1); font-weight:600; }
-    .btn.danger { border-color:var(--pink); color:var(--pink); background:rgba(240,36,92,.1); font-weight:600; }
-    .checks { font-size:.78rem; color:var(--muted); background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
+    :root {
+      --bg: #0B0D13;
+      --sidebar: #11141E;
+      --surface: #171B26;
+      --surface-hover: #1E2433;
+      --border: #252B3B;
+      --text: #ECEFF6;
+      --muted: #8E98B0;
+      --cyan: #21E0DC;
+      --pink: #F0245C;
+      --green: #22C55E;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* SIDEBAR */
+    aside {
+      width: 270px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 10px 16px;
+    }
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+    .new-chat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.88rem;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: background 0.15s;
+    }
+    .new-chat:hover { background: var(--surface-hover); border-color: var(--cyan); }
+
+    .nav-section { margin-bottom: 18px; overflow-y: auto; }
+    .nav-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 0 10px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #CBD3E6;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: background 0.12s;
+    }
+    .nav-item:hover { background: var(--surface-hover); }
+    .nav-item.active { background: rgba(33, 224, 220, 0.12); color: var(--cyan); font-weight: 500; }
+    .tag {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-family: monospace;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .tag.safe { border-color: rgba(34,197,94,0.4); color: var(--green); }
+    .tag.gen { border-color: rgba(33,224,220,0.4); color: var(--cyan); }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.76rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-left: 8px;
+    }
+    .status-row { display: flex; align-items: center; gap: 6px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* MAIN WORKSPACE */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+    }
+    .topbar {
+      height: 56px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 13, 19, 0.85);
+      backdrop-filter: blur(8px);
+    }
+    .model-select {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .lane-pill {
+      font-size: 0.74rem;
+      font-family: monospace;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+    .lane-pill.safe { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+    .lane-pill.general { border-color: var(--cyan); color: var(--cyan); background: rgba(33,224,220,0.08); }
+
+    /* PROSPECTHUB CONTEXT BAR (only visible in ProspectHub mode) */
+    .ph-bar {
+      display: none;
+      padding: 10px 24px;
+      background: var(--sidebar);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ph-bar.visible { display: flex; }
+    .ph-states { display: flex; gap: 5px; flex-wrap: wrap; }
+    .state-chip {
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .state-chip.active { border-color: var(--cyan); color: var(--cyan); background: rgba(33,224,220,0.12); font-weight: 600; }
+
+    /* CHAT STREAM */
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 20px 140px;
+    }
+    .chat-container {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .msg { display: flex; flex-direction: column; gap: 6px; }
+    .msg.user { align-items: flex-end; }
+    .msg.user .bubble {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 18px 18px 4px 18px;
+      max-width: 80%;
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+    .msg.ai .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .msg.ai .bubble {
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: #E2E8F5;
+      padding: 4px 2px;
+    }
+    .alert-card {
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border-left: 3px solid var(--pink);
+      background: rgba(240, 36, 92, 0.09);
+      font-size: 0.85rem;
+    }
+    .info-card {
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.85rem;
+    }
+
+    /* FLOATING COMPOSER */
+    .composer-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px 22px;
+      background: linear-gradient(transparent, var(--bg) 35%);
+    }
+    .composer {
+      max-width: 780px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+    .composer:focus-within { border-color: var(--cyan); }
+    .composer input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 0.95rem;
+      width: 100%;
+      padding: 4px 4px;
+    }
+    .composer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quick-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      font-size: 0.74rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--sidebar);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .chip:hover { border-color: var(--cyan); color: var(--text); }
+    .chip.warn:hover { border-color: var(--pink); color: var(--pink); }
+    .send-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: var(--cyan);
+      color: #08090D;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (max-width: 768px) { aside { display: none; } }
   </style>
 </head>
 <body>
-  <header>
-    <div><h1>Pillar II · Balaerion v1 (Two-Section Workspace)</h1></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <span class="badge cyan">Vercel EU + Supabase EU</span>
-      <span class="badge pink">Edge Password Gate: LOCKED</span>
-      <span class="badge green">Invite-Only Auth</span>
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="brand">
+      <div class="brand-title"><span class="dot"></span>Balaerion</div>
+      <span class="tag">v1</span>
     </div>
-  </header>
 
-  <main>
-    <!-- SECTION 1: EVERYDAY GENERAL AI ASSISTANT -->
-    <section class="section-card">
-      <div class="section-head">
-        <h2>Section 1 · Everyday AI Assistant</h2>
-        <span class="badge cyan">lane: general</span>
-      </div>
-      <div class="checks">
-        <strong>Checks & Balances:</strong> Pre-dispatch PII scanner blocks unmasked client names/VATs from leaving for general providers. Rate-limit failover across Groq / Gemini / DeepSeek.
-      </div>
-      <div class="pill-row">
-        <span class="pill active" onclick="setModel(this,'Groq · Llama-3.3-70B')">Groq · Llama-3.3-70B</span>
-        <span class="pill" onclick="setModel(this,'Gemini 2.5 Pro')">Gemini 2.5 Pro</span>
-        <span class="pill" onclick="setModel(this,'DeepSeek R1')">DeepSeek R1</span>
-      </div>
-      <div id="sec1-log" class="console">[SECTION 1 · GENERAL AI] Provider: Groq · Llama-3.3-70B
-[GATE] Pre-dispatch PII filter: ACTIVE.
-Ready for everyday coding, SQL, writing, or analysis tasks.</div>
-      <div class="controls">
-        <input id="sec1-in" type="text" placeholder="Type an everyday prompt..." />
-        <button class="btn primary" onclick="sendGeneral()">Send</button>
-        <button class="btn danger" onclick="testPii()">Test PII Block</button>
-      </div>
-    </section>
+    <button class="new-chat" onclick="newGeneralChat()">+ New chat</button>
 
-    <!-- SECTION 2: PROSPECTHUB MULTI-PERSONA SUITE -->
-    <section class="section-card">
-      <div class="section-head">
-        <h2>Section 2 · ProspectHub Multi-Persona</h2>
-        <span class="badge green">lane: safe (EU locked)</span>
+    <div class="nav-section">
+      <div class="nav-label"><span>General AI</span><span class="tag gen">general</span></div>
+      <div class="nav-item active" id="nav-gen-1" onclick="switchMode('general', this)">
+        <span>Postgres RLS & Architecture</span>
       </div>
-      <div class="checks">
-        <strong>Checks & Balances:</strong> Deterministic OSINT only (zero hallucination) · EU Zero-Retention lock · <strong>Human-in-the-Loop</strong> manual state transitions · GDPR Art. 15/17 ready.
+      <div class="nav-item" id="nav-gen-2" onclick="switchMode('general', this)">
+        <span>Everyday Coding & Writing</span>
       </div>
-      <div class="pill-row">
-        <span class="pill" onclick="setState(this,'Cold')">1. Cold</span>
-        <span class="pill" onclick="setState(this,'Auto-replied')">2. Auto-replied</span>
-        <span class="pill" onclick="setState(this,'Agent-contacted')">3. Contacted</span>
-        <span class="pill" onclick="setState(this,'Discovery-booked')">4. Booked</span>
-        <span class="pill active" onclick="setState(this,'Post-discovery')">5. Post-discovery</span>
-        <span class="pill" onclick="setState(this,'In-nurture')">6. Nurture</span>
-        <span class="pill" onclick="setState(this,'Dormant')">7. Dormant</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label"><span>ProspectHub</span><span class="tag safe">multi-persona</span></div>
+      <div class="nav-item" onclick="switchMode('prospecthub', this, 'research')">
+        <span>Research & OSINT</span><span class="tag safe">safe</span>
       </div>
-      <div class="controls">
-        <button class="btn primary" onclick="runPersona('research')">Research & Intel (safe)</button>
-        <button class="btn primary" onclick="runPersona('activate')">Activate (safe)</button>
-        <button class="btn" onclick="runPersona('pitch')">Cold Pitch (general)</button>
-        <button class="btn danger" onclick="runPersona('auto-block')">Test Auto-Transition Block</button>
+      <div class="nav-item" onclick="switchMode('prospecthub', this, 'activate')">
+        <span>Activate (Post-Discovery)</span><span class="tag safe">safe</span>
       </div>
-      <div id="sec2-log" class="console">[SECTION 2 · PROSPECTHUB] Fictional Calibration Entity: Kapsalon Vuurtoren BV (KBO 0123.456.789 · BE 0.94).
-[LANE] safe (locked) -> Mistral EU Zero-Retention.
-[STATE] Post-discovery (Human-approved).</div>
-    </section>
-  </main>
+      <div class="nav-item" onclick="switchMode('prospecthub', this, 'pitch')">
+        <span>Cold Pitch & Outreach</span><span class="tag gen">gen</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="status-row"><span class="status-dot" style="background:var(--pink);"></span>Vercel Edge Gate: Password Locked</div>
+      <div class="status-row"><span class="status-dot" style="background:var(--green);"></span>Supabase EU · Invite-Only RLS</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <select id="model-select" class="model-select" onchange="onModelChange()">
+        <option value="Groq · Llama-3.3-70B">Groq · Llama-3.3-70B (Fast)</option>
+        <option value="Gemini 2.5 Pro">Gemini 2.5 Pro (Reasoning)</option>
+        <option value="DeepSeek R1">DeepSeek R1 (Code)</option>
+      </select>
+      <span id="lane-pill" class="lane-pill general">lane: general · PII Filter ON</span>
+    </div>
+
+    <!-- PROSPECTHUB CONTEXT STRIP -->
+    <div id="ph-bar" class="ph-bar">
+      <div><strong>Kapsalon Vuurtoren BV</strong> · KBO <code>0123.456.789</code> · BE (0.94) · <strong>8.6/10</strong></div>
+      <div class="ph-states">
+        <span class="state-chip" onclick="setState(this,'Cold')">Cold</span>
+        <span class="state-chip" onclick="setState(this,'Auto-replied')">Auto-replied</span>
+        <span class="state-chip" onclick="setState(this,'Agent-contacted')">Contacted</span>
+        <span class="state-chip" onclick="setState(this,'Discovery-booked')">Booked</span>
+        <span class="state-chip active" onclick="setState(this,'Post-discovery')">Post-discovery</span>
+        <span class="state-chip" onclick="setState(this,'In-nurture')">Nurture</span>
+        <span class="state-chip" onclick="setState(this,'Dormant')">Dormant</span>
+      </div>
+    </div>
+
+    <!-- CHAT STREAM -->
+    <div class="chat-scroll" id="chat-scroll">
+      <div class="chat-container" id="chat-container"></div>
+    </div>
+
+    <!-- FLOATING COMPOSER -->
+    <div class="composer-wrap">
+      <div class="composer">
+        <input id="prompt-input" type="text" placeholder="Ask Balaerion..." onkeydown="if(event.key==='Enter') sendMessage()" />
+        <div class="composer-bottom">
+          <div class="quick-chips" id="quick-chips">
+            <button class="chip warn" onclick="testPii()">Test PII Block</button>
+            <button class="chip" onclick="quickPrompt('Write a Supabase RLS policy for owner-only threads')">Supabase RLS</button>
+          </div>
+          <button class="send-btn" onclick="sendMessage()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    let model = 'Groq · Llama-3.3-70B';
-    let state = 'Post-discovery';
-    function setModel(el, m) {
-      el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-      el.classList.add('active'); model = m;
-      document.getElementById('sec1-log').textContent = `[SECTION 1 · GENERAL AI] Switched to ${model} (lane: general).`;
+    let mode = 'general';
+    let persona = 'research';
+    let phState = 'Post-discovery';
+    const chat = document.getElementById('chat-container');
+    const scrollBox = document.getElementById('chat-scroll');
+
+    function addMsg(role, html, meta = '') {
+      const div = document.createElement('div');
+      div.className = `msg ${role}`;
+      if (role === 'user') {
+        div.innerHTML = `<div class="bubble">${html}</div>`;
+      } else {
+        div.innerHTML = `<div class="ai-header"><span class="dot" style="width:7px;height:7px;"></span><strong>Balaerion</strong> · ${meta}</div><div class="bubble">${html}</div>`;
+      }
+      chat.appendChild(div);
+      scrollBox.scrollTop = scrollBox.scrollHeight;
     }
-    function sendGeneral() {
-      const q = document.getElementById('sec1-in').value.trim() || 'Write a Supabase RLS policy for owner-only access.';
-      document.getElementById('sec1-log').textContent = `[USER] ${q}\n[DISPATCH] ${model} · 0 PII detected.\n[OK] Response persisted to Supabase general_threads.`;
-      document.getElementById('sec1-in').value = '';
+
+    function renderInitial() {
+      chat.innerHTML = '';
+      if (mode === 'general') {
+        addMsg('ai', 'Ready for everyday engineering, SQL, writing, or analysis. Pre-dispatch PII scanning is active—unmasked client data is automatically blocked from leaving for general providers.', document.getElementById('model-select').value);
+      } else {
+        const intros = {
+          research: `Loaded deterministic OSINT brief for fictional calibration entity <strong>Kapsalon Vuurtoren BV</strong>.<div class="info-card"><strong>KBO:</strong> 0123.456.789 (Verified via VIES/KBO/NBB · BE 0.94)<br><strong>Stack:</strong> Lightspeed eCom · Meta Pixel active<br><strong>Readiness:</strong> 8.6 / 10 (Tier A)</div>`,
+          activate: `Pulled existing <strong>Kapsalon Vuurtoren BV</strong> brief (State: <strong>${phState}</strong>).<br><br>What changed in the discovery meeting? I will update the phased activation plan without re-running cold research.`,
+          pitch: `Drafting anonymized NL outreach (10-Language EU Parity). No raw PII is sent to general-lane drafting models.`
+        };
+        addMsg('ai', intros[persona], persona === 'pitch' ? 'ProspectHub · lane: general' : 'ProspectHub · Mistral EU (Zero-Retention)');
+      }
     }
+
+    function switchMode(newMode, el, newPersona = 'research') {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      if (el) el.classList.add('active');
+      mode = newMode;
+      persona = newPersona;
+
+      const phBar = document.getElementById('ph-bar');
+      const lanePill = document.getElementById('lane-pill');
+      const chips = document.getElementById('quick-chips');
+
+      if (mode === 'general') {
+        phBar.classList.remove('visible');
+        lanePill.className = 'lane-pill general';
+        lanePill.textContent = 'lane: general · PII Filter ON';
+        chips.innerHTML = `<button class="chip warn" onclick="testPii()">Test PII Block</button><button class="chip" onclick="quickPrompt('Write a Supabase RLS policy for owner-only threads')">Supabase RLS</button>`;
+      } else {
+        phBar.classList.add('visible');
+        const isSafe = persona !== 'pitch';
+        lanePill.className = isSafe ? 'lane-pill safe' : 'lane-pill general';
+        lanePill.textContent = isSafe ? 'lane: safe · EU Zero-Retention' : 'lane: general · Anonymized Brief';
+        chips.innerHTML = `<button class="chip warn" onclick="testAutoBlock()">Test Auto-Transition Block</button><button class="chip" onclick="quickPrompt('Generate post-discovery activation plan')">Run Activate</button>`;
+      }
+      renderInitial();
+    }
+
+    function newGeneralChat() {
+      switchMode('general', document.getElementById('nav-gen-1'));
+    }
+
+    function onModelChange() {
+      if (mode === 'general') {
+        addMsg('ai', `Switched active provider to <strong>${document.getElementById('model-select').value}</strong>.`, 'Router');
+      }
+    }
+
+    function setState(el, state) {
+      document.querySelectorAll('.state-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      phState = state;
+      addMsg('ai', `Lifecycle state manually updated to <strong>${state}</strong> and logged to Supabase <code>prospect_events</code>.`, 'Human-in-the-Loop Audit');
+    }
+
+    function quickPrompt(text) {
+      document.getElementById('prompt-input').value = text;
+      sendMessage();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('prompt-input');
+      const val = input.value.trim();
+      if (!val) return;
+      addMsg('user', val);
+      input.value = '';
+
+      if (mode === 'general') {
+        addMsg('ai', `Processed cleanly on <code>lane: general</code> (0 PII detected) and saved to your Supabase thread.<div class="info-card"><code>CREATE POLICY "owner_only" ON threads FOR ALL USING (auth.uid() = user_id);</code></div>`, document.getElementById('model-select').value);
+      } else {
+        addMsg('ai', `Updated <strong>Kapsalon Vuurtoren BV</strong> deliverable under state <strong>${phState}</strong>.<div class="info-card"><strong>Recommended Plan:</strong> Launch Video Views first to build retargeting pool before enabling Conversion optimization.</div>`, 'ProspectHub · EU Safe Lane');
+      }
+    }
+
     function testPii() {
-      document.getElementById('sec1-log').textContent = `[BLOCKED · PRE-DISPATCH GATE] Unmasked client VAT (BE0123.456.789) detected on lane: general.\n[ACTION] Request refused for ${model}. Route client records through Section 2 (lane: safe).`;
+      addMsg('user', 'Audit client VAT BE0123.456.789 using Groq.');
+      addMsg('ai', `<div class="alert-card"><strong>Pre-Dispatch Gate Blocked:</strong> Unmasked client identifier (<code>BE0123.456.789</code>) detected on <code>lane: general</code>. Request refused for Groq. Switch to <strong>ProspectHub (EU Safe Lane)</strong> to process client records.</div>`, 'Security Gate');
     }
-    function setState(el, s) {
-      el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-      el.classList.add('active'); state = s;
-      document.getElementById('sec2-log').textContent = `[HUMAN-IN-THE-LOOP] Operator manually updated state to: ${state}.\n[AUDIT] Logged to Supabase prospect_events with actor_id + timestamp.`;
+
+    function testAutoBlock() {
+      addMsg('user', 'Automatically move Kapsalon Vuurtoren BV to Discovery-booked.');
+      addMsg('ai', `<div class="alert-card"><strong>Human-in-the-Loop Enforced:</strong> AI cannot auto-transition prospect states. Click a state pill in the top bar to approve the change manually.</div>`, 'Governance Gate');
     }
-    function runPersona(p) {
-      const map = {
-        research: `[OSINT · DETERMINISTIC] KBO 0123.456.789 verified via VIES/KBO/NBB (BE 0.94).\n[LANE] safe (locked) -> Mistral EU.\n[VERDICT] Tier A · Readiness 8.6/10 · Lightspeed eCom.`,
-        activate: `[PERSONA] activate | Lane: safe | State: ${state}\n[CHECK] Pulled existing brief. Asking only: "What changed in the discovery meeting?"`,
-        pitch: `[PERSONA] cold-pitch-email | Lane: general (anonymized brief only)\n[PARITY] 10-Language EU Parity (NL selected).`,
-        'auto-block': `[BLOCKED · HUMAN-IN-THE-LOOP RULE] AI attempted automatic transition to "Discovery-booked".\n[REFUSED] AI recommends; human operator must manually approve all lifecycle state transitions.`
-      };
-      document.getElementById('sec2-log').textContent = map[p];
-    }
+
+    renderInitial();
   </script>
 </body>
 </html>
