@@ -17,3 +17,9 @@ EDITABLE_DOCX/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Vercel & local state (never commit)
+.vercel/
+.dev/
+balaerion-app/.next/
+balaerion-app/public/book/

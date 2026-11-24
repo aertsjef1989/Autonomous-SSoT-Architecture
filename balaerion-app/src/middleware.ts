@@ -1,28 +1,27 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const ACCESS_COOKIE = 'balaerion_access_granted';
+const OWNER_COOKIE = 'balaerion_owner_session';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow login page and auth endpoint
-  if (pathname === '/login' || pathname === '/api/auth/unlock') {
-    return NextResponse.next();
-  }
-
-  const requiredPassword = process.env.BALAERION_ACCESS_PASSWORD;
-  const cookieVal = request.cookies.get(ACCESS_COOKIE)?.value;
-
-  if (!requiredPassword || cookieVal !== requiredPassword) {
-    if (pathname.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Unauthorized: Edge Password Gate locked.' }, { status: 401 });
+  if (pathname.startsWith('/api/admin')) {
+    const ownerSecret = process.env.OWNER_ACCESS_SECRET;
+    const cookieVal = request.cookies.get(OWNER_COOKIE)?.value;
+    if (!ownerSecret || cookieVal !== ownerSecret) {
+      return NextResponse.json({ error: 'Unauthorized: Tier 3 Owner access required.' }, { status: 401 });
     }
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+  response.headers.set('Referrer-Policy', 'no-referrer');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+  return response;
 }
 
 export const config = {
