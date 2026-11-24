@@ -3,323 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Balaerion v1 — Dual-Mode AI & ProspectHub Prototype</title>
+  <title>Balaerion v1 — Dual-Section Workspace & Checks-and-Balances</title>
   <style>
-    :root {
-      --bg: #08090D;
-      --panel: #10131C;
-      --panel-2: #161A26;
-      --border: #23293A;
-      --text: #E8ECF4;
-      --muted: #8C96AD;
-      --cyan: #21E0DC;
-      --pink: #F0245C;
-      --green: #22C55E;
-      --amber: #F59E0B;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      min-height: 100vh;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand h1 { font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; }
-    .badge {
-      font-size: 0.72rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: monospace;
-    }
-    .badge.cyan { border-color: var(--cyan); color: var(--cyan); }
-    .badge.pink { border-color: var(--pink); color: var(--pink); }
-    .badge.green { border-color: var(--green); color: var(--green); }
-    .mode-switch { display: flex; gap: 8px; }
-    .btn {
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.15s ease;
-    }
-    .btn:hover { border-color: var(--cyan); }
-    .btn.active { background: rgba(33, 224, 220, 0.12); border-color: var(--cyan); color: var(--cyan); font-weight: 600; }
-    .btn.pink-active { background: rgba(240, 36, 92, 0.14); border-color: var(--pink); color: var(--pink); font-weight: 600; }
-    main { max-width: 1220px; margin: 22px auto; padding: 0 20px 40px; }
-    .grid { display: grid; grid-template-columns: 310px 1fr; gap: 18px; }
-    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    .card h2 {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .persona-item {
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      background: var(--panel-2);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.84rem;
-    }
-    .persona-item.selected { border-color: var(--cyan); background: rgba(33, 224, 220, 0.08); }
-    .lifecycle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-    .state-pill {
-      font-size: 0.75rem;
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--panel-2);
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .state-pill.active {
-      border-color: var(--cyan);
-      color: var(--cyan);
-      background: rgba(33, 224, 220, 0.12);
-      font-weight: 600;
-    }
-    .kv-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .kv {
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-    }
-    .kv label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
-    .kv span { font-size: 0.88rem; font-weight: 600; }
-    .console {
-      background: #050609;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.82rem;
-      white-space: pre-wrap;
-      min-height: 210px;
-      color: #D7E2F0;
-    }
-    .controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-    input[type="text"] {
-      flex: 1;
-      min-width: 220px;
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-    }
-    .hidden { display: none; }
-    .notice {
-      margin-top: 16px;
-      padding: 10px 14px;
-      border-left: 3px solid var(--pink);
-      background: rgba(240, 36, 92, 0.08);
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
+    :root { --bg:#08090D; --panel:#10131C; --panel2:#161A26; --border:#23293A; --text:#E8ECF4; --muted:#8C96AD; --cyan:#21E0DC; --pink:#F0245C; --green:#22C55E; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:10px; }
+    header h1 { font-size:1rem; letter-spacing:.06em; text-transform:uppercase; }
+    .badge { font-size:.72rem; padding:3px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); font-family:monospace; }
+    .badge.cyan { border-color:var(--cyan); color:var(--cyan); }
+    .badge.pink { border-color:var(--pink); color:var(--pink); }
+    .badge.green { border-color:var(--green); color:var(--green); }
+    main { max-width:1240px; margin:20px auto; padding:0 20px 40px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    @media (max-width:960px){ main{ grid-template-columns:1fr; } }
+    .section-card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .section-head { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; }
+    .section-head h2 { font-size:.9rem; text-transform:uppercase; letter-spacing:.06em; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:6px; }
+    .pill { font-size:.75rem; padding:5px 9px; border-radius:6px; border:1px solid var(--border); background:var(--panel2); color:var(--muted); cursor:pointer; }
+    .pill.active { border-color:var(--cyan); color:var(--cyan); background:rgba(33,224,220,.12); font-weight:600; }
+    .console { background:#050609; border:1px solid var(--border); border-radius:8px; padding:12px; font-family:ui-monospace,Menlo,monospace; font-size:.79rem; white-space:pre-wrap; min-height:175px; color:#D7E2F0; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; }
+    input[type="text"] { flex:1; min-width:180px; background:var(--panel2); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:6px; font-size:.82rem; }
+    .btn { background:var(--panel2); color:var(--text); border:1px solid var(--border); padding:8px 12px; border-radius:6px; cursor:pointer; font-size:.8rem; }
+    .btn.primary { border-color:var(--cyan); color:var(--cyan); background:rgba(33,224,220,.1); font-weight:600; }
+    .btn.danger { border-color:var(--pink); color:var(--pink); background:rgba(240,36,92,.1); font-weight:600; }
+    .checks { font-size:.78rem; color:var(--muted); background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">
-      <h1>Balaerion v1</h1>
-      <span class="badge cyan">Vercel + Supabase</span>
+    <div><h1>Pillar II · Balaerion v1 (Two-Section Workspace)</h1></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge cyan">Vercel EU + Supabase EU</span>
       <span class="badge pink">Edge Password Gate: LOCKED</span>
-      <span class="badge">Static Mirror Demo</span>
-    </div>
-    <div class="mode-switch">
-      <button id="btn-mode-a" class="btn active" onclick="setMode('general')">Mode A: General AI Assistant</button>
-      <button id="btn-mode-b" class="btn" onclick="setMode('prospecthub')">Mode B: ProspectHub Multi-Persona</button>
+      <span class="badge green">Invite-Only Auth</span>
     </div>
   </header>
 
   <main>
-    <!-- MODE A: GENERAL AI ASSISTANT -->
-    <section id="mode-general">
-      <div class="grid">
-        <div class="card">
-          <h2>General Lane Routing</h2>
-          <div class="persona-item selected" onclick="selectGeneralModel(this, 'Groq · Llama-3.3-70B')">
-            <span>Groq · Llama-3.3-70B</span><span class="badge cyan">Fast</span>
-          </div>
-          <div class="persona-item" onclick="selectGeneralModel(this, 'Gemini 2.5 Pro')">
-            <span>Gemini 2.5 Pro</span><span class="badge">Reasoning</span>
-          </div>
-          <div class="persona-item" onclick="selectGeneralModel(this, 'DeepSeek R1')">
-            <span>DeepSeek R1</span><span class="badge">Code</span>
-          </div>
-          <div class="notice">
-            <strong>Lane Guardrail:</strong> Mode A runs on <code>lane: general</code>. Any prompt containing unmasked client PII is blocked before dispatch and redirected to <code>lane: safe</code>.
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Everyday AI Workspace (Persistent Supabase Threads)</h2>
-          <div id="general-console" class="console">[ROUTER] Mode A active · Provider: Groq · Llama-3.3-70B · Lane: general
-[AUTH] Supabase Session verified (Invite-Only · RLS enforced)
-
-Ready for everyday engineering, SQL debugging, writing, or analysis tasks.
-Try typing a prompt below or click "Test PII Block" to see pre-dispatch lane enforcement.</div>
-          <div class="controls">
-            <input id="general-input" type="text" placeholder="Ask Balaerion anything (e.g., Write a Postgres RLS policy for workspaces)..." />
-            <button class="btn active" onclick="runGeneralPrompt()">Send</button>
-            <button class="btn pink-active" onclick="testPiiBlock()">Test PII Block</button>
-          </div>
-        </div>
+    <!-- SECTION 1: EVERYDAY GENERAL AI ASSISTANT -->
+    <section class="section-card">
+      <div class="section-head">
+        <h2>Section 1 · Everyday AI Assistant</h2>
+        <span class="badge cyan">lane: general</span>
+      </div>
+      <div class="checks">
+        <strong>Checks & Balances:</strong> Pre-dispatch PII scanner blocks unmasked client names/VATs from leaving for general providers. Rate-limit failover across Groq / Gemini / DeepSeek.
+      </div>
+      <div class="pill-row">
+        <span class="pill active" onclick="setModel(this,'Groq · Llama-3.3-70B')">Groq · Llama-3.3-70B</span>
+        <span class="pill" onclick="setModel(this,'Gemini 2.5 Pro')">Gemini 2.5 Pro</span>
+        <span class="pill" onclick="setModel(this,'DeepSeek R1')">DeepSeek R1</span>
+      </div>
+      <div id="sec1-log" class="console">[SECTION 1 · GENERAL AI] Provider: Groq · Llama-3.3-70B
+[GATE] Pre-dispatch PII filter: ACTIVE.
+Ready for everyday coding, SQL, writing, or analysis tasks.</div>
+      <div class="controls">
+        <input id="sec1-in" type="text" placeholder="Type an everyday prompt..." />
+        <button class="btn primary" onclick="sendGeneral()">Send</button>
+        <button class="btn danger" onclick="testPii()">Test PII Block</button>
       </div>
     </section>
 
-    <!-- MODE B: PROSPECTHUB MULTI-PERSONA SUITE -->
-    <section id="mode-prospecthub" class="hidden">
-      <div class="grid">
-        <div class="card">
-          <h2>Safe Lane Personas (EU Zero-Retention)</h2>
-          <div class="persona-item selected" onclick="selectPersona(this, 'research')">
-            <span>prospecthub-research-and-intel</span><span class="badge green">safe</span>
-          </div>
-          <div class="persona-item" onclick="selectPersona(this, 'activate')">
-            <span>activate (Post-Discovery)</span><span class="badge green">safe</span>
-          </div>
-          <div class="persona-item" onclick="selectPersona(this, 'watcher')">
-            <span>watcher (Signal Monitor)</span><span class="badge green">safe</span>
-          </div>
-
-          <h2 style="margin-top: 16px;">General Lane Personas (Commercial)</h2>
-          <div class="persona-item" onclick="selectPersona(this, 'cold-pitch')">
-            <span>prospecthub-cold-pitch-email</span><span class="badge cyan">general</span>
-          </div>
-          <div class="persona-item" onclick="selectPersona(this, 'roadmap')">
-            <span>prospecthub-scaling-roadmap</span><span class="badge cyan">general</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Domain-Keyed Workspace · Calibration Entity (Fictional)</h2>
-          <div class="kv-grid">
-            <div class="kv"><label>Entity</label><span>Kapsalon Vuurtoren BV</span></div>
-            <div class="kv"><label>Registry (KBO)</label><span>0123.456.789 (BE · 0.94)</span></div>
-            <div class="kv"><label>Stack & Pixels</label><span>Lightspeed eCom · Meta Pixel</span></div>
-            <div class="kv"><label>Readiness Score</label><span style="color: var(--cyan);">8.6 / 10 (Tier A)</span></div>
-          </div>
-
-          <h2>7-State Human-in-the-Loop Lifecycle</h2>
-          <div class="lifecycle" id="lifecycle-bar">
-            <span class="state-pill" onclick="setState(this, 'Cold')">1. Cold</span>
-            <span class="state-pill" onclick="setState(this, 'Auto-replied')">2. Auto-replied</span>
-            <span class="state-pill" onclick="setState(this, 'Agent-contacted')">3. Agent-contacted</span>
-            <span class="state-pill" onclick="setState(this, 'Discovery-booked')">4. Discovery-booked</span>
-            <span class="state-pill active" onclick="setState(this, 'Post-discovery')">5. Post-discovery</span>
-            <span class="state-pill" onclick="setState(this, 'In-nurture')">6. In-nurture</span>
-            <span class="state-pill" onclick="setState(this, 'Dormant')">7. Dormant</span>
-          </div>
-
-          <div id="ph-console" class="console">[OSINT · DETERMINISTIC] KBO 0123.456.789 verified via VIES/KBO/NBB Consult (BE confidence: 0.94).
-[LANE ENFORCEMENT] Persona: prospecthub-research-and-intel | Lane: safe (locked) | Endpoint: Mistral EU (Zero-Retention).
-[WORKSPACE STATE] Post-discovery (Human-approved transition).
-
-Summary:
-- Lightspeed eCom storefront detected; active organic content, zero paid conversion tracking.
-- Recommended next action: Run `activate` persona with discovery call deltas to generate client activation plan.</div>
-        </div>
+    <!-- SECTION 2: PROSPECTHUB MULTI-PERSONA SUITE -->
+    <section class="section-card">
+      <div class="section-head">
+        <h2>Section 2 · ProspectHub Multi-Persona</h2>
+        <span class="badge green">lane: safe (EU locked)</span>
       </div>
+      <div class="checks">
+        <strong>Checks & Balances:</strong> Deterministic OSINT only (zero hallucination) · EU Zero-Retention lock · <strong>Human-in-the-Loop</strong> manual state transitions · GDPR Art. 15/17 ready.
+      </div>
+      <div class="pill-row">
+        <span class="pill" onclick="setState(this,'Cold')">1. Cold</span>
+        <span class="pill" onclick="setState(this,'Auto-replied')">2. Auto-replied</span>
+        <span class="pill" onclick="setState(this,'Agent-contacted')">3. Contacted</span>
+        <span class="pill" onclick="setState(this,'Discovery-booked')">4. Booked</span>
+        <span class="pill active" onclick="setState(this,'Post-discovery')">5. Post-discovery</span>
+        <span class="pill" onclick="setState(this,'In-nurture')">6. Nurture</span>
+        <span class="pill" onclick="setState(this,'Dormant')">7. Dormant</span>
+      </div>
+      <div class="controls">
+        <button class="btn primary" onclick="runPersona('research')">Research & Intel (safe)</button>
+        <button class="btn primary" onclick="runPersona('activate')">Activate (safe)</button>
+        <button class="btn" onclick="runPersona('pitch')">Cold Pitch (general)</button>
+        <button class="btn danger" onclick="runPersona('auto-block')">Test Auto-Transition Block</button>
+      </div>
+      <div id="sec2-log" class="console">[SECTION 2 · PROSPECTHUB] Fictional Calibration Entity: Kapsalon Vuurtoren BV (KBO 0123.456.789 · BE 0.94).
+[LANE] safe (locked) -> Mistral EU Zero-Retention.
+[STATE] Post-discovery (Human-approved).</div>
     </section>
   </main>
 
   <script>
-    let activeModel = 'Groq · Llama-3.3-70B';
-    let currentState = 'Post-discovery';
-
-    function setMode(mode) {
-      document.getElementById('mode-general').classList.toggle('hidden', mode !== 'general');
-      document.getElementById('mode-prospecthub').classList.toggle('hidden', mode !== 'prospecthub');
-      document.getElementById('btn-mode-a').classList.toggle('active', mode === 'general');
-      document.getElementById('btn-mode-b').classList.toggle('active', mode === 'prospecthub');
+    let model = 'Groq · Llama-3.3-70B';
+    let state = 'Post-discovery';
+    function setModel(el, m) {
+      el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+      el.classList.add('active'); model = m;
+      document.getElementById('sec1-log').textContent = `[SECTION 1 · GENERAL AI] Switched to ${model} (lane: general).`;
     }
-
-    function selectGeneralModel(el, model) {
-      el.parentElement.querySelectorAll('.persona-item').forEach(i => i.classList.remove('selected'));
-      el.classList.add('selected');
-      activeModel = model;
-      document.getElementById('general-console').textContent =
-        `[ROUTER] Switched provider to: ${activeModel} (lane: general)\n[STATUS] Ready for everyday AI tasks.`;
+    function sendGeneral() {
+      const q = document.getElementById('sec1-in').value.trim() || 'Write a Supabase RLS policy for owner-only access.';
+      document.getElementById('sec1-log').textContent = `[USER] ${q}\n[DISPATCH] ${model} · 0 PII detected.\n[OK] Response persisted to Supabase general_threads.`;
+      document.getElementById('sec1-in').value = '';
     }
-
-    function runGeneralPrompt() {
-      const input = document.getElementById('general-input');
-      const val = input.value.trim() || 'Generate a Supabase RLS policy restricting workspace rows to auth.uid().';
-      document.getElementById('general-console').textContent =
-        `[USER] ${val}\n\n[ROUTER] Dispatched via ${activeModel} (lane: general · 0 PII detected)\n[RESPONSE]\nCREATE POLICY "owner_only" ON workspaces\n  FOR ALL USING (auth.uid() = user_id);`;
-      input.value = '';
+    function testPii() {
+      document.getElementById('sec1-log').textContent = `[BLOCKED · PRE-DISPATCH GATE] Unmasked client VAT (BE0123.456.789) detected on lane: general.\n[ACTION] Request refused for ${model}. Route client records through Section 2 (lane: safe).`;
     }
-
-    function testPiiBlock() {
-      document.getElementById('general-console').textContent =
-        `[USER] Draft an audit for client VAT BE0123.456.789 using Groq.\n\n` +
-        `[BLOCKED · PRE-DISPATCH GATE] Unmasked client identifier detected on lane: general.\n` +
-        `[ACTION] Request refused for ${activeModel}. Switch to Mode B (lane: safe · EU Zero-Retention) to process client records.`;
+    function setState(el, s) {
+      el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+      el.classList.add('active'); state = s;
+      document.getElementById('sec2-log').textContent = `[HUMAN-IN-THE-LOOP] Operator manually updated state to: ${state}.\n[AUDIT] Logged to Supabase prospect_events with actor_id + timestamp.`;
     }
-
-    function setState(el, state) {
-      document.querySelectorAll('.state-pill').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      currentState = state;
-      document.getElementById('ph-console').textContent =
-        `[HUMAN-IN-THE-LOOP] Lifecycle state manually updated to: ${currentState}\n` +
-        `[AUDIT] Logged to Supabase prospect_events table with timestamp & actor_id.\n` +
-        `[RULE] AI recommends next actions; human operator owns all state transitions.`;
-    }
-
-    function selectPersona(el, key) {
-      document.querySelectorAll('#mode-prospecthub .persona-item').forEach(i => i.classList.remove('selected'));
-      el.classList.add('selected');
-      const outputs = {
-        research: `[OSINT · DETERMINISTIC] KBO 0123.456.789 verified (BE · 0.94).\n[LANE] safe (locked) -> Mistral EU Zero-Retention.\n[VERDICT] Tier A · Readiness 8.6/10 · Lightspeed eCom detected.`,
-        activate: `[PERSONA] activate | Lane: safe (locked) | State: ${currentState}\n[PROMPT] Pulling existing Kapsalon Vuurtoren BV brief. What changed in the discovery meeting?\n[DELIVERABLE] Phased Activation Plan: Start with Video Views to build retargeting pool before launching Conversion campaigns.`,
-        watcher: `[PERSONA] watcher | Lane: safe | Scheduled Footprint Check\n[SIGNALS] No new pixel removals. Detected +2 new landing pages on Lightspeed eCom.\n[QUEUE] Surfaced to daily-view action queue.`,
-        'cold-pitch': `[PERSONA] prospecthub-cold-pitch-email | Lane: general (anonymized brief)\n[LANGUAGE] NL (10-Language EU Parity)\n[DRAFT] Concise value-led outreach tailored to regional retail e-commerce benchmarks.`,
-        roadmap: `[PERSONA] prospecthub-scaling-roadmap | Lane: general\n[OUTPUT] 90-day phased testing roadmap (Creative Velocity -> Pixel Maturity -> Conversion Scaling).`
+    function runPersona(p) {
+      const map = {
+        research: `[OSINT · DETERMINISTIC] KBO 0123.456.789 verified via VIES/KBO/NBB (BE 0.94).\n[LANE] safe (locked) -> Mistral EU.\n[VERDICT] Tier A · Readiness 8.6/10 · Lightspeed eCom.`,
+        activate: `[PERSONA] activate | Lane: safe | State: ${state}\n[CHECK] Pulled existing brief. Asking only: "What changed in the discovery meeting?"`,
+        pitch: `[PERSONA] cold-pitch-email | Lane: general (anonymized brief only)\n[PARITY] 10-Language EU Parity (NL selected).`,
+        'auto-block': `[BLOCKED · HUMAN-IN-THE-LOOP RULE] AI attempted automatic transition to "Discovery-booked".\n[REFUSED] AI recommends; human operator must manually approve all lifecycle state transitions.`
       };
-      document.getElementById('ph-console').textContent = outputs[key];
+      document.getElementById('sec2-log').textContent = map[p];
     }
   </script>
 </body>

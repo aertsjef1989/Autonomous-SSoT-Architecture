@@ -1,313 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSoT — 6-Tab Autonomous Knowledge Architecture Console</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<style>
-  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; --green:#22C55E; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
-  header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
-  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
-  .back { color:var(--cyan); text-decoration:none; font-size:12px; border:1px solid var(--border); padding:5px 10px; border-radius:5px; }
-  .back:hover { border-color:var(--cyan); }
-  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
-  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:7px 11px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12px; }
-  .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
-  main { max-width:1240px; margin:22px auto; padding:0 20px 64px; }
-  .view { display:none; }
-  .view.active { display:block; }
-  .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
-  .card h3 { margin:0 0 8px; font-size:13.5px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
-  .muted { color:var(--muted); font-size:12px; }
-  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; }
-  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-top:12px; }
-  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
-  .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
-  .box.ok { border-color:var(--cyan); }
-  .box.block { border-color:var(--pink); background:rgba(240,36,92,0.1); }
-  .box.warn { border-color:var(--amber); }
-  .val { font-size:20px; font-weight:800; color:var(--cyan); margin-top:3px; }
-  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
-  select, input[type="text"], button.act { background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 11px; border-radius:6px; font-size:12.5px; }
-  input[type="range"] { width:100%; accent-color:var(--cyan); }
-  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; cursor:pointer; }
-  button.act.pink { background:var(--pink); color:#fff; }
-  label.chk { display:inline-flex; gap:7px; align-items:center; font-size:12.5px; cursor:pointer; }
-  .banner { padding:11px 14px; border-radius:6px; font-size:12.5px; font-weight:600; margin-top:12px; }
-  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
-  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
-  .b-warn { background:rgba(245,166,35,0.14); border:1px solid var(--amber); color:var(--amber); }
-  .log, pre.json { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:11.5px; overflow:auto; color:#c7d0dd; margin:0; }
-  .log { max-height:190px; }
-  .chart-box { position:relative; height:290px; width:100%; }
-  .bar-bg { background:#050609; border:1px solid var(--border); border-radius:4px; height:10px; overflow:hidden; margin-top:6px; }
-  .bar-fg { height:100%; background:var(--cyan); }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autonomous SSoT — Governance & Checks-and-Balances Demo</title>
+  <style>
+    :root { --bg:#08090D; --panel:#10131C; --panel2:#161A26; --border:#23293A; --text:#E8ECF4; --muted:#8C96AD; --cyan:#21E0DC; --pink:#F0245C; --green:#22C55E; --amber:#F59E0B; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:10px; }
+    header h1 { font-size:1rem; letter-spacing:.06em; text-transform:uppercase; }
+    .badge { font-size:.72rem; padding:3px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); font-family:monospace; }
+    .badge.cyan { border-color:var(--cyan); color:var(--cyan); }
+    .badge.pink { border-color:var(--pink); color:var(--pink); }
+    .badge.green { border-color:var(--green); color:var(--green); }
+    main { max-width:1180px; margin:22px auto; padding:0 20px 40px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    @media (max-width:860px){ main{ grid-template-columns:1fr; } }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; }
+    .card h2 { font-size:.82rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:12px; }
+    .gate { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:var(--panel2); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; font-size:.84rem; }
+    .btn { background:var(--panel2); color:var(--text); border:1px solid var(--border); padding:8px 12px; border-radius:6px; cursor:pointer; font-size:.82rem; }
+    .btn:hover { border-color:var(--cyan); }
+    .btn.primary { border-color:var(--cyan); color:var(--cyan); background:rgba(33,224,220,.1); font-weight:600; }
+    .btn.danger { border-color:var(--pink); color:var(--pink); background:rgba(240,36,92,.1); font-weight:600; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    .console { background:#050609; border:1px solid var(--border); border-radius:8px; padding:14px; font-family:ui-monospace,Menlo,monospace; font-size:.8rem; white-space:pre-wrap; min-height:190px; color:#D7E2F0; }
+    .warn { padding:10px 12px; border-left:3px solid var(--amber); background:rgba(245,158,11,.08); font-size:.8rem; margin-bottom:12px; color:#FDE68A; }
+  </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <a class="back" href="../">← Back to Book</a>
-    <span class="dot" style="background:var(--pink)"></span>
-    <span class="dot" style="background:var(--cyan)"></span>
-    <span>SSoT // 6-TAB AUTONOMOUS KNOWLEDGE ARCHITECTURE CONSOLE</span>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="sw('t1',this)">1. Dual-Root Explorer</button>
-    <button class="tab-btn" onclick="sw('t2',this)">2. 7-Station Harness</button>
-    <button class="tab-btn" onclick="sw('t3',this)">3. Self-Healing &amp; Bot</button>
-    <button class="tab-btn" onclick="sw('t4',this)">4. Stage 0 Gates</button>
-    <button class="tab-btn" onclick="sw('t5',this)">5. v3.0 ROI Model</button>
-    <button class="tab-btn" onclick="sw('t6',this)">6. 21-KPI &amp; QA</button>
-  </div>
-</header>
-<main>
-  <!-- TAB 1: DUAL-ROOT 385-NODE EXPLORER -->
-  <section id="t1" class="view active">
-    <div class="grid-4">
-      <div class="box ok"><div class="muted">Public Knowledge Estate</div><div class="val">3,386 Files</div><div class="muted">8 folders × 45 markets</div></div>
-      <div class="box ok"><div class="muted">Internal Ops Estate</div><div class="val">~1,500 Docs</div><div class="muted">15 functional areas</div></div>
-      <div class="box ok"><div class="muted">Relational Schema</div><div class="val">T1 – T10</div><div class="muted">Audit-split tables</div></div>
-      <div class="box ok"><div class="muted">Access Governance</div><div class="val">6-Tier RBAC</div><div class="muted">Container inheritance</div></div>
+  <header>
+    <div><h1>Pillar I · Autonomous SSoT</h1></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge cyan">v3.0 Governance Baseline</span>
+      <span class="badge green">Zero Unowned Files (BR-02)</span>
+      <span class="badge pink">Staleness & Approval Gates Active</span>
     </div>
-    <div class="card" style="margin-top:16px;">
-      <h3>Dual-Root Container &amp; Permission Inheritance Explorer</h3>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. Active Checks & Balances (Interactive Gates)</h2>
+      <div class="gate"><span><strong>BR-02 · Ownership Check</strong> (No unowned files)</span><span id="g-owner" class="badge green">PASS</span></div>
+      <div class="gate"><span><strong>FR-C01 · Approval Gate</strong> (Required before register write)</span><span id="g-approval" class="badge pink">PENDING</span></div>
+      <div class="gate"><span><strong>FR-C03 · Market Scope</strong> (Explicit market tag required)</span><span id="g-market" class="badge green">NL / BE</span></div>
+      <div class="gate"><span><strong>FR-37 · Node Parentage</strong> (Verify parent before publish)</span><span id="g-parent" class="badge green">VERIFIED</span></div>
+      <div class="gate"><span><strong>FR-11 · Escalation</strong> (Day 0 -> Day 14 -> Day 30 Archive)</span><span id="g-cadence" class="badge cyan">DAY 0</span></div>
+
       <div class="controls">
-        <label>Root Tree:
-          <select id="rootSel" onchange="runT1()">
-            <option value="public">Public Tree (EMEA / MENA / LATAM — 45 Markets)</option>
-            <option value="staging">_STAGING (Market-Partitioned Drafts)</option>
-            <option value="archive">_ARCHIVE (Unpartitioned 30-Day Kill-Switch Sink)</option>
-            <option value="internal">Internal Tree (15 Ops &amp; Governance Areas)</option>
-          </select>
-        </label>
-        <label>User Role Tier:
-          <select id="roleSel" onchange="runT1()">
-            <option value="T1_VIEWER">Tier 1 — Frontline Viewer</option>
-            <option value="T3_SME">Tier 3 — Market SME / Author</option>
-            <option value="T5_ADMIN">Tier 5 — System Admin</option>
-            <option value="T6_BOT">Tier 6 — Autonomous Service Bot</option>
-          </select>
-        </label>
+        <button class="btn primary" onclick="approveWrite()">Approve Register Write (FR-C01)</button>
+        <button class="btn danger" onclick="simulateUnowned()">Test Unowned File Block (BR-02)</button>
+        <button class="btn" onclick="simulateStale()">Simulate Day 30 Overdue (FR-11/36)</button>
+        <button class="btn" onclick="resetGates()">Reset</button>
       </div>
-      <div id="t1Banner"></div>
-      <div id="t1Grid" class="grid-3"></div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TAB 2: 7-STATION GENERATION HARNESS -->
-  <section id="t2" class="view">
-    <div class="card">
-      <h3>7-Station Anti-Hallucination Generation Harness (+ Station 8 Human Read)</h3>
-      <div class="muted">Enforces fresh-instance isolation at Sort (Station 3) and Audit (Station 7), with live web search disabled during Write (Station 5).</div>
-      <div class="controls">
-        <label class="chk"><input type="checkbox" id="unsourcedChk" onchange="runT2()"> Inject Unsourced Claim During Station 5 (Write)</label>
-        <button class="act" onclick="runT2()">Run Harness Audit</button>
+    <section class="card">
+      <h2>2. Audit & Enforcement Log</h2>
+      <div id="stale-banner" class="warn" style="display:none;">
+        <strong>STALENESS WARNING (FR-36):</strong> Document exceeded verification cadence (Day 30). Auto-archive triggered; flagged in search results.
       </div>
-      <div id="t2Banner"></div>
-      <div id="t2Grid" class="grid-4"></div>
-    </div>
-  </section>
+      <div id="ssot-log" class="console">[SSoT ENGINE] Loaded governance checks: BR-02, BR-09, FR-11, FR-36, FR-37, FR-C01, FR-C03.
+[STATUS] Register write is currently LOCKED awaiting human approval (FR-C01).
+[TIP] Use the buttons on the left to test each check-and-balance gate.</div>
+    </section>
+  </main>
 
-  <!-- TAB 3: SELF-HEALING LOOP & 23-COMMAND BOT -->
-  <section id="t3" class="view">
-    <div class="grid-2">
-      <div class="card">
-        <h3>5-Stage Self-Healing Loop (29 Fault Types · P1–P4)</h3>
-        <div class="controls">
-          <label>Simulate Fault:
-            <select id="faultSel" onchange="runT3()">
-              <option value="stale">F-07 (P2): Unverified Doc > 30 Days (Archive Kill Switch)</option>
-              <option value="perm">F-14 (P1): Broken Container Permission Inheritance</option>
-              <option value="orphan">F-21 (P3): Orphaned Metadata Row in Schema T4</option>
-              <option value="rate">F-28 (P4): Upstream API 429 Rate-Limit Burst</option>
-            </select>
-          </label>
-          <button class="act" onclick="runT3(true)">Trigger Loop</button>
-        </div>
-        <div id="t3Banner"></div>
-        <div id="t3Log" class="log" style="margin-top:12px;"></div>
-      </div>
-      <div class="card">
-        <h3>23-Command Bot Simulator (3s ACK · Move-Then-Confirm)</h3>
-        <div class="controls">
-          <label>Bot Command:
-            <select id="cmdSel">
-              <option value="/publish">/publish [doc_id] (Move-Then-Confirm)</option>
-              <option value="/scan-batch">/scan-batch (98% Budget Reduction)</option>
-              <option value="/audit-perm">/audit-perm [market_node]</option>
-              <option value="/archive-sweep">/archive-sweep (30-Day Kill Switch)</option>
-            </select>
-          </label>
-          <button class="act" onclick="runBot()">Execute Command</button>
-        </div>
-        <div id="botLog" class="log"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 4: STAGE 0 GATES (G1-G5) & 11-STAGE PLAN -->
-  <section id="t4" class="view">
-    <div class="card">
-      <h3>Stage 0 Sandbox Gates (G1–G5) &amp; 11-Stage Programme (1,616 Person-Days · 3.7 FTE)</h3>
-      <div class="muted">Uncheck any Stage 0 Gate to inspect the exact architectural fallback triggered before full buildout.</div>
-      <div class="controls">
-        <label class="chk"><input type="checkbox" id="g1" checked onchange="runT4()"> G1: API Auth &amp; 3s ACK</label>
-        <label class="chk"><input type="checkbox" id="g2" checked onchange="runT4()"> G2: 5-Level Nested Tree</label>
-        <label class="chk"><input type="checkbox" id="g3" checked onchange="runT4()"> G3: Container Inheritance</label>
-        <label class="chk"><input type="checkbox" id="g4" checked onchange="runT4()"> G4: Batch Provisioning</label>
-        <label class="chk"><input type="checkbox" id="g5" checked onchange="runT4()"> G5: 9-Surface Console</label>
-      </div>
-      <div id="t4Banner"></div>
-      <div id="t4Grid" class="grid-3"></div>
-    </div>
-  </section>
-
-  <!-- TAB 5: v3.0 BUSINESS CASE & ROI SIMULATOR -->
-  <section id="t5" class="view">
-    <div class="card">
-      <h3>v3.0 Business Case — Eurostat Labor-Waste Model &amp; Recovery Scenarios</h3>
-      <div class="muted">Re-anchored v3.0 scenarios (10% conservative / 20% base / 35% upside recovery) against €1.89M–€2.81M annual fragmentation waste.</div>
-      <div class="controls">
-        <label style="min-width:260px;">Supported Headcount: <strong id="hcLbl">200</strong> users<input type="range" id="hcSlider" min="50" max="500" step="25" value="200" oninput="runT5()"></label>
-      </div>
-      <div id="t5Stats" class="grid-4"></div>
-      <div class="chart-box" style="margin-top:14px;"><canvas id="roiChart"></canvas></div>
-    </div>
-  </section>
-
-  <!-- TAB 6: 21-KPI & QA READINESS CONSOLE -->
-  <section id="t6" class="view">
-    <div class="grid-4">
-      <div class="box ok"><div class="muted">Knowledge Health Score</div><div class="val">72 → 90+</div><div class="muted">Target autonomous steady-state</div></div>
-      <div class="box ok"><div class="muted">Repeat-Question Reduction</div><div class="val">-50%</div><div class="muted">Via 2-layer bot + SSoT</div></div>
-      <div class="box ok"><div class="muted">Time-to-Find Target</div><div class="val">&lt; 2 min</div><div class="muted">Across 45 markets</div></div>
-      <div class="box ok"><div class="muted">Batched Scan Savings</div><div class="val">98%</div><div class="muted">Automation budget preserved</div></div>
-    </div>
-    <div class="grid-2" style="margin-top:16px;">
-      <div class="card">
-        <h3>Acceptance Criteria Readiness (185 Total · 6 Blocking)</h3>
-        <div style="font-size:12.5px;margin-bottom:8px;">Core Schema &amp; Governance (64/64)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
-        <div style="font-size:12.5px;margin-bottom:8px;">Self-Healing &amp; 23 Bot Commands (71/71)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
-        <div style="font-size:12.5px;margin-bottom:8px;">Security, RBAC &amp; 6 Blocking Gates (50/50)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
-      </div>
-      <div class="card">
-        <h3>QA Verification Suite (94 Automated &amp; Rehearsal Tests)</h3>
-        <div class="box ok" style="margin-bottom:8px;"><strong>Unit &amp; Contract Tests (48):</strong> Schema T1–T10 invariants, 3s ACK SLA, 429 exponential backoff.</div>
-        <div class="box ok" style="margin-bottom:8px;"><strong>Failure-Mode Rehearsals (28):</strong> Move-then-confirm rollback, permission drift auto-repair, 30-day archive kill switch.</div>
-        <div class="box ok"><strong>End-to-End Continuity (18):</strong> Dual-root failover, zero-license-cost compliance verification.</div>
-      </div>
-    </div>
-  </section>
-</main>
-<script>
-function sw(id, btn) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-
-// TAB 1
-function runT1() {
-  const root = document.getElementById('rootSel').value;
-  const role = document.getElementById('roleSel').value;
-  const canWrite = (role==='T5_ADMIN'||role==='T6_BOT') || (role==='T3_SME' && root==='staging');
-  const canRead = !(root==='internal' && role==='T1_VIEWER') && !(root==='archive' && role==='T1_VIEWER');
-  document.getElementById('t1Banner').innerHTML = !canRead
-    ? `<div class="banner b-err">ACCESS DENIED: ${role} blocked from ${root.toUpperCase()} via container-level inheritance.</div>`
-    : `<div class="banner b-ok">ACCESS GRANTED: ${role} has ${canWrite?'READ + WRITE':'READ-ONLY'} on ${root.toUpperCase()}.</div>`;
-  document.getElementById('t1Grid').innerHTML = `
-    <div class="box ${canRead?'ok':'block'}"><strong>Container Scope</strong><br>${root.toUpperCase()}</div>
-    <div class="box ok"><strong>Inheritance Rule</strong><br>Zero per-file ACL drift; inherited from parent container</div>
-    <div class="box ${canWrite?'ok':'warn'}"><strong>Effective Privilege</strong><br>${!canRead?'NONE (403)':(canWrite?'READ / WRITE':'READ-ONLY')}</div>`;
-}
-
-// TAB 2
-const STATIONS = [
-  "1. Look Up (Primary Sources)","2. Ask (Gap Clarification)","3. Sort [Fresh Instance]","4. Check (Cross-Verify)",
-  "5. Write [Search OFF]","6. Scan (Leak & Policy)","7. Audit [Fresh Instance]","8. Human Read (Sign-Off)"
-];
-function runT2() {
-  const bad = document.getElementById('unsourcedChk').checked;
-  document.getElementById('t2Banner').innerHTML = bad
-    ? `<div class="banner b-err">HARNESS HALTED AT STATION 5 &amp; 7: Unsourced claim rejected (Search OFF at Write; Fresh-Instance Audit flagged missing citation).</div>`
-    : `<div class="banner b-ok">HARNESS PASSED (8/8): All claims grounded in primary sources and verified by fresh-instance audit.</div>`;
-  document.getElementById('t2Grid').innerHTML = STATIONS.map((s,i) => {
-    const fail = bad && (i===4 || i===6);
-    return `<div class="box ${fail?'block':'ok'}"><strong>${s}</strong><br>${fail?'BLOCKED — Unsourced claim detected':'PASSED'}</div>`;
-  }).join('');
-}
-
-// TAB 3
-function runT3(logIt) {
-  const f = document.getElementById('faultSel').value;
-  const map = {
-    stale:{tier:"Tier 2 Auto-Archive",msg:"30-day unverified kill switch moved node to _ARCHIVE; verified T+24h."},
-    perm:{tier:"Tier 1 Auto-Repair (P1)",msg:"Re-applied parent container ACL inheritance; drift eliminated in 1.2s."},
-    orphan:{tier:"Tier 2 Schema Sync",msg:"Reconciled orphaned T4 metadata row against dual-root index."},
-    rate:{tier:"Tier 1 Backoff",msg:"API 429 caught; exponential retry succeeded on attempt 2."}
-  };
-  document.getElementById('t3Banner').innerHTML = `<div class="banner b-ok">LOOP COMPLETE (${map[f].tier}): ${map[f].msg}</div>`;
-  if (logIt) {
-    const ts = new Date().toISOString().slice(11,19);
-    document.getElementById('t3Log').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:#21E0DC">${map[f].tier}</strong> — ${map[f].msg}</div>` + document.getElementById('t3Log').innerHTML;
-  }
-}
-function runBot() {
-  const cmd = document.getElementById('cmdSel').value;
-  const ts = new Date().toISOString().slice(11,19);
-  document.getElementById('botLog').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:#21E0DC">ACK (0.4s &lt; 3s SLA)</strong> Executed <code>${cmd}</code> — verified clean.</div>` + document.getElementById('botLog').innerHTML;
-}
-
-// TAB 4
-function runT4() {
-  const g1=document.getElementById('g1').checked, g2=document.getElementById('g2').checked,
-        g3=document.getElementById('g3').checked, g4=document.getElementById('g4').checked, g5=document.getElementById('g5').checked;
-  const fails = [];
-  if(!g1) fails.push("G1 Failed: Bot SLA degraded; requires async webhook queue.");
-  if(!g2) fails.push("G2 Failed: 5-level tree flattened to 3-level prefixed folders.");
-  if(!g3) fails.push("G3 Failed: Container inheritance replaced by nightly ACL reconciliation.");
-  if(!g4) fails.push("G4 Failed: Provisioning jumps from 200 to 4,000 API calls.");
-  if(!g5) fails.push("G5 Failed: 9-Surface Console blocked; fallback to CLI + Bot-only ops.");
-  document.getElementById('t4Banner').innerHTML = fails.length
-    ? `<div class="banner b-warn">FALLBACK MODE ACTIVE (${fails.length} Gate(s) Failed): ${fails.join(' | ')}</div>`
-    : `<div class="banner b-ok">ALL 5 STAGE 0 GATES PASSED: Full 11-Stage Programme (1,616 person-days, 3.7 FTE) cleared for execution.</div>`;
-  document.getElementById('t4Grid').innerHTML = `
-    <div class="box ${g2?'ok':'warn'}"><strong>Tree Depth</strong><br>${g2?'5-Level Dual-Root':'Flattened 3-Level Fallback'}</div>
-    <div class="box ${g4?'ok':'warn'}"><strong>Provisioning Calls</strong><br>${g4?'~200 Batched Calls':'4,000 Unbatched Calls'}</div>
-    <div class="box ${g5?'ok':'block'}"><strong>Console Surface</strong><br>${g5?'9-Surface Console Active':'Blocked (Bot/CLI Only)'}</div>`;
-}
-
-// TAB 5
-let roiChart;
-function runT5() {
-  const hc = parseInt(document.getElementById('hcSlider').value, 10);
-  document.getElementById('hcLbl').textContent = hc;
-  const scale = hc / 200;
-  const baseMid = 2.35 * scale; // €2.35M midpoint of €1.89M-€2.81M at 200 users
-  const r10 = +(baseMid * 0.10).toFixed(2), r20 = +(baseMid * 0.20).toFixed(2), r35 = +(baseMid * 0.35).toFixed(2);
-  document.getElementById('t5Stats').innerHTML = `
-    <div class="box"><div class="muted">Annual Waste Midpoint</div><div class="val">€${baseMid.toFixed(2)}M</div></div>
-    <div class="box ok"><div class="muted">10% Conservative</div><div class="val">€${r10}M</div></div>
-    <div class="box ok"><div class="muted">20% Base Case</div><div class="val">€${r20}M</div></div>
-    <div class="box ok"><div class="muted">35% Upside</div><div class="val">€${r35}M</div></div>`;
-  const data = [r10, r20, r35];
-  if (roiChart) { roiChart.data.datasets[0].data = data; roiChart.update(); }
-  else {
-    roiChart = new Chart(document.getElementById('roiChart'), {
-      type:'bar',
-      data:{labels:['10% Conservative','20% Base Case','35% Upside'],datasets:[{label:'Annual Recovered Value (€M)',data,backgroundColor:['#F5A623','#21E0DC','#22C55E'],borderRadius:5}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#F2F5F9'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5',callback:v=>'€'+v+'M'},grid:{color:'#1b202c'}}}}
-    });
-  }
-}
-
-runT1(); runT2(); runT3(true); runBot(); runT4(); runT5();
-</script>
+  <script>
+    const log = (msg) => document.getElementById('ssot-log').textContent = msg;
+    function approveWrite() {
+      document.getElementById('g-approval').className = 'badge green';
+      document.getElementById('g-approval').textContent = 'APPROVED';
+      log('[FR-C01] Approval granted by reviewer.\n[FR-37] Node parentage verified (04_Markets/NL -> Root Public Layer).\n[FR-C03] Market scope validated: NL/BE.\n[COMMIT] State written to SSoT register. Audit row logged.');
+    }
+    function simulateUnowned() {
+      document.getElementById('g-owner').className = 'badge pink';
+      document.getElementById('g-owner').textContent = 'BLOCKED';
+      log('[BLOCKED · BR-02] Publish rejected: target file has no assigned owner.\n[RULE] Zero unowned files permitted in SSoT. Assign a valid owner_id before retry.');
+    }
+    function simulateStale() {
+      document.getElementById('g-cadence').className = 'badge pink';
+      document.getElementById('g-cadence').textContent = 'DAY 30 · ARCHIVED';
+      document.getElementById('stale-banner').style.display = 'block';
+      log('[FR-11] Escalation triggered: Day 0 reminder -> Day 14 manager ping -> Day 30 auto-archive.\n[FR-36] Staleness banner injected on all overdue query results until re-verified (BR-09).');
+    }
+    function resetGates() {
+      document.getElementById('g-owner').className = 'badge green'; document.getElementById('g-owner').textContent = 'PASS';
+      document.getElementById('g-approval').className = 'badge pink'; document.getElementById('g-approval').textContent = 'PENDING';
+      document.getElementById('g-cadence').className = 'badge cyan'; document.getElementById('g-cadence').textContent = 'DAY 0';
+      document.getElementById('stale-banner').style.display = 'none';
+      log('[SSoT ENGINE] Gates reset. Register write locked awaiting FR-C01 approval.');
+    }
+  </script>
 </body>
 </html>
