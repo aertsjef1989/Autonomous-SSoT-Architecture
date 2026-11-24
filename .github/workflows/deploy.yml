@@ -20,18 +20,30 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Run Leak Gate (Pre-Build)
+        run: python3 scripts/leak_gate.py
+
       - name: Install dependencies and build HTML
         run: |
           npm install -g honkit
           honkit build
-          mkdir -p _book/styles
+          mkdir -p _book/styles _book/signal/02_studio _book/balaerion/demo _book/syndicate/demo
           cp styles/website.css _book/styles/website.css
-          if [ -d "DESIGN_SYSTEM_Signal" ]; then
-            cp -r DESIGN_SYSTEM_Signal _book/signal
+          if [ -d "DESIGN_SYSTEM_Signal/02_studio" ]; then
+            cp -r DESIGN_SYSTEM_Signal/02_studio/* _book/signal/02_studio/
           fi
           if [ -d "DEMO" ]; then
             cp -r DEMO _book/demo
           fi
+          if [ -d "balaerion/demo" ]; then
+            cp -r balaerion/demo/* _book/balaerion/demo/
+          fi
+          if [ -d "syndicate/demo" ]; then
+            cp -r syndicate/demo/* _book/syndicate/demo/
+          fi
+
+      - name: Run Leak Gate (Built _book Verification)
+        run: python3 scripts/leak_gate.py
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4

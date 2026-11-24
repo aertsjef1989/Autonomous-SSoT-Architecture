@@ -1,31 +1,42 @@
 # Summary
 
 - [Executive Summary](README.md)
-- [Final Architecture Flowchart](ARCHITECTURE_FLOW.md)
+- [Architecture Topology](ARCHITECTURE_FLOW.md)
 
-## Part I: Autonomous SSoT Architecture
+## I. The Mandate
 - [Business Case & ROI](01-Business-Case-and-ROI.md)
+
+## II. The Blueprint
 - [System Architecture](02-System-Architecture.md)
 - [Design Methodology (DMADV & DMAIC)](03-Design-Methodology-DMADV.md)
+
+## III. The Engine
 - [Relational Database Schema](04-Relational-Database-Schema.md)
 - [Self-Healing Loop & Fault Taxonomy](05-Self-Healing-Loop-and-Fault-Taxonomy.md)
 - [Bot & API Command Reference](06-Bot-Command-Reference.md)
+
+## IV. Governance & Security
 - [Role-Based Access Matrix](07-Role-Based-Access-Matrix.md)
 - [Security & Compliance](08-Security-and-Compliance.md)
 - [Architecture Decision Records & Governance](12-Architecture-Decision-Records.md)
+
+## V. Continuity & Readiness
 - [Operations Runbook](09-Operations-Runbook.md)
 - [Contracts, Testability & Readiness](13-Contracts-and-Readiness.md)
 - [AI Content Engineering & Verification Rules](14-AI-Content-Engineering-and-Rules.md)
 - [Enablement, Adoption & Continuity](15-Enablement-and-Continuity.md)
+
+## VI. Interfaces & Design System
 - [Failure-Mode Rehearsals & Interface Specs](10-Prototype-Manual.md)
 - [Signal Design System](11-Signal-Design-System.md)
+- [Interactive SSoT Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
 
-## Part II: Project Balerion (12-Agent RevOps)
-- [Mandate & 12-Agent Topology](part-2-balerion/01-Mandate-and-12-Agent-Topology.md)
-- [Failure Modes, Guardrails & Telemetry](part-2-balerion/02-Failure-Modes-and-Guardrails.md)
-- [Interactive Balerion Pipeline Demo](part-2-balerion/demo/index.html)
+## Balaerion (OmniRoute AI Gateway)
+- [OmniRoute Gateway, Hosting & Security](balaerion/01-Gateway-Hosting-and-Security.md)
+- [MCP Agent Layer & GTM Product Surface](balaerion/02-MCP-Agents-and-Product-Layer.md)
+- [Interactive Balaerion Routing Simulator](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/balaerion/demo/)
 
-## Part III: Syndicate Matchday AI (Poisson & NAV Ledger)
-- [Mandate, Poisson / xG Engine & Dashboard](part-3-syndicate/01-Mandate-Poisson-Engine-and-Dashboard.md)
-- [Unit-Share NAV Ledger & Tipgame Integrity](part-3-syndicate/02-NAV-Ledger-and-Tipgame-Integrity.md)
-- [Interactive Syndicate xG & NAV Lab](part-3-syndicate/demo/index.html)
+## Syndicate (Matchday AI)
+- [Mandate, Poisson / xG Engine & Dashboard](syndicate/01-Mandate-Poisson-Engine-and-Dashboard.md)
+- [Unit-Share NAV Ledger & Tipgame Integrity](syndicate/02-NAV-Ledger-and-Tipgame-Integrity.md)
+- [Interactive Syndicate xG & NAV Lab](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/syndicate/demo/)

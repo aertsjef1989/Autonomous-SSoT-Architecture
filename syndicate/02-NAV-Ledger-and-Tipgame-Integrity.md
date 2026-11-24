@@ -13,6 +13,6 @@ Equal splits break down when members contribute or withdraw at different points 
 - **Redemption (Unit Burn):** Exiting units are priced at the prevailing `NAV_per_unit` and retired from total active units.
 - **Append-Only Ledger Discipline:** Deposits, slip stakes, payouts, and adjustments are recorded as immutable ledger entries rather than overwriting prior balances.
 
-## 2. Group Slip Voting & Interactive Section Demo
+## 2. Group Slip Voting & Interactive Demo
 - **Pre-Kickoff Lock:** Members propose and vote on matchday slips prior to kickoff; once locked at cutoff, slip selections and stakes cannot be edited post-event.
-- **Interactive Section Demo:** Open [Part III Interactive Demo](demo/index.html) to test Poisson/xG win/draw/loss probabilities, pre-kickoff slip locking, and unit-share NAV deposit/settlement math on synthetic matchday data.
+- **Interactive Demo:** Launch the [Syndicate xG & NAV Lab](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/syndicate/demo/) to test Poisson/xG probabilities, pre-kickoff slip locking, and unit-share NAV math.

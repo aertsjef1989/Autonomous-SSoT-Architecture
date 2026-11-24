@@ -33,7 +33,7 @@ To execute its duties without violating enterprise boundaries, the Bot operates 
 | `cardkit:card:write` | Rendering interactive response cards (Schema 2.0). |
 | `wiki:wiki` | Node read, search, **and the physical node move operations** required during publish and archive sequences. |
 | `drive:drive` | Permission container grants and file statistics collection. |
-| `bitable:app` | Read and write access across all operational and audit tables. |
+| `database:app` | Read and write access across all operational and audit tables. |
 | `contact:user.base:readonly` | Sender lookup and supervisor/escalation path resolution. |
 
 *Crucial Implementation Note:* Holding API scopes is insufficient on its own. The application must additionally be explicitly added as a **Base Collaborator** on both the Data Layer and Audit Layer applications. Furthermore, while early iterations of enterprise bots relied on read-only wiki scopes, this architecture requires full `wiki:wiki` access because the Bot actively executes node relocations during document publication.
