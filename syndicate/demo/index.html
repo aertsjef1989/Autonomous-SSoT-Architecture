@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Syndicate — Poisson / xG, Slip Lock & NAV Ledger Lab</title>
+<title>Syndicate — UCL 2026-27 Real-Data Analytics & NAV Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
-  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; }
+  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; --green:#22C55E; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
   header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
@@ -14,28 +15,40 @@
   .back:hover { border-color:var(--cyan); }
   .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
   .tabs { display:flex; gap:8px; flex-wrap:wrap; }
-  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; }
+  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:8px 13px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12.5px; }
   .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
-  main { max-width:1160px; margin:24px auto; padding:0 20px 60px; }
+  main { max-width:1240px; margin:22px auto; padding:0 20px 64px; }
   .view { display:none; }
   .view.active { display:block; }
   .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
-  .card h3 { margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
+  .card h3 { margin:0 0 8px; font-size:13.5px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
+  .muted { color:var(--muted); font-size:12px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; }
   .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:12px; }
-  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:12px; }
   .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
-  .val { font-size:22px; font-weight:800; color:var(--cyan); margin-top:4px; }
-  label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
-  label.chk { display:inline-flex; gap:7px; align-items:center; color:var(--ink); font-size:13px; cursor:pointer; }
+  .val { font-size:21px; font-weight:800; color:var(--cyan); margin-top:3px; }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
+  select, input[type="number"] { background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 10px; border-radius:6px; font-size:12.5px; }
   input[type="range"] { width:100%; accent-color:var(--cyan); }
-  input[type="number"] { width:100%; background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 10px; border-radius:6px; }
-  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px; }
+  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; padding:8px 13px; border-radius:6px; cursor:pointer; font-size:12.5px; }
   button.act.pink { background:var(--pink); color:#fff; }
-  .banner { padding:12px 14px; border-radius:6px; font-size:13px; font-weight:600; margin-top:12px; }
+  label.chk { display:inline-flex; gap:7px; align-items:center; font-size:12.5px; cursor:pointer; }
+  .banner { padding:11px 14px; border-radius:6px; font-size:12.5px; font-weight:600; margin-top:12px; }
   .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
   .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
-  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12px; max-height:170px; overflow-y:auto; color:#c7d0dd; }
-  .muted { color:var(--muted); font-size:12px; }
+  table.data { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+  table.data th, table.data td { border-bottom:1px solid var(--border); padding:6px 8px; text-align:left; }
+  table.data th { background:var(--alt); color:var(--cyan); position:sticky; top:0; }
+  .tbl-wrap { max-height:420px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; }
+  .z-r16 { border-left:3px solid var(--cyan); }
+  .z-po { border-left:3px solid var(--amber); }
+  .z-out { border-left:3px solid var(--pink); }
+  table.mx { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+  table.mx th, table.mx td { border:1px solid var(--border); padding:6px; text-align:center; }
+  table.mx th { background:var(--alt); color:var(--cyan); }
+  .chart-box { position:relative; height:320px; width:100%; }
+  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:10px; font-size:11.5px; max-height:170px; overflow-y:auto; color:#c7d0dd; }
 </style>
 </head>
 <body>
@@ -44,129 +57,337 @@
     <a class="back" href="../../">← Back to Book</a>
     <span class="dot" style="background:var(--pink)"></span>
     <span class="dot" style="background:var(--cyan)"></span>
-    <span>SYNDICATE // POISSON xG, SLIP LOCK &amp; NAV LAB</span>
+    <span>SYNDICATE // UCL 2026–27 LIVE DATA &amp; NAV DASHBOARD</span>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="sw('xg',this)">1. Poisson / xG Engine</button>
-    <button class="tab-btn" onclick="sw('slip',this)">2. Group Slip &amp; Kickoff Lock</button>
-    <button class="tab-btn" onclick="sw('nav',this)">3. Unit-Share NAV Ledger</button>
+    <button class="tab-btn active" onclick="sw('standings',this)">1. UCL Table &amp; Cutlines</button>
+    <button class="tab-btn" onclick="sw('eda',this)">2. Attack vs. Defense EDA</button>
+    <button class="tab-btn" onclick="sw('residuals',this)">3. Seed Residuals</button>
+    <button class="tab-btn" onclick="sw('poisson',this)">4. MD5 Poisson (18 Games)</button>
+    <button class="tab-btn" onclick="sw('nav',this)">5. Tipgame &amp; NAV Ledger</button>
   </div>
 </header>
 <main>
-  <section id="xg" class="view active">
-    <div class="card">
-      <h3>Bivariate Poisson Match Matrix &amp; Market Edge</h3>
-      <div class="grid-3">
-        <div><label>Home Expected Goals (lambda_H): <strong id="lhLbl">1.75</strong></label><input type="range" id="lh" min="0.4" max="3.5" step="0.05" value="1.75" oninput="calcXg()"></div>
-        <div><label>Away Expected Goals (lambda_A): <strong id="laLbl">1.05</strong></label><input type="range" id="la" min="0.4" max="3.5" step="0.05" value="1.05" oninput="calcXg()"></div>
-        <div><label>Bookmaker Home Odds (Decimal)</label><input type="number" id="mktOdds" value="2.10" step="0.05" oninput="calcXg()"></div>
+  <!-- TAB 1: LIVE 36-CLUB TABLE & POINTS HISTOGRAM -->
+  <section id="standings" class="view active">
+    <div class="grid-4" id="kpiRow"></div>
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card">
+        <h3>2026–27 UCL League Phase (After MD4 · 24 Nov 2026)</h3>
+        <div class="muted">Cyan = Top 8 (R16) · Amber = 9–24 (Play-offs) · Pink = 25–36 (Eliminated)</div>
+        <div class="controls">
+          <label>Zone Filter:
+            <select id="zoneFilter" onchange="renderTable()">
+              <option value="all">All 36 Clubs</option>
+              <option value="r16">Top 8 (Automatic R16)</option>
+              <option value="po">9–24 (Knockout Play-offs)</option>
+              <option value="out">25–36 (Elimination Zone)</option>
+            </select>
+          </label>
+        </div>
+        <div class="tbl-wrap"><table class="data" id="uclTable"></table></div>
       </div>
-      <div id="xgStats" class="grid-4"></div>
-      <div id="xgBanner"></div>
+      <div class="card">
+        <h3>Points Distribution &amp; Qualification Cutlines</h3>
+        <div class="muted">Frequency of clubs by points total after 4 of 8 matchdays (Current Top-8 cutline: 9 pts, Top-24 cutline: 4 pts).</div>
+        <div class="chart-box" style="margin-top:14px;"><canvas id="histChart"></canvas></div>
+      </div>
     </div>
   </section>
 
-  <section id="slip" class="view">
+  <!-- TAB 2: ATTACK VS DEFENSE SCATTER -->
+  <section id="eda" class="view">
     <div class="card">
-      <h3>Democratic Slip Voting &amp; Pre-Kickoff Lock</h3>
-      <div class="grid-3">
-        <div><label>Yes Votes (of 6 Active Members): <strong id="vLbl">4</strong></label><input type="range" id="yesVotes" min="0" max="6" step="1" value="4" oninput="calcSlip()"></div>
-        <div style="display:flex;align-items:center;"><label class="chk"><input type="checkbox" id="pastCutoff" onchange="calcSlip()"> Past T-15m Kickoff Cutoff</label></div>
-        <div style="display:flex;align-items:center;"><button class="act pink" onclick="attemptEdit()">Attempt Post-Lock Stake Edit</button></div>
-      </div>
-      <div id="slipBanner"></div>
-      <div id="slipCards" class="grid-3"></div>
+      <h3>Bivariate EDA — Goals For / Match vs. Goals Against / Match (All 36 Clubs)</h3>
+      <div class="muted">Top-left quadrant = Elite (High Attack, Low Conceded). Bottom-right = Vulnerable. Hover any point for club stats.</div>
+      <div class="chart-box" style="height:420px; margin-top:12px;"><canvas id="scatterChart"></canvas></div>
     </div>
   </section>
 
+  <!-- TAB 3: SEED RESIDUALS -->
+  <section id="residuals" class="view">
+    <div class="card">
+      <h3>Expectation vs. Reality — Pre-Season Seed Rank Minus Actual MD4 Rank</h3>
+      <div class="muted">Positive delta (Cyan) = Overperforming pre-season UEFA seeding. Negative delta (Pink) = Underperforming.</div>
+      <div class="chart-box" style="height:420px; margin-top:12px;"><canvas id="residChart"></canvas></div>
+    </div>
+  </section>
+
+  <!-- TAB 4: ALL 18 MATCHDAY 5 FIXTURES + POISSON -->
+  <section id="poisson" class="view">
+    <div class="card">
+      <h3>Matchday 5 Slate (24–25 Nov 2026) — All 18 Fixtures Poisson / xG Lab</h3>
+      <div class="controls">
+        <label>Select MD5 Fixture (18 Games):
+          <select id="fixSel" onchange="loadFixture()"></select>
+        </label>
+        <label>Market Home Odds: <input type="number" id="mktOdds" value="2.10" step="0.05" style="width:90px;" oninput="calcPoisson()"></label>
+      </div>
+      <div class="grid-2">
+        <div><label>Home Goal Rate (lambda_H): <strong id="lhLbl">1.75</strong></label><input type="range" id="lh" min="0.4" max="3.8" step="0.05" value="1.75" oninput="calcPoisson()"></div>
+        <div><label>Away Goal Rate (lambda_A): <strong id="laLbl">1.05</strong></label><input type="range" id="la" min="0.4" max="3.8" step="0.05" value="1.05" oninput="calcPoisson()"></div>
+      </div>
+      <div id="pStats" class="grid-4"></div>
+      <div id="pBanner"></div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div><div class="muted">Bivariate Poisson Scoreline Matrix (0–5)</div><div id="pMatrix"></div></div>
+        <div><div class="muted">Goal-Line Probability Ladder</div><div id="pLadder" style="margin-top:10px;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5: TIPGAME & NAV LEDGER -->
   <section id="nav" class="view">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Democratic Slip Voting &amp; Pre-Kickoff Lock</h3>
+        <div class="controls" id="voteWrap"></div>
+        <div class="controls">
+          <label class="chk"><input type="checkbox" id="cutoffChk" onchange="calcSlip()"> Past T-15m Kickoff Lock</label>
+          <button class="act pink" onclick="testEdit()">Attempt Post-Lock Edit</button>
+        </div>
+        <div id="slipBanner"></div>
+      </div>
+      <div class="card">
+        <h3>Live NAV / Unit Equity Curve</h3>
+        <div class="chart-box" style="height:210px;"><canvas id="navChart"></canvas></div>
+      </div>
+    </div>
     <div class="card">
       <h3>Unit-Share NAV Pool &amp; Append-Only Ledger</h3>
       <div class="grid-4" id="navStats"></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-        <button class="act" onclick="ledgerTx('DEPOSIT', 250)">+ Member Deposit (€250)</button>
-        <button class="act" onclick="ledgerTx('WIN', 300)">+ Slip Win Settlement (+€300)</button>
-        <button class="act pink" onclick="ledgerTx('LOSS', -150)">- Slip Loss Settlement (-€150)</button>
-        <button class="act pink" onclick="ledgerTx('WITHDRAW', -200)">- Member Redemption (€200)</button>
+      <div class="controls">
+        <label>Member: <select id="memSel"><option value="A">Member A</option><option value="B">Member B</option><option value="C">Member C</option></select></label>
+        <button class="act" onclick="tx('DEPOSIT',250)">+ Deposit €250 (Mint)</button>
+        <button class="act pink" onclick="tx('REDEEM',-200)">- Redeem €200 (Burn)</button>
+        <button class="act" onclick="tx('WIN',300)">+ Slip Win (+€300)</button>
+        <button class="act pink" onclick="tx('LOSS',-150)">- Slip Loss (-€150)</button>
       </div>
-    </div>
-    <div class="card">
-      <h3>Append-Only Ledger Stream (Zero In-Place Overwrites)</h3>
-      <div id="navLog" class="log"></div>
+      <div class="grid-3" id="memPos"></div>
+      <div class="log" id="navLog" style="margin-top:12px;"></div>
     </div>
   </section>
 </main>
 <script>
+// Real 2026-27 UEFA Champions League Standings after Matchday 4 (24 Nov 2026)
+const CLUBS = [
+  {pos:1,team:"PSG",p:4,w:4,d:0,l:0,gf:20,ga:5,pts:12,seed:4},
+  {pos:2,team:"Real Madrid",p:4,w:4,d:0,l:0,gf:13,ga:7,pts:12,seed:1},
+  {pos:3,team:"Arsenal",p:4,w:3,d:1,l:0,gf:8,ga:3,pts:10,seed:7},
+  {pos:4,team:"Como 1907",p:4,w:3,d:0,l:1,gf:19,ga:6,pts:9,seed:33},
+  {pos:5,team:"FC Barcelona",p:4,w:3,d:0,l:1,gf:14,ga:6,pts:9,seed:6},
+  {pos:6,team:"Aston Villa",p:4,w:3,d:0,l:1,gf:12,ga:6,pts:9,seed:18},
+  {pos:7,team:"Man City",p:4,w:3,d:0,l:1,gf:12,ga:7,pts:9,seed:2},
+  {pos:8,team:"Liverpool",p:4,w:3,d:0,l:1,gf:14,ga:10,pts:9,seed:5},
+  {pos:9,team:"Club Brugge",p:4,w:3,d:0,l:1,gf:11,ga:7,pts:9,seed:24},
+  {pos:10,team:"Sporting CP",p:4,w:3,d:0,l:1,gf:8,ga:4,pts:9,seed:20},
+  {pos:11,team:"Real Betis",p:4,w:3,d:0,l:1,gf:8,ga:6,pts:9,seed:22},
+  {pos:12,team:"Borussia Dortmund",p:4,w:3,d:0,l:1,gf:7,ga:5,pts:9,seed:9},
+  {pos:13,team:"Bayern Munich",p:4,w:2,d:2,l:0,gf:12,ga:5,pts:8,seed:3},
+  {pos:14,team:"VfB Stuttgart",p:4,w:2,d:1,l:1,gf:7,ga:4,pts:7,seed:25},
+  {pos:15,team:"Inter Milan",p:4,w:2,d:0,l:2,gf:8,ga:6,pts:6,seed:8},
+  {pos:16,team:"LASK",p:4,w:2,d:0,l:2,gf:10,ga:9,pts:6,seed:31},
+  {pos:17,team:"Man United",p:4,w:2,d:0,l:2,gf:8,ga:8,pts:6,seed:12},
+  {pos:18,team:"Galatasaray",p:4,w:2,d:0,l:2,gf:8,ga:9,pts:6,seed:23},
+  {pos:19,team:"Fenerbahçe",p:4,w:1,d:2,l:1,gf:6,ga:11,pts:5,seed:26},
+  {pos:20,team:"AS Roma",p:4,w:1,d:1,l:2,gf:10,ga:8,pts:4,seed:14},
+  {pos:21,team:"Shakhtar Donetsk",p:4,w:1,d:1,l:2,gf:4,ga:4,pts:4,seed:21},
+  {pos:22,team:"Viking FK",p:4,w:1,d:1,l:2,gf:9,ga:10,pts:4,seed:34},
+  {pos:23,team:"Atlético Madrid",p:4,w:1,d:1,l:2,gf:4,ga:5,pts:4,seed:10},
+  {pos:24,team:"PSV",p:4,w:1,d:1,l:2,gf:3,ga:4,pts:4,seed:19},
+  {pos:25,team:"Bodø/Glimt",p:4,w:1,d:1,l:2,gf:4,ga:9,pts:4,seed:28},
+  {pos:26,team:"FC Porto",p:4,w:1,d:0,l:3,gf:6,ga:7,pts:3,seed:15},
+  {pos:27,team:"SSC Napoli",p:4,w:1,d:0,l:3,gf:6,ga:11,pts:3,seed:11},
+  {pos:28,team:"Villarreal",p:4,w:1,d:0,l:3,gf:8,ga:14,pts:3,seed:16},
+  {pos:29,team:"RB Leipzig",p:4,w:1,d:0,l:3,gf:5,ga:11,pts:3,seed:13},
+  {pos:29,team:"AEK Athens",p:4,w:1,d:0,l:3,gf:5,ga:11,pts:3,seed:30},
+  {pos:31,team:"Sabah FK",p:4,w:1,d:0,l:3,gf:4,ga:10,pts:3,seed:35},
+  {pos:32,team:"Feyenoord",p:4,w:1,d:0,l:3,gf:4,ga:11,pts:3,seed:27},
+  {pos:33,team:"RC Lens",p:4,w:1,d:0,l:3,gf:4,ga:16,pts:3,seed:29},
+  {pos:34,team:"Slavia Prague",p:4,w:0,d:1,l:3,gf:5,ga:9,pts:1,seed:32},
+  {pos:35,team:"LOSC Lille",p:4,w:0,d:1,l:3,gf:4,ga:10,pts:1,seed:17},
+  {pos:36,team:"Slovan Bratislava",p:4,w:0,d:0,l:4,gf:1,ga:17,pts:0,seed:36}
+];
+
+// All 18 Real Matchday 5 Fixtures (Tue 24 Nov & Wed 25 Nov 2026)
+const MD5 = [
+  {day:"Tue 24 Nov · 17:45 WET",h:"Galatasaray",a:"Aston Villa",odds:2.65},
+  {day:"Tue 24 Nov · 17:45 WET",h:"Bodø/Glimt",a:"LASK",odds:1.95},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Arsenal",a:"Borussia Dortmund",odds:1.62},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Real Madrid",a:"PSV",odds:1.30},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Man City",a:"SSC Napoli",odds:1.45},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Feyenoord",a:"FC Porto",odds:2.50},
+  {day:"Tue 24 Nov · 20:00 WET",h:"RB Leipzig",a:"RC Lens",odds:1.72},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Como 1907",a:"AEK Athens",odds:1.38},
+  {day:"Tue 24 Nov · 20:00 WET",h:"Slovan Bratislava",a:"Real Betis",odds:5.80},
+  {day:"Wed 25 Nov · 17:45 WET",h:"Slavia Prague",a:"Villarreal",odds:2.75},
+  {day:"Wed 25 Nov · 17:45 WET",h:"Sabah FK",a:"FC Barcelona",odds:11.00},
+  {day:"Wed 25 Nov · 20:00 WET",h:"PSG",a:"AS Roma",odds:1.42},
+  {day:"Wed 25 Nov · 20:00 WET",h:"Inter Milan",a:"VfB Stuttgart",odds:1.68},
+  {day:"Wed 25 Nov · 20:00 WET",h:"Sporting CP",a:"Man United",odds:2.20},
+  {day:"Wed 25 Nov · 20:00 WET",h:"Club Brugge",a:"Liverpool",odds:3.90},
+  {day:"Wed 25 Nov · 20:00 WET",h:"Atlético Madrid",a:"Viking FK",odds:1.28},
+  {day:"Wed 25 Nov · 20:00 WET",h:"LOSC Lille",a:"Bayern Munich",odds:5.40},
+  {day:"Wed 25 Nov · 20:00 WET",h:"Shakhtar Donetsk",a:"Fenerbahçe",odds:2.60}
+];
+
 function sw(id, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
-function poisson(k, lam) { let f = 1; for (let i = 2; i <= k; i++) f *= i; return (Math.pow(lam, k) * Math.exp(-lam)) / f; }
-function calcXg() {
+
+const totalGoals = CLUBS.reduce((s,c)=>s+c.gf,0);
+const avgGf = totalGoals / (CLUBS.length * 4);
+document.getElementById('kpiRow').innerHTML = `
+  <div class="box"><div class="muted">Clubs / Matches Played</div><div class="val">36 · 72</div></div>
+  <div class="box"><div class="muted">Avg Goals / Team / Game</div><div class="val">${avgGf.toFixed(2)}</div></div>
+  <div class="box"><div class="muted">Top Attack (GF)</div><div class="val">PSG (20)</div></div>
+  <div class="box"><div class="muted">Top Defense (GA)</div><div class="val">Arsenal (3)</div></div>`;
+
+function renderTable() {
+  const z = document.getElementById('zoneFilter').value;
+  const rows = CLUBS.filter(c => z==='all' || (z==='r16'&&c.pos<=8) || (z==='po'&&c.pos>=9&&c.pos<=24) || (z==='out'&&c.pos>=25));
+  document.getElementById('uclTable').innerHTML = `<thead><tr><th>#</th><th>Club</th><th>P</th><th>W-D-L</th><th>GF:GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>` +
+    rows.map(c => {
+      const cls = c.pos<=8?'z-r16':(c.pos<=24?'z-po':'z-out');
+      const gd = c.gf - c.ga;
+      return `<tr class="${cls}"><td>${c.pos}</td><td><strong>${c.team}</strong></td><td>${c.p}</td><td>${c.w}-${c.d}-${c.l}</td><td>${c.gf}:${c.ga}</td><td>${gd>=0?'+':''}${gd}</td><td><strong>${c.pts}</strong></td></tr>`;
+    }).join('') + `</tbody>`;
+}
+
+// Chart 1: Points Histogram
+const ptsBins = [0,1,3,4,5,6,7,8,9,10,12];
+new Chart(document.getElementById('histChart'), {
+  type:'bar',
+  data:{
+    labels:ptsBins.map(p=>p+' pts'),
+    datasets:[{label:'Clubs',data:ptsBins.map(p=>CLUBS.filter(c=>c.pts===p).length),backgroundColor:ptsBins.map(p=>p>=9?'#21E0DC':(p>=4?'#F5A623':'#F0245C')),borderRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5',stepSize:1},grid:{color:'#1b202c'}}}}
+});
+
+// Chart 2: Attack vs Defense Scatter
+new Chart(document.getElementById('scatterChart'), {
+  type:'scatter',
+  data:{
+    datasets:[{
+      label:'UCL Clubs (GF/G vs GA/G)',
+      data:CLUBS.map(c=>({x:+(c.gf/4).toFixed(2),y:+(c.ga/4).toFixed(2),team:c.team,pos:c.pos})),
+      backgroundColor:CLUBS.map(c=>c.pos<=8?'#21E0DC':(c.pos<=24?'#F5A623':'#F0245C')),
+      pointRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.raw.team} (#${ctx.raw.pos}): ${ctx.raw.x} GF/G, ${ctx.raw.y} GA/G`}}},
+    scales:{
+      x:{title:{display:true,text:'Goals For per Match (Higher = Better)',color:'#8B95A5'},ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},
+      y:{reverse:true,title:{display:true,text:'Goals Against per Match (Top = Stronger Defense)',color:'#8B95A5'},ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}}
+    }
+  }
+});
+
+// Chart 3: Seed Residuals (Top 16 biggest movers)
+const movers = [...CLUBS].map(c=>({team:c.team,delta:c.seed - c.pos})).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,16).sort((a,b)=>b.delta-a.delta);
+new Chart(document.getElementById('residChart'), {
+  type:'bar',
+  data:{
+    labels:movers.map(m=>m.team),
+    datasets:[{label:'Seed Rank - Actual Rank',data:movers.map(m=>m.delta),backgroundColor:movers.map(m=>m.delta>=0?'#21E0DC':'#F0245C'),borderRadius:4}]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#F2F5F9'},grid:{color:'#1b202c'}}}}
+});
+
+// Tab 4: All 18 MD5 Fixtures & Poisson Engine
+const fixSel = document.getElementById('fixSel');
+fixSel.innerHTML = MD5.map((f,i)=>`<option value="${i}">[${f.day}] ${f.h} vs ${f.a}</option>`).join('');
+function findClub(name){ return CLUBS.find(c=>c.team===name) || {gf:6,ga:6}; }
+function loadFixture() {
+  const f = MD5[parseInt(fixSel.value,10)];
+  const h = findClub(f.h), a = findClub(f.a);
+  const lh = Math.max(0.45, Math.min(3.6, ((h.gf/4) * (a.ga/4) / avgGf) * 1.12));
+  const la = Math.max(0.40, Math.min(3.4, ((a.gf/4) * (h.ga/4) / avgGf) * 0.92));
+  document.getElementById('lh').value = lh.toFixed(2);
+  document.getElementById('la').value = la.toFixed(2);
+  document.getElementById('mktOdds').value = f.odds.toFixed(2);
+  calcPoisson();
+}
+function poisson(k,lam){ let f=1; for(let i=2;i<=k;i++) f*=i; return (Math.pow(lam,k)*Math.exp(-lam))/f; }
+function calcPoisson() {
   const lh = parseFloat(document.getElementById('lh').value), la = parseFloat(document.getElementById('la').value);
-  const odds = Math.max(1.01, parseFloat(document.getElementById('mktOdds').value) || 2.0);
+  const odds = Math.max(1.01, parseFloat(document.getElementById('mktOdds').value)||2.0);
   document.getElementById('lhLbl').textContent = lh.toFixed(2);
   document.getElementById('laLbl').textContent = la.toFixed(2);
-  let pH = 0, pD = 0, pA = 0, pO25 = 0;
-  for (let h = 0; h <= 7; h++) for (let a = 0; a <= 7; a++) {
-    const p = poisson(h, lh) * poisson(a, la);
-    if (h > a) pH += p; else if (h === a) pD += p; else pA += p;
-    if (h + a > 2) pO25 += p;
+  let pH=0,pD=0,pA=0,pBtts=0,gBins=[0,0,0,0,0];
+  for(let h=0;h<=8;h++) for(let a=0;a<=8;a++) {
+    const p = poisson(h,lh)*poisson(a,la);
+    if(h>a) pH+=p; else if(h===a) pD+=p; else pA+=p;
+    if(h>0 && a>0) pBtts+=p;
+    for(let t=0;t<5;t++) if(h+a > t) gBins[t]+=p;
   }
-  const edge = (pH * odds - 1) * 100;
-  document.getElementById('xgStats').innerHTML = `
+  const edge = (pH*odds - 1)*100;
+  document.getElementById('pStats').innerHTML = `
     <div class="box"><div class="muted">Home Win</div><div class="val">${(pH*100).toFixed(1)}%</div></div>
     <div class="box"><div class="muted">Draw</div><div class="val">${(pD*100).toFixed(1)}%</div></div>
     <div class="box"><div class="muted">Away Win</div><div class="val">${(pA*100).toFixed(1)}%</div></div>
-    <div class="box"><div class="muted">Over 2.5 Goals</div><div class="val">${(pO25*100).toFixed(1)}%</div></div>`;
-  document.getElementById('xgBanner').innerHTML = edge >= 3
-    ? `<div class="banner b-ok">POSITIVE EV (+${edge.toFixed(1)}% Edge): Model fair odds ${(1/pH).toFixed(2)} vs Market ${odds.toFixed(2)}. Eligible for Syndicate slip proposal.</div>`
-    : `<div class="banner b-err">NO EDGE (${edge.toFixed(1)}%): Below +3.0% minimum syndicate threshold. Pass recommended.</div>`;
+    <div class="box"><div class="muted">BTTS Yes</div><div class="val">${(pBtts*100).toFixed(1)}%</div></div>`;
+  document.getElementById('pBanner').innerHTML = edge >= 3
+    ? `<div class="banner b-ok">POSITIVE EV (+${edge.toFixed(1)}%): Fair Home Odds ${(1/pH).toFixed(2)} vs Market ${odds.toFixed(2)}.</div>`
+    : `<div class="banner b-err">NO VALUE EDGE (${edge.toFixed(1)}%): Below +3.0% minimum Syndicate threshold.</div>`;
+  let mx = '<table class="mx"><thead><tr><th>H \\ A</th>'+[0,1,2,3,4,5].map(a=>`<th>${a}</th>`).join('')+'</tr></thead><tbody>';
+  for(let h=0;h<=5;h++){ mx+=`<tr><th>${h}</th>`; for(let a=0;a<=5;a++){ const pct=(poisson(h,lh)*poisson(a,la)*100).toFixed(1); mx+=`<td style="${parseFloat(pct)>=7.5?'color:#21E0DC;font-weight:700;':''}">${pct}%</td>`; } mx+='</tr>'; }
+  document.getElementById('pMatrix').innerHTML = mx+'</tbody></table>';
+  document.getElementById('pLadder').innerHTML = gBins.map((p,i)=>`<div class="box" style="margin-bottom:6px;display:flex;justify-content:space-between;"><span>Over ${i+0.5} Goals</span><strong style="color:var(--cyan)">${(p*100).toFixed(1)}%</strong></div>`).join('');
 }
+
+// Tab 5: Tipgame Voting & NAV Ledger
+document.getElementById('voteWrap').innerHTML = ['M1','M2','M3','M4','M5','M6'].map((m,i)=>`<label class="chk"><input type="checkbox" class="vc" ${i<4?'checked':''} onchange="calcSlip()"> ${m}</label>`).join('');
 function calcSlip() {
-  const v = parseInt(document.getElementById('yesVotes').value, 10);
-  const cutoff = document.getElementById('pastCutoff').checked;
-  document.getElementById('vLbl').textContent = v;
-  const pct = (v / 6) * 100;
-  const approved = pct >= 60;
-  document.getElementById('slipBanner').innerHTML = cutoff
-    ? `<div class="banner b-ok">STATE: LOCKED_PRE_KICKOFF — Cutoff passed. Slip selections and stakes are frozen server-side.</div>`
-    : (approved ? `<div class="banner b-ok">QUORUM MET (${pct.toFixed(0)}% Yes): Ready to lock at T-15m cutoff.</div>`
-                : `<div class="banner b-err">BELOW THRESHOLD (${pct.toFixed(0)}% Yes): Requires >=60% approval to lock.</div>`);
-  document.getElementById('slipCards').innerHTML = `
-    <div class="box"><strong>Governance Rule</strong><br>1 Active Member = 1 Vote</div>
-    <div class="box"><strong>Approval Ratio</strong><br>${v}/6 (${pct.toFixed(0)}%)</div>
-    <div class="box"><strong>Write Route</strong><br>${cutoff?'LOCKED (403 on edits)':'OPEN until T-15m'}</div>`;
+  const yes = [...document.querySelectorAll('.vc')].filter(c=>c.checked).length;
+  const locked = document.getElementById('cutoffChk').checked;
+  const pct = (yes/6)*100;
+  document.getElementById('slipBanner').innerHTML = locked
+    ? `<div class="banner b-ok">LOCKED_PRE_KICKOFF: Cutoff passed; selections &amp; stakes frozen server-side.</div>`
+    : (pct>=60 ? `<div class="banner b-ok">QUORUM APPROVED (${yes}/6 · ${pct.toFixed(0)}%): Ready to lock at T-15m.</div>` : `<div class="banner b-err">BELOW 60% THRESHOLD (${yes}/6 · ${pct.toFixed(0)}%).</div>`);
 }
-function attemptEdit() {
-  const cutoff = document.getElementById('pastCutoff').checked;
-  document.getElementById('slipBanner').innerHTML = cutoff
-    ? `<div class="banner b-err">403 REJECTED: Pre-kickoff lock enforced. Post-cutoff edits are impossible; audit row logged.</div>`
-    : `<div class="banner b-ok">200 ALLOWED: Slip is still before T-15m cutoff. Edit accepted and versioned.</div>`;
+function testEdit() {
+  const locked = document.getElementById('cutoffChk').checked;
+  document.getElementById('slipBanner').innerHTML = locked
+    ? `<div class="banner b-err">403 BLOCKED: Pre-kickoff lock enforced. Post-cutoff edits impossible.</div>`
+    : `<div class="banner b-ok">200 ALLOWED: Slip still open prior to T-15m cutoff.</div>`;
 }
-let pool = 2500, units = 200;
+let pool=2400, units=200, hold={A:80,B:70,C:50}, navHist=[12.00];
+const navChart = new Chart(document.getElementById('navChart'), {
+  type:'line',
+  data:{labels:['T0'],datasets:[{label:'NAV / Unit (€)',data:navHist,borderColor:'#21E0DC',backgroundColor:'rgba(33,224,220,0.12)',fill:true,tension:0.25}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}}}}
+});
 function renderNav() {
-  const nav = pool / units;
+  const nav = pool/units;
   document.getElementById('navStats').innerHTML = `
-    <div class="box"><div class="muted">Total Pool Value</div><div class="val">€${pool.toFixed(2)}</div></div>
-    <div class="box"><div class="muted">Total Active Units</div><div class="val">${units.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">Pool Value</div><div class="val">€${pool.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">Active Units</div><div class="val">${units.toFixed(2)}</div></div>
     <div class="box"><div class="muted">NAV / Unit</div><div class="val">€${nav.toFixed(2)}</div></div>
-    <div class="box"><div class="muted">Dashboard Boundary</div><div class="val" style="font-size:15px;">Read-Only Next.js</div></div>`;
+    <div class="box"><div class="muted">Invariant</div><div class="val" style="font-size:15px;">Append-Only OK</div></div>`;
+  document.getElementById('memPos').innerHTML = ['A','B','C'].map(m=>`<div class="box"><strong>Member ${m}</strong> · ${hold[m].toFixed(2)} units · <strong style="color:var(--cyan)">€${(hold[m]*nav).toFixed(2)}</strong></div>`).join('');
 }
-function ledgerTx(type, amt) {
-  const nav = pool / units;
-  let uDelta = 0;
-  if (type === 'DEPOSIT') { uDelta = amt / nav; pool += amt; units += uDelta; }
-  else if (type === 'WITHDRAW') { if (pool + amt <= 100) return; uDelta = amt / nav; pool += amt; units += uDelta; }
-  else { pool = Math.max(100, pool + amt); }
+function tx(type, amt) {
+  const m = document.getElementById('memSel').value, nav = pool/units;
+  let du = 0;
+  if(type==='DEPOSIT'){ du=amt/nav; pool+=amt; units+=du; hold[m]+=du; }
+  else if(type==='REDEEM'){ if(Math.abs(amt)>hold[m]*nav || pool+amt<=100) return; du=amt/nav; pool+=amt; units+=du; hold[m]+=du; }
+  else { pool=Math.max(100,pool+amt); }
+  const newNav = +(pool/units).toFixed(2);
+  navHist.push(newNav);
+  navChart.data.labels.push('T'+(navHist.length-1));
+  navChart.update();
   const ts = new Date().toISOString().slice(11,19);
-  const el = document.getElementById('navLog');
-  el.innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:${amt>=0?'#21E0DC':'#F0245C'}">${type}</strong> cash=${amt>=0?'+':''}€${amt} | units=${uDelta>=0?'+':''}${uDelta.toFixed(2)} | new_NAV=€${(pool/units).toFixed(2)}</div>` + el.innerHTML;
+  document.getElementById('navLog').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:${amt>=0?'#21E0DC':'#F0245C'}">${type}</strong> (${m}) cash=${amt>=0?'+':''}€${amt} | units=${du>=0?'+':''}${du.toFixed(2)} | NAV=€${newNav.toFixed(2)}</div>` + document.getElementById('navLog').innerHTML;
   renderNav();
 }
-calcXg(); calcSlip(); renderNav();
+renderTable(); loadFixture(); calcSlip(); renderNav();
 </script>
 </body>
 </html>
