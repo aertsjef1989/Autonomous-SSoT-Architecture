@@ -26,4 +26,4 @@ Existing members' per-unit value remains completely unchanged at the exact momen
 Launch the [Syndicate 5-Tab Real-Data Analytics Dashboard](https://aertsjef1989.github.io/systems-design-portfolio/syndicate/demo/) to test the Poisson/xG scoreline matrix, pre-kickoff slip voting locks, and unit-share NAV mint/burn ledger.
 
 ## Interactive Syndicate Prototype
-* [Open Interactive Syndicate Prototype](demo/index.html)
+* <a href="demo/index.html" target="_blank">Open Interactive Syndicate Prototype</a>

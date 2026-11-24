@@ -174,4 +174,4 @@ The prototypes show **what the system does**. The testable specifications—Acce
 
 Thresholds are hard-coded on purpose. **Abstracting them would hide the numbers the prototype exists to argue about.**
 ## Interactive SSoT Demo
-* [Open Interactive SSoT Demo](DEMO/index.html)
+* <a href="demo/index.html" target="_blank">Open Interactive SSoT Demo</a>

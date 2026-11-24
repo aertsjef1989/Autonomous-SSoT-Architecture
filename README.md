@@ -54,6 +54,6 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 | **Compliance Overlord** | Enforces regional regulations (GDPR Art. 15/17/35), channel bans, and schema validation | Hard circuit breaker (`#F0245C`) blocking non-compliant payloads |
 
 ## Interactive Standalone Prototypes
-* [Open Interactive SSoT Demo](DEMO/index.html)
-* [Open Interactive Balaerion Prototype](balaerion/demo/index.html)
-* [Open Interactive Syndicate Prototype](syndicate/demo/index.html)
+* <a href="demo/index.html" target="_blank">Open Interactive SSoT Demo</a>
+* <a href="balaerion/demo/index.html" target="_blank">Open Interactive Balaerion Prototype</a>
+* <a href="syndicate/demo/index.html" target="_blank">Open Interactive Syndicate Prototype</a>
