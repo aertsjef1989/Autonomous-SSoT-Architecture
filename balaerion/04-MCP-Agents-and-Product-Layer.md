@@ -24,4 +24,4 @@ To eliminate hallucinated synthesis while keeping API spend near zero:
 * **Deck Builder & Activation Skill:** PC-only manual-first deck builder with 50 fresh presets and native Signal `.pptx` export, paired with an `"Activate [company]"` advisory skill and multi-edition channel/image generation workflows.
 
 ## 4. Interactive Architecture Prototype
-Launch the [Balaerion 3-Tab Interactive Prototype](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) to test OmniRoute GDPR routing, Hetzner/Oracle failover, and concurrent MCP agent orchestration.
+Launch the [Balaerion 6-Tab Interactive Console](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) to test OmniRoute GDPR routing, Hetzner/Oracle failover, and concurrent MCP agent orchestration.

@@ -3,395 +3,311 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autonomous SSoT — Interactive Architecture Showcase</title>
+<title>SSoT — 6-Tab Autonomous Knowledge Architecture Console</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --ground: #08090D;
-    --panel: #11141B;
-    --panel-alt: #171B24;
-    --border: #232836;
-    --ink: #FFFFFF;
-    --muted: #79828F;
-    --cyan: #21E0DC;
-    --pink: #F0245C;
-    --amber: #F5A623;
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font); line-height: 1.5; }
-  header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--panel); flex-wrap: wrap; gap: 12px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.5px; }
-  .dots { display: inline-flex; gap: 5px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; }
-  .dot.pink { background: var(--pink); }
-  .dot.cyan { background: var(--cyan); }
-  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-  .tab-btn { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-  .tab-btn.active { color: var(--ground); background: var(--cyan); border-color: var(--cyan); }
-  main { max-width: 1200px; margin: 24px auto; padding: 0 20px 60px; }
-  .view { display: none; }
-  .view.active { display: block; }
-  .grid-2 { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-  @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 16px; }
-  .card h3 { margin: 0 0 12px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--cyan); }
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .b-cyan { background: rgba(33,224,220,0.15); color: var(--cyan); border: 1px solid var(--cyan); }
-  .b-pink { background: rgba(240,36,92,0.15); color: var(--pink); border: 1px solid var(--pink); }
-  .b-amber { background: rgba(245,166,35,0.15); color: var(--amber); border: 1px solid var(--amber); }
-  .doc-item { padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; cursor: pointer; background: var(--panel-alt); }
-  .doc-item:hover { border-color: var(--cyan); }
-  .doc-item.selected { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan); }
-  .doc-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .banner { padding: 12px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 13px; font-weight: 600; }
-  .banner-pink { background: rgba(240,36,92,0.14); border: 1px solid var(--pink); color: var(--pink); }
-  .banner-amber { background: rgba(245,166,35,0.14); border: 1px solid var(--amber); color: var(--amber); }
-  .banner-cyan { background: rgba(33,224,220,0.12); border: 1px solid var(--cyan); color: var(--cyan); }
-  select, input[type="text"], button.action { background: var(--panel-alt); color: var(--ink); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 13px; }
-  button.action { background: var(--cyan); color: var(--ground); font-weight: 700; cursor: pointer; border: none; }
-  button.action.pink { background: var(--pink); color: #fff; }
-  .bot-row { display: flex; gap: 8px; margin-top: 10px; }
-  .bot-row input { flex: 1; }
-  .log-box { background: #050609; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: monospace; font-size: 12px; max-height: 170px; overflow-y: auto; color: #c7d0dd; }
-  .toggle-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0; align-items: center; }
-  label.chk { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
-  .step-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-top: 12px; }
-  .step { padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel-alt); font-size: 12px; }
-  .step.ok { border-color: var(--cyan); }
-  .step.fail { border-color: var(--pink); background: rgba(240,36,92,0.1); }
-  .kpi-num { font-size: 28px; font-weight: 800; margin: 4px 0; }
-  .muted { color: var(--muted); font-size: 12px; }
-  input[type="range"] { width: 100%; accent-color: var(--cyan); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-  th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; --green:#22C55E; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
+  .back { color:var(--cyan); text-decoration:none; font-size:12px; border:1px solid var(--border); padding:5px 10px; border-radius:5px; }
+  .back:hover { border-color:var(--cyan); }
+  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:7px 11px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12px; }
+  .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
+  main { max-width:1240px; margin:22px auto; padding:0 20px 64px; }
+  .view { display:none; }
+  .view.active { display:block; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
+  .card h3 { margin:0 0 8px; font-size:13.5px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
+  .muted { color:var(--muted); font-size:12px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-top:12px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
+  .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
+  .box.ok { border-color:var(--cyan); }
+  .box.block { border-color:var(--pink); background:rgba(240,36,92,0.1); }
+  .box.warn { border-color:var(--amber); }
+  .val { font-size:20px; font-weight:800; color:var(--cyan); margin-top:3px; }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
+  select, input[type="text"], button.act { background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 11px; border-radius:6px; font-size:12.5px; }
+  input[type="range"] { width:100%; accent-color:var(--cyan); }
+  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; cursor:pointer; }
+  button.act.pink { background:var(--pink); color:#fff; }
+  label.chk { display:inline-flex; gap:7px; align-items:center; font-size:12.5px; cursor:pointer; }
+  .banner { padding:11px 14px; border-radius:6px; font-size:12.5px; font-weight:600; margin-top:12px; }
+  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
+  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
+  .b-warn { background:rgba(245,166,35,0.14); border:1px solid var(--amber); color:var(--amber); }
+  .log, pre.json { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:11.5px; overflow:auto; color:#c7d0dd; margin:0; }
+  .log { max-height:190px; }
+  .chart-box { position:relative; height:290px; width:100%; }
+  .bar-bg { background:#050609; border:1px solid var(--border); border-radius:4px; height:10px; overflow:hidden; margin-top:6px; }
+  .bar-fg { height:100%; background:var(--cyan); }
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <span class="dots"><span class="dot pink"></span><span class="dot cyan"></span></span>
-    <span>AUTONOMOUS SSoT // INTERACTIVE ARCHITECTURE DEMO</span>
+    <a class="back" href="../">← Back to Book</a>
+    <span class="dot" style="background:var(--pink)"></span>
+    <span class="dot" style="background:var(--cyan)"></span>
+    <span>SSoT // 6-TAB AUTONOMOUS KNOWLEDGE ARCHITECTURE CONSOLE</span>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('workspace', this)">1. SSoT Workspace Mockup</button>
-    <button class="tab-btn" onclick="switchTab('automations', this)">2. Automations & Failure Modes</button>
-    <button class="tab-btn" onclick="switchTab('metrics', this)">3. Tracking & Metrics Console</button>
+    <button class="tab-btn active" onclick="sw('t1',this)">1. Dual-Root Explorer</button>
+    <button class="tab-btn" onclick="sw('t2',this)">2. 7-Station Harness</button>
+    <button class="tab-btn" onclick="sw('t3',this)">3. Self-Healing &amp; Bot</button>
+    <button class="tab-btn" onclick="sw('t4',this)">4. Stage 0 Gates</button>
+    <button class="tab-btn" onclick="sw('t5',this)">5. v3.0 ROI Model</button>
+    <button class="tab-btn" onclick="sw('t6',this)">6. 21-KPI &amp; QA</button>
   </div>
 </header>
-
 <main>
-  <!-- TAB 1: WORKSPACE MOCKUP -->
-  <section id="workspace" class="view active">
-    <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-      <div>
-        <strong>Simulated Operator Session (T4 Access Matrix)</strong>
-        <div class="muted">Role: Agent (AGT — View-Only on T1 Base, Proxy Write via Bot)</div>
-      </div>
-      <div>
-        <label class="muted">Active Market Scope: </label>
-        <select id="scopeSelect" onchange="renderDocs()">
-          <option value="NL">NL Only</option>
-          <option value="BE">BE Only</option>
-          <option value="FR">FR Only</option>
-          <option value="ALL">ALL (Regional Manager)</option>
-        </select>
-      </div>
+  <!-- TAB 1: DUAL-ROOT 385-NODE EXPLORER -->
+  <section id="t1" class="view active">
+    <div class="grid-4">
+      <div class="box ok"><div class="muted">Public Knowledge Estate</div><div class="val">3,386 Files</div><div class="muted">8 folders × 45 markets</div></div>
+      <div class="box ok"><div class="muted">Internal Ops Estate</div><div class="val">~1,500 Docs</div><div class="muted">15 functional areas</div></div>
+      <div class="box ok"><div class="muted">Relational Schema</div><div class="val">T1 – T10</div><div class="muted">Audit-split tables</div></div>
+      <div class="box ok"><div class="muted">Access Governance</div><div class="val">6-Tier RBAC</div><div class="muted">Container inheritance</div></div>
     </div>
+    <div class="card" style="margin-top:16px;">
+      <h3>Dual-Root Container &amp; Permission Inheritance Explorer</h3>
+      <div class="controls">
+        <label>Root Tree:
+          <select id="rootSel" onchange="runT1()">
+            <option value="public">Public Tree (EMEA / MENA / LATAM — 45 Markets)</option>
+            <option value="staging">_STAGING (Market-Partitioned Drafts)</option>
+            <option value="archive">_ARCHIVE (Unpartitioned 30-Day Kill-Switch Sink)</option>
+            <option value="internal">Internal Tree (15 Ops &amp; Governance Areas)</option>
+          </select>
+        </label>
+        <label>User Role Tier:
+          <select id="roleSel" onchange="runT1()">
+            <option value="T1_VIEWER">Tier 1 — Frontline Viewer</option>
+            <option value="T3_SME">Tier 3 — Market SME / Author</option>
+            <option value="T5_ADMIN">Tier 5 — System Admin</option>
+            <option value="T6_BOT">Tier 6 — Autonomous Service Bot</option>
+          </select>
+        </label>
+      </div>
+      <div id="t1Banner"></div>
+      <div id="t1Grid" class="grid-3"></div>
+    </div>
+  </section>
 
+  <!-- TAB 2: 7-STATION GENERATION HARNESS -->
+  <section id="t2" class="view">
+    <div class="card">
+      <h3>7-Station Anti-Hallucination Generation Harness (+ Station 8 Human Read)</h3>
+      <div class="muted">Enforces fresh-instance isolation at Sort (Station 3) and Audit (Station 7), with live web search disabled during Write (Station 5).</div>
+      <div class="controls">
+        <label class="chk"><input type="checkbox" id="unsourcedChk" onchange="runT2()"> Inject Unsourced Claim During Station 5 (Write)</label>
+        <button class="act" onclick="runT2()">Run Harness Audit</button>
+      </div>
+      <div id="t2Banner"></div>
+      <div id="t2Grid" class="grid-4"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: SELF-HEALING LOOP & 23-COMMAND BOT -->
+  <section id="t3" class="view">
     <div class="grid-2">
-      <div>
-        <div class="card">
-          <h3>Public_Information_Layer</h3>
-          <div id="docList"></div>
+      <div class="card">
+        <h3>5-Stage Self-Healing Loop (29 Fault Types · P1–P4)</h3>
+        <div class="controls">
+          <label>Simulate Fault:
+            <select id="faultSel" onchange="runT3()">
+              <option value="stale">F-07 (P2): Unverified Doc > 30 Days (Archive Kill Switch)</option>
+              <option value="perm">F-14 (P1): Broken Container Permission Inheritance</option>
+              <option value="orphan">F-21 (P3): Orphaned Metadata Row in Schema T4</option>
+              <option value="rate">F-28 (P4): Upstream API 429 Rate-Limit Burst</option>
+            </select>
+          </label>
+          <button class="act" onclick="runT3(true)">Trigger Loop</button>
         </div>
-        <div class="card">
-          <h3>@Bot Command Proxy</h3>
-          <div class="muted">Try: <code>ask finance NL</code>, <code>check health BE</code>, <code>review</code>, <code>gap</code></div>
-          <div class="bot-row">
-            <input id="botInput" type="text" value="ask finance NL" />
-            <button class="action" onclick="runBot()">Send</button>
-          </div>
-          <div id="botReply" style="margin-top:12px;"></div>
-        </div>
+        <div id="t3Banner"></div>
+        <div id="t3Log" class="log" style="margin-top:12px;"></div>
       </div>
-
-      <div>
-        <div class="card" id="docViewer"></div>
-        <div class="card">
-          <h3>T10 Immutable Audit Log (Live Stream)</h3>
-          <div id="auditLog" class="log-box"></div>
+      <div class="card">
+        <h3>23-Command Bot Simulator (3s ACK · Move-Then-Confirm)</h3>
+        <div class="controls">
+          <label>Bot Command:
+            <select id="cmdSel">
+              <option value="/publish">/publish [doc_id] (Move-Then-Confirm)</option>
+              <option value="/scan-batch">/scan-batch (98% Budget Reduction)</option>
+              <option value="/audit-perm">/audit-perm [market_node]</option>
+              <option value="/archive-sweep">/archive-sweep (30-Day Kill Switch)</option>
+            </select>
+          </label>
+          <button class="act" onclick="runBot()">Execute Command</button>
         </div>
+        <div id="botLog" class="log"></div>
       </div>
     </div>
   </section>
 
-  <!-- TAB 2: AUTOMATIONS & FAILURE MODES -->
-  <section id="automations" class="view">
+  <!-- TAB 4: STAGE 0 GATES (G1-G5) & 11-STAGE PLAN -->
+  <section id="t4" class="view">
     <div class="card">
-      <h3>Flow 01 — Async Publish Sequence (Move-Then-Confirm)</h3>
-      <div class="muted">Test why writing <code>Published</code> before verifying the physical wiki move creates a silent production lie.</div>
-      <div class="toggle-row">
-        <label class="chk"><input type="checkbox" id="chkBreakMove"> Break the Move API (HTTP 500)</label>
-        <label class="chk"><input type="checkbox" id="chkWriteFirst"> Buggy Ordering: Write State First</label>
-        <button class="action" onclick="runPublishFlow()">Execute Publish Sequence</button>
+      <h3>Stage 0 Sandbox Gates (G1–G5) &amp; 11-Stage Programme (1,616 Person-Days · 3.7 FTE)</h3>
+      <div class="muted">Uncheck any Stage 0 Gate to inspect the exact architectural fallback triggered before full buildout.</div>
+      <div class="controls">
+        <label class="chk"><input type="checkbox" id="g1" checked onchange="runT4()"> G1: API Auth &amp; 3s ACK</label>
+        <label class="chk"><input type="checkbox" id="g2" checked onchange="runT4()"> G2: 5-Level Nested Tree</label>
+        <label class="chk"><input type="checkbox" id="g3" checked onchange="runT4()"> G3: Container Inheritance</label>
+        <label class="chk"><input type="checkbox" id="g4" checked onchange="runT4()"> G4: Batch Provisioning</label>
+        <label class="chk"><input type="checkbox" id="g5" checked onchange="runT4()"> G5: 9-Surface Console</label>
       </div>
-      <div id="pubAlert"></div>
-      <div id="pubSteps" class="step-box"></div>
-    </div>
-
-    <div class="card">
-      <h3>Flow 04 — 30-Day Escalation Ladder & Auto-Archive Kill Switch</h3>
-      <div class="muted">Drag the overdue day slider to inspect the 07:30 Single Daily Scan and stepped Health Score penalty.</div>
-      <div style="margin: 14px 0;">
-        <strong>Days Past Review: <span id="dayVal" style="color:var(--cyan);">0</span> days</strong>
-        <input type="range" id="daySlider" min="0" max="35" value="0" oninput="updateEscalation()">
-      </div>
-      <div id="escResult" class="grid-3"></div>
-    </div>
-
-    <div class="card">
-      <h3>Flow 07 — The Mover Protocol (NL → FR Transfer)</h3>
-      <div class="toggle-row">
-        <label class="chk"><input type="radio" name="moverOrder" value="revoke" checked onchange="renderMover()"> Revoke-Before-Grant (ADR-11 Compliant)</label>
-        <label class="chk"><input type="radio" name="moverOrder" value="grant" onchange="renderMover()"> Grant-First (Creates Compliance Leak)</label>
-      </div>
-      <div id="moverOut"></div>
+      <div id="t4Banner"></div>
+      <div id="t4Grid" class="grid-3"></div>
     </div>
   </section>
 
-  <!-- TAB 3: TRACKING & METRICS CONSOLE -->
-  <section id="metrics" class="view">
-    <div class="grid-3">
-      <div class="card">
-        <h3>Console S1 — Coverage</h3>
-        <div class="kpi-num" style="color:var(--cyan);">3,386</div>
-        <div class="muted">Public nodes across 45 markets + ~500 governed internal nodes</div>
-      </div>
-      <div class="card">
-        <h3>Console S4 — Open P1 Faults</h3>
-        <div class="kpi-num" style="color:var(--cyan);">0</div>
-        <div class="muted">2-Hour SLA · Audit Log (T10) healthy</div>
-      </div>
-      <div class="card" style="border-color:var(--amber);">
-        <h3 style="color:var(--amber);">Console S7 — Archive Queue</h3>
-        <div class="kpi-num" style="color:var(--amber);">2 Files</div>
-        <div class="muted">At Day 30 — Auto-archives tonight at 00:00 unless verified</div>
-      </div>
-    </div>
-
+  <!-- TAB 5: v3.0 BUSINESS CASE & ROI SIMULATOR -->
+  <section id="t5" class="view">
     <div class="card">
-      <h3>Stepped vs. Linear Health Score Simulator (Field 15)</h3>
-      <div class="toggle-row">
-        <label class="chk"><input type="checkbox" id="hOwner" onchange="calcHealth()"> Missing Owner (-20)</label>
-        <label class="chk"><input type="checkbox" id="hTags" onchange="calcHealth()"> Tags &lt; 2 (-20)</label>
-        <label class="chk"><input type="checkbox" id="hDesc" onchange="calcHealth()"> Missing Description (-20)</label>
+      <h3>v3.0 Business Case — Eurostat Labor-Waste Model &amp; Recovery Scenarios</h3>
+      <div class="muted">Re-anchored v3.0 scenarios (10% conservative / 20% base / 35% upside recovery) against €1.89M–€2.81M annual fragmentation waste.</div>
+      <div class="controls">
+        <label style="min-width:260px;">Supported Headcount: <strong id="hcLbl">200</strong> users<input type="range" id="hcSlider" min="50" max="500" step="25" value="200" oninput="runT5()"></label>
       </div>
-      <div>
-        <span class="muted">Days Overdue: <strong id="hDaysVal" style="color:var(--ink);">20</strong></span>
-        <input type="range" id="hDays" min="0" max="45" value="20" oninput="calcHealth()">
-      </div>
-      <div class="grid-3" style="margin-top:14px;" id="healthCompare"></div>
+      <div id="t5Stats" class="grid-4"></div>
+      <div class="chart-box" style="margin-top:14px;"><canvas id="roiChart"></canvas></div>
     </div>
+  </section>
 
-    <div class="card">
-      <h3>Declarative KPI Trend (T-KPI-03) — Version Break Guardrail</h3>
-      <div class="toggle-row">
-        <label class="chk"><input type="checkbox" id="chkVerBreak" checked onchange="renderKpiChart()"> Show Definition Version Break (v1 → v2)</label>
+  <!-- TAB 6: 21-KPI & QA READINESS CONSOLE -->
+  <section id="t6" class="view">
+    <div class="grid-4">
+      <div class="box ok"><div class="muted">Knowledge Health Score</div><div class="val">72 → 90+</div><div class="muted">Target autonomous steady-state</div></div>
+      <div class="box ok"><div class="muted">Repeat-Question Reduction</div><div class="val">-50%</div><div class="muted">Via 2-layer bot + SSoT</div></div>
+      <div class="box ok"><div class="muted">Time-to-Find Target</div><div class="val">&lt; 2 min</div><div class="muted">Across 45 markets</div></div>
+      <div class="box ok"><div class="muted">Batched Scan Savings</div><div class="val">98%</div><div class="muted">Automation budget preserved</div></div>
+    </div>
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card">
+        <h3>Acceptance Criteria Readiness (185 Total · 6 Blocking)</h3>
+        <div style="font-size:12.5px;margin-bottom:8px;">Core Schema &amp; Governance (64/64)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
+        <div style="font-size:12.5px;margin-bottom:8px;">Self-Healing &amp; 23 Bot Commands (71/71)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
+        <div style="font-size:12.5px;margin-bottom:8px;">Security, RBAC &amp; 6 Blocking Gates (50/50)<div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div></div>
       </div>
-      <div id="kpiChartWrap"></div>
+      <div class="card">
+        <h3>QA Verification Suite (94 Automated &amp; Rehearsal Tests)</h3>
+        <div class="box ok" style="margin-bottom:8px;"><strong>Unit &amp; Contract Tests (48):</strong> Schema T1–T10 invariants, 3s ACK SLA, 429 exponential backoff.</div>
+        <div class="box ok" style="margin-bottom:8px;"><strong>Failure-Mode Rehearsals (28):</strong> Move-then-confirm rollback, permission drift auto-repair, 30-day archive kill switch.</div>
+        <div class="box ok"><strong>End-to-End Continuity (18):</strong> Dual-root failover, zero-license-cost compliance verification.</div>
+      </div>
     </div>
   </section>
 </main>
-
 <script>
-const DOCS = [
-  { id: 'ENT_VRT_NL_001_Financial_Services.md', market: 'NL', status: 'Active', overdue: 0, health: 100, verified: '2026-11-10', owner: 'm.de.vries', verdict: 'GATED', body: 'Regulated under Wft (AFM / ACM). Mandatory statutory credit warning required. Pixel/Events API gated on prior opt-in consent.' },
-  { id: 'ENT_POL_NL_003_Healthcare.md', market: 'NL', status: 'Overdue', overdue: 23, health: 72, verified: '2026-04-15', owner: 'j.bakker', verdict: 'GATED', body: 'Prescription pharmaceuticals prohibited. OTC medical claims require KOAG/KAG approval number. Stepped penalty active at 23 days overdue.' },
-  { id: 'ENT_VRT_BE_004_Insurance.md', market: 'BE', status: 'Active', overdue: 0, health: 100, verified: '2026-11-18', owner: 's.peeters', verdict: 'GATED', body: 'Governed by FSMA AssurMiFID / IDD rules. Mandatory IPID/KID consistency. Flemish and French regional language alignment enforced.' },
-  { id: 'ENT_VRT_FR_016_Automotive.md', market: 'FR', status: 'Active', overdue: 4, health: 96, verified: '2026-05-12', owner: 'c.laurent', verdict: 'GATED', body: 'Mandatory #SeDeplacerMoinsPolluer mobility notice and CO2 emission class label under Code de l\'environnement Art. L.229-66.' }
-];
-let selectedDoc = DOCS[0];
-
-function logAudit(cmd, param, status) {
-  const el = document.getElementById('auditLog');
-  const ts = new Date().toISOString().replace('T',' ').slice(0,19);
-  const color = status === 'OK' ? '#21E0DC' : '#F0245C';
-  el.innerHTML = `<div><span style="color:#79828F">[${ts}]</span> <strong style="color:${color}">${cmd}</strong> (${param}) → ${status}</div>` + el.innerHTML;
-}
-
-function switchTab(id, btn) {
+function sw(id, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
 
-function renderDocs() {
-  const scope = document.getElementById('scopeSelect').value;
-  const list = document.getElementById('docList');
-  list.innerHTML = DOCS.map(d => {
-    const inScope = scope === 'ALL' || scope === d.market;
-    const badge = d.overdue > 14 ? 'b-pink' : (d.overdue > 0 ? 'b-amber' : 'b-cyan');
-    return `<div class="doc-item ${selectedDoc.id===d.id?'selected':''}" onclick="selectDoc('${d.id}')">
-      <div style="font-size:12px;font-weight:700;">${d.id}</div>
-      <div class="doc-meta">Market: <strong>${d.market}</strong> · Health: <span class="badge ${badge}">${d.health}</span> ${!inScope?'· <span style="color:var(--pink)">OUT OF SCOPE</span>':''}</div>
-    </div>`;
+// TAB 1
+function runT1() {
+  const root = document.getElementById('rootSel').value;
+  const role = document.getElementById('roleSel').value;
+  const canWrite = (role==='T5_ADMIN'||role==='T6_BOT') || (role==='T3_SME' && root==='staging');
+  const canRead = !(root==='internal' && role==='T1_VIEWER') && !(root==='archive' && role==='T1_VIEWER');
+  document.getElementById('t1Banner').innerHTML = !canRead
+    ? `<div class="banner b-err">ACCESS DENIED: ${role} blocked from ${root.toUpperCase()} via container-level inheritance.</div>`
+    : `<div class="banner b-ok">ACCESS GRANTED: ${role} has ${canWrite?'READ + WRITE':'READ-ONLY'} on ${root.toUpperCase()}.</div>`;
+  document.getElementById('t1Grid').innerHTML = `
+    <div class="box ${canRead?'ok':'block'}"><strong>Container Scope</strong><br>${root.toUpperCase()}</div>
+    <div class="box ok"><strong>Inheritance Rule</strong><br>Zero per-file ACL drift; inherited from parent container</div>
+    <div class="box ${canWrite?'ok':'warn'}"><strong>Effective Privilege</strong><br>${!canRead?'NONE (403)':(canWrite?'READ / WRITE':'READ-ONLY')}</div>`;
+}
+
+// TAB 2
+const STATIONS = [
+  "1. Look Up (Primary Sources)","2. Ask (Gap Clarification)","3. Sort [Fresh Instance]","4. Check (Cross-Verify)",
+  "5. Write [Search OFF]","6. Scan (Leak & Policy)","7. Audit [Fresh Instance]","8. Human Read (Sign-Off)"
+];
+function runT2() {
+  const bad = document.getElementById('unsourcedChk').checked;
+  document.getElementById('t2Banner').innerHTML = bad
+    ? `<div class="banner b-err">HARNESS HALTED AT STATION 5 &amp; 7: Unsourced claim rejected (Search OFF at Write; Fresh-Instance Audit flagged missing citation).</div>`
+    : `<div class="banner b-ok">HARNESS PASSED (8/8): All claims grounded in primary sources and verified by fresh-instance audit.</div>`;
+  document.getElementById('t2Grid').innerHTML = STATIONS.map((s,i) => {
+    const fail = bad && (i===4 || i===6);
+    return `<div class="box ${fail?'block':'ok'}"><strong>${s}</strong><br>${fail?'BLOCKED — Unsourced claim detected':'PASSED'}</div>`;
   }).join('');
-  renderViewer();
 }
 
-function selectDoc(id) {
-  selectedDoc = DOCS.find(d => d.id === id);
-  renderDocs();
-}
-
-function renderViewer() {
-  const scope = document.getElementById('scopeSelect').value;
-  const v = document.getElementById('docViewer');
-  const inScope = scope === 'ALL' || scope === selectedDoc.market;
-  if (!inScope) {
-    logAudit('WIKI_READ', `${selectedDoc.id} [scope=${scope}]`, 'BLOCKED_403');
-    v.innerHTML = `<div class="banner banner-pink">ACCESS DENIED (STR-ERR-403) — Container Branch Grant Blocked<br>Your T4 Market Scope is <strong>${scope}</strong>. You can see the register index row, but cannot open <strong>${selectedDoc.market}</strong> branch documents.</div>`;
-    return;
+// TAB 3
+function runT3(logIt) {
+  const f = document.getElementById('faultSel').value;
+  const map = {
+    stale:{tier:"Tier 2 Auto-Archive",msg:"30-day unverified kill switch moved node to _ARCHIVE; verified T+24h."},
+    perm:{tier:"Tier 1 Auto-Repair (P1)",msg:"Re-applied parent container ACL inheritance; drift eliminated in 1.2s."},
+    orphan:{tier:"Tier 2 Schema Sync",msg:"Reconciled orphaned T4 metadata row against dual-root index."},
+    rate:{tier:"Tier 1 Backoff",msg:"API 429 caught; exponential retry succeeded on attempt 2."}
+  };
+  document.getElementById('t3Banner').innerHTML = `<div class="banner b-ok">LOOP COMPLETE (${map[f].tier}): ${map[f].msg}</div>`;
+  if (logIt) {
+    const ts = new Date().toISOString().slice(11,19);
+    document.getElementById('t3Log').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:#21E0DC">${map[f].tier}</strong> — ${map[f].msg}</div>` + document.getElementById('t3Log').innerHTML;
   }
-  logAudit('WIKI_READ', selectedDoc.id, 'OK');
-  let warn = '';
-  if (selectedDoc.overdue > 0) {
-    warn = `<div class="banner ${selectedDoc.overdue>=14?'banner-pink':'banner-amber'}">STALENESS WARNING: This file is ${selectedDoc.overdue} days past review. Verify primary sources before relying on it.</div>`;
-  }
-  v.innerHTML = `
-    <h3>${selectedDoc.id}</h3>
-    ${warn}
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-      <span class="badge b-cyan">Market: ${selectedDoc.market}</span>
-      <span class="badge b-amber">Verdict: ${selectedDoc.verdict}</span>
-      <span class="badge ${selectedDoc.health<80?'b-pink':'b-cyan'}">Health Score: ${selectedDoc.health}/100</span>
-      <span class="badge b-cyan">Verified: ${selectedDoc.verified}</span>
-    </div>
-    <p style="font-size:14px;">${selectedDoc.body}</p>
-    <div class="muted" style="margin-top:14px;border-top:1px solid var(--border);padding-top:10px;">
-      Owner: <code>@${selectedDoc.owner}</code> · Direct T1 table editing locked (Agent Lockdown ADR-05). Use <code>@Bot review</code> to update freshness.
-    </div>`;
 }
-
 function runBot() {
-  const raw = document.getElementById('botInput').value.trim();
-  const scope = document.getElementById('scopeSelect').value;
-  const out = document.getElementById('botReply');
-  const lower = raw.toLowerCase();
-  if (lower.startsWith('review')) {
-    selectedDoc.overdue = 0; selectedDoc.health = 100; selectedDoc.verified = '2026-11-23';
-    logAudit('BOT_REVIEW', selectedDoc.id, 'OK');
-    out.innerHTML = `<div class="banner banner-cyan">Bot Proxy Write Complete: Reset Review Due (native) for ${selectedDoc.id}. Health Score → 100.</div>`;
-    renderDocs(); return;
-  }
-  if (lower.startsWith('gap')) {
-    logAudit('BOT_GAP', raw, 'OK');
-    out.innerHTML = `<div class="banner banner-cyan">Logged to T3 Gap Tracker (Frequency Count +1). Market Lead notified.</div>`;
-    return;
-  }
-  const match = DOCS.find(d => lower.includes(d.market.toLowerCase()));
-  if (match && scope !== 'ALL' && scope !== match.market) {
-    logAudit('BOT_CMD', `${raw} [scope=${scope}]`, 'BLOCKED_403');
-    out.innerHTML = `<div class="banner banner-pink">Scope Violation (STR-ERR-403): Caller scoped to ${scope} cannot query ${match.market}. Attempt logged to T10.</div>`;
-    return;
-  }
-  const target = match || DOCS.find(d => d.market === (scope==='ALL'?'NL':scope));
-  logAudit('BOT_CMD', raw, 'OK');
-  out.innerHTML = `<div class="banner banner-cyan">Best Match: <strong>${target.id}</strong> (${target.verdict})<br><span style="color:#fff;font-weight:400;">${target.body}</span></div>`;
+  const cmd = document.getElementById('cmdSel').value;
+  const ts = new Date().toISOString().slice(11,19);
+  document.getElementById('botLog').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:#21E0DC">ACK (0.4s &lt; 3s SLA)</strong> Executed <code>${cmd}</code> — verified clean.</div>` + document.getElementById('botLog').innerHTML;
 }
 
-function runPublishFlow() {
-  const breakMove = document.getElementById('chkBreakMove').checked;
-  const writeFirst = document.getElementById('chkWriteFirst').checked;
-  const alertEl = document.getElementById('pubAlert');
-  const stepsEl = document.getElementById('pubSteps');
-  if (writeFirst && breakMove) {
-    alertEl.innerHTML = `<div class="banner banner-pink">CRITICAL SILENT FAILURE (F-027): THE REGISTER IS LYING — T1 says "Published" while the document is still trapped in _STAGING/. Zero error surfaced to reviewer.</div>`;
-    stepsEl.innerHTML = `
-      <div class="step ok"><strong>1. ACK Card (&lt;3s)</strong><br>HTTP 200 returned</div>
-      <div class="step fail"><strong>2. Write T1 = Published</strong><br>Premature DB commit</div>
-      <div class="step fail"><strong>3. Move Wiki Node</strong><br>HTTP 500 — Failed</div>
-      <div class="step fail"><strong>4. State Divergence</strong><br>DB ≠ Wiki until 02:00 SC-006 scan</div>`;
-  } else if (breakMove) {
-    alertEl.innerHTML = `<div class="banner banner-cyan">SAFEGUARD HELD (ADR-04): Move API failed, so T1 stayed "Awaiting Approval". Zero state divergence.</div>`;
-    stepsEl.innerHTML = `
-      <div class="step ok"><strong>1. ACK Card (&lt;3s)</strong><br>HTTP 200 returned</div>
-      <div class="step fail"><strong>2. Move Wiki Node</strong><br>HTTP 500 — Aborted</div>
-      <div class="step ok"><strong>3. Verify Parent Token</strong><br>Check halted</div>
-      <div class="step ok"><strong>4. T1 Preserved</strong><br>Held at Awaiting Approval</div>`;
-  } else {
-    alertEl.innerHTML = `<div class="banner banner-cyan">CLEAN PUBLISH: Move verified before T1 commit. Container permissions inherited automatically.</div>`;
-    stepsEl.innerHTML = `
-      <div class="step ok"><strong>1. ACK Card (&lt;3s)</strong><br>HTTP 200 returned</div>
-      <div class="step ok"><strong>2. Move Wiki Node</strong><br>Moved to /EMEA/NL/</div>
-      <div class="step ok"><strong>3. Verify Parent Token</strong><br>Asserted OK</div>
-      <div class="step ok"><strong>4. Commit T1 + T10</strong><br>Published & logged</div>`;
+// TAB 4
+function runT4() {
+  const g1=document.getElementById('g1').checked, g2=document.getElementById('g2').checked,
+        g3=document.getElementById('g3').checked, g4=document.getElementById('g4').checked, g5=document.getElementById('g5').checked;
+  const fails = [];
+  if(!g1) fails.push("G1 Failed: Bot SLA degraded; requires async webhook queue.");
+  if(!g2) fails.push("G2 Failed: 5-level tree flattened to 3-level prefixed folders.");
+  if(!g3) fails.push("G3 Failed: Container inheritance replaced by nightly ACL reconciliation.");
+  if(!g4) fails.push("G4 Failed: Provisioning jumps from 200 to 4,000 API calls.");
+  if(!g5) fails.push("G5 Failed: 9-Surface Console blocked; fallback to CLI + Bot-only ops.");
+  document.getElementById('t4Banner').innerHTML = fails.length
+    ? `<div class="banner b-warn">FALLBACK MODE ACTIVE (${fails.length} Gate(s) Failed): ${fails.join(' | ')}</div>`
+    : `<div class="banner b-ok">ALL 5 STAGE 0 GATES PASSED: Full 11-Stage Programme (1,616 person-days, 3.7 FTE) cleared for execution.</div>`;
+  document.getElementById('t4Grid').innerHTML = `
+    <div class="box ${g2?'ok':'warn'}"><strong>Tree Depth</strong><br>${g2?'5-Level Dual-Root':'Flattened 3-Level Fallback'}</div>
+    <div class="box ${g4?'ok':'warn'}"><strong>Provisioning Calls</strong><br>${g4?'~200 Batched Calls':'4,000 Unbatched Calls'}</div>
+    <div class="box ${g5?'ok':'block'}"><strong>Console Surface</strong><br>${g5?'9-Surface Console Active':'Blocked (Bot/CLI Only)'}</div>`;
+}
+
+// TAB 5
+let roiChart;
+function runT5() {
+  const hc = parseInt(document.getElementById('hcSlider').value, 10);
+  document.getElementById('hcLbl').textContent = hc;
+  const scale = hc / 200;
+  const baseMid = 2.35 * scale; // €2.35M midpoint of €1.89M-€2.81M at 200 users
+  const r10 = +(baseMid * 0.10).toFixed(2), r20 = +(baseMid * 0.20).toFixed(2), r35 = +(baseMid * 0.35).toFixed(2);
+  document.getElementById('t5Stats').innerHTML = `
+    <div class="box"><div class="muted">Annual Waste Midpoint</div><div class="val">€${baseMid.toFixed(2)}M</div></div>
+    <div class="box ok"><div class="muted">10% Conservative</div><div class="val">€${r10}M</div></div>
+    <div class="box ok"><div class="muted">20% Base Case</div><div class="val">€${r20}M</div></div>
+    <div class="box ok"><div class="muted">35% Upside</div><div class="val">€${r35}M</div></div>`;
+  const data = [r10, r20, r35];
+  if (roiChart) { roiChart.data.datasets[0].data = data; roiChart.update(); }
+  else {
+    roiChart = new Chart(document.getElementById('roiChart'), {
+      type:'bar',
+      data:{labels:['10% Conservative','20% Base Case','35% Upside'],datasets:[{label:'Annual Recovered Value (€M)',data,backgroundColor:['#F5A623','#21E0DC','#22C55E'],borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#F2F5F9'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5',callback:v=>'€'+v+'M'},grid:{color:'#1b202c'}}}}
+    });
   }
 }
 
-function updateEscalation() {
-  const d = parseInt(document.getElementById('daySlider').value, 10);
-  document.getElementById('dayVal').textContent = d;
-  const penalty = d === 0 ? 0 : (d <= 14 ? d : (d <= 30 ? 28 : (d <= 40 ? 36 : 40)));
-  const score = 100 - penalty;
-  let state = 'Active', action = 'No action required', cls = 'b-cyan';
-  if (d >= 1 && d <= 13) { state = 'Needs Review'; action = '07:30 Scan: DM Card sent to Owner'; cls = 'b-amber'; }
-  else if (d >= 14 && d <= 29) { state = 'Overdue (Escalated)'; action = '07:30 Scan: Escalation Card to Owner + FLM'; cls = 'b-pink'; }
-  else if (d >= 30) { state = 'Archived (Kill Switch)'; action = 'Node moved to _ARCHIVE/. Admin-only access.'; cls = 'b-pink'; }
-  document.getElementById('escResult').innerHTML = `
-    <div class="card" style="margin:0"><div class="muted">Publication State</div><div style="margin-top:6px;"><span class="badge ${cls}">${state}</span></div></div>
-    <div class="card" style="margin:0"><div class="muted">Stepped Health Score</div><div class="kpi-num" style="color:${score<80?'var(--pink)':'var(--cyan)'}">${score}</div></div>
-    <div class="card" style="margin:0"><div class="muted">07:30 Daily Scan Action</div><div style="margin-top:6px;font-size:13px;">${action}</div></div>`;
-}
-
-function renderMover() {
-  const mode = document.querySelector('input[name="moverOrder"]:checked').value;
-  const out = document.getElementById('moverOut');
-  if (mode === 'revoke') {
-    out.innerHTML = `<div class="banner banner-cyan">SAFE SEQUENCE (ADR-11): 1. Strip NL tokens → 2. Grant FR tokens → 3. Queue NL owned files to FLM → 4. Nightly SC-006 verifies zero drift.</div>`;
-  } else {
-    out.innerHTML = `<div class="banner banner-pink">COMPLIANCE LEAK (F-029): Granting FR before revoking NL creates a dual-market access window where the mover can view/edit both markets simultaneously.</div>`;
-  }
-}
-
-function calcHealth() {
-  const d = parseInt(document.getElementById('hDays').value, 10);
-  document.getElementById('hDaysVal').textContent = d;
-  const baseDed = (document.getElementById('hOwner').checked?20:0) + (document.getElementById('hTags').checked?20:0) + (document.getElementById('hDesc').checked?20:0);
-  const steppedPen = d === 0 ? 0 : (d <= 14 ? d : (d <= 30 ? 28 : (d <= 40 ? 36 : 40)));
-  const linearPen = Math.min(40, d);
-  const stepped = Math.max(0, 100 - baseDed - steppedPen);
-  const linear = Math.max(0, 100 - baseDed - linearPen);
-  document.getElementById('healthCompare').innerHTML = `
-    <div class="card" style="margin:0"><div class="muted">Stepped Model (ADR-07)</div><div class="kpi-num" style="color:${stepped<80?'var(--pink)':'var(--cyan)'}">${stepped}</div><div class="muted">Penalty: -${steppedPen} pts</div></div>
-    <div class="card" style="margin:0"><div class="muted">Naive Linear Model</div><div class="kpi-num">${linear}</div><div class="muted">Penalty: -${linearPen} pts</div></div>
-    <div class="card" style="margin:0"><div class="muted">Delta</div><div class="kpi-num" style="color:var(--amber)">${stepped - linear} pts</div><div class="muted">Forces Day 15–30 into Needs Review</div></div>`;
-}
-
-function renderKpiChart() {
-  const showBreak = document.getElementById('chkVerBreak').checked;
-  const el = document.getElementById('kpiChartWrap');
-  el.innerHTML = `
-    <svg viewBox="0 0 600 170" style="width:100%;max-width:680px;background:#050609;border:1px solid var(--border);border-radius:6px;">
-      <line x1="40" y1="140" x2="570" y2="140" stroke="#232836" />
-      <polyline fill="none" stroke="#21E0DC" stroke-width="3" points="60,115 150,105 240,98 300,92" />
-      ${showBreak
-        ? `<line x1="330" y1="20" x2="330" y2="145" stroke="#F0245C" stroke-width="2" stroke-dasharray="5,4" />
-           <text x="338" y="34" fill="#F0245C" font-size="11" font-family="monospace">DEF VERSION BREAK (v1 → v2)</text>
-           <polyline fill="none" stroke="#F5A623" stroke-width="3" points="350,55 440,48 530,42" />`
-        : `<polyline fill="none" stroke="#21E0DC" stroke-width="3" points="300,92 350,55 440,48 530,42" />
-           <text x="310" y="34" fill="#F0245C" font-size="11" font-family="monospace">SILENT CORRUPTION: Looks like a +37% jump</text>`}
-      <text x="55" y="158" fill="#79828F" font-size="10" font-family="monospace">Jan</text>
-      <text x="235" y="158" fill="#79828F" font-size="10" font-family="monospace">Mar</text>
-      <text x="345" y="158" fill="#79828F" font-size="10" font-family="monospace">Apr (Filter Edited)</text>
-      <text x="520" y="158" fill="#79828F" font-size="10" font-family="monospace">Jun</text>
-    </svg>`;
-}
-
-renderDocs(); runPublishFlow(); updateEscalation(); renderMover(); calcHealth(); renderKpiChart();
+runT1(); runT2(); runT3(true); runBot(); runT4(); runT5();
 </script>
 </body>
 </html>
