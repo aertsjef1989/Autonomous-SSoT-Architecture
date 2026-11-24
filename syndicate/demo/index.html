@@ -3,59 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Syndicate Matchday AI — Poisson / xG & NAV Ledger Demo</title>
+<title>Syndicate — Poisson / xG, Slip Lock & NAV Ledger Prototype</title>
 <style>
-  :root { --bg:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; }
+  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; padding:24px; }
-  .wrap { max-width:1040px; margin:0 auto; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
+  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; }
+  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; }
+  .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
+  main { max-width:1160px; margin:24px auto; padding:0 20px 60px; }
+  .view { display:none; }
+  .view.active { display:block; }
   .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:12px; }
-  h1 { margin:0 0 10px; font-size:20px; }
-  label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
-  input[type="number"], input[type="range"] { width:100%; accent-color:var(--cyan); }
-  input[type="number"] { background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 10px; border-radius:6px; }
-  .stat { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; }
+  .card h3 { margin:0 0 10px; font-size:14px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:12px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
+  .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
   .val { font-size:22px; font-weight:800; color:var(--cyan); margin-top:4px; }
-  .chk { display:inline-flex; gap:8px; align-items:center; color:var(--ink); font-size:13px; margin-top:10px; cursor:pointer; }
-  .banner { padding:10px 14px; border-radius:6px; font-size:13px; font-weight:600; margin-top:12px; }
-  .b-cyan { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
-  .b-pink { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
+  label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+  label.chk { display:inline-flex; gap:7px; align-items:center; color:var(--ink); font-size:13px; cursor:pointer; }
+  input[type="range"] { width:100%; accent-color:var(--cyan); }
+  input[type="number"] { width:100%; background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 10px; border-radius:6px; }
+  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px; }
+  button.act.pink { background:var(--pink); color:#fff; }
+  .banner { padding:12px 14px; border-radius:6px; font-size:13px; font-weight:600; margin-top:12px; }
+  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
+  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
+  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12px; max-height:170px; overflow-y:auto; color:#c7d0dd; }
+  .muted { color:var(--muted); font-size:12px; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>Syndicate Matchday AI — Poisson / xG &amp; Unit-Share NAV Lab</h1>
-    <div class="grid">
-      <div><label>Home Expected Goals (lambda_H): <strong id="lhLbl">1.65</strong></label><input type="range" id="lh" min="0.4" max="3.5" step="0.05" value="1.65" oninput="recalc()"></div>
-      <div><label>Away Expected Goals (lambda_A): <strong id="laLbl">1.10</strong></label><input type="range" id="la" min="0.4" max="3.5" step="0.05" value="1.10" oninput="recalc()"></div>
-      <div><label>Pool Value (EUR)</label><input type="number" id="poolVal" value="2500" step="50" oninput="recalc()"></div>
-      <div><label>Active Units Issued</label><input type="number" id="unitsTot" value="200" step="10" oninput="recalc()"></div>
-    </div>
-    <div class="grid" id="probsGrid"></div>
-    <div class="grid" id="navGrid"></div>
-    <label class="chk"><input type="checkbox" id="kickoffLocked" checked onchange="recalc()"> Pre-Kickoff Slip Lock Active</label>
-    <div id="lockBanner"></div>
+<header>
+  <div class="brand">
+    <span class="dot" style="background:var(--pink)"></span>
+    <span class="dot" style="background:var(--cyan)"></span>
+    <span>SYNDICATE // POISSON xG, SLIP LOCK &amp; NAV PROTOTYPE</span>
   </div>
-</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="sw('xg',this)">1. Poisson / xG Engine</button>
+    <button class="tab-btn" onclick="sw('slip',this)">2. Group Slip &amp; Kickoff Lock</button>
+    <button class="tab-btn" onclick="sw('nav',this)">3. Unit-Share NAV Ledger</button>
+  </div>
+</header>
+<main>
+  <!-- TAB 1: POISSON / xG -->
+  <section id="xg" class="view active">
+    <div class="card">
+      <h3>Bivariate Poisson Match Matrix &amp; Market Edge</h3>
+      <div class="grid-3">
+        <div><label>Home Expected Goals (lambda_H): <strong id="lhLbl">1.75</strong></label><input type="range" id="lh" min="0.4" max="3.5" step="0.05" value="1.75" oninput="calcXg()"></div>
+        <div><label>Away Expected Goals (lambda_A): <strong id="laLbl">1.05</strong></label><input type="range" id="la" min="0.4" max="3.5" step="0.05" value="1.05" oninput="calcXg()"></div>
+        <div><label>Bookmaker Home Odds (Decimal)</label><input type="number" id="mktOdds" value="2.10" step="0.05" oninput="calcXg()"></div>
+      </div>
+      <div id="xgStats" class="grid-4"></div>
+      <div id="xgBanner"></div>
+    </div>
+  </section>
+
+  <!-- TAB 2: GROUP SLIP VOTING -->
+  <section id="slip" class="view">
+    <div class="card">
+      <h3>Democratic Slip Voting &amp; Pre-Kickoff Lock</h3>
+      <div class="grid-3">
+        <div><label>Yes Votes (of 6 Active Members): <strong id="vLbl">4</strong></label><input type="range" id="yesVotes" min="0" max="6" step="1" value="4" oninput="calcSlip()"></div>
+        <div style="display:flex;align-items:center;"><label class="chk"><input type="checkbox" id="pastCutoff" onchange="calcSlip()"> Past T-15m Kickoff Cutoff</label></div>
+        <div style="display:flex;align-items:center;"><button class="act pink" onclick="attemptEdit()">Attempt Post-Lock Stake Edit</button></div>
+      </div>
+      <div id="slipBanner"></div>
+      <div id="slipCards" class="grid-3"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: UNIT-SHARE NAV LEDGER -->
+  <section id="nav" class="view">
+    <div class="card">
+      <h3>Unit-Share NAV Pool &amp; Append-Only Ledger</h3>
+      <div class="grid-4" id="navStats"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button class="act" onclick="ledgerTx('DEPOSIT', 250)">+ Member Deposit (€250)</button>
+        <button class="act" onclick="ledgerTx('WIN', 300)">+ Slip Win Settlement (+€300)</button>
+        <button class="act pink" onclick="ledgerTx('LOSS', -150)">- Slip Loss Settlement (-€150)</button>
+        <button class="act pink" onclick="ledgerTx('WITHDRAW', -200)">- Member Redemption (€200)</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Append-Only Ledger Stream (Zero In-Place Overwrites)</h3>
+      <div id="navLog" class="log"></div>
+    </div>
+  </section>
+</main>
 <script>
+function sw(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
 function poisson(k, lam) { let f = 1; for (let i = 2; i <= k; i++) f *= i; return (Math.pow(lam, k) * Math.exp(-lam)) / f; }
-function recalc() {
+function calcXg() {
   const lh = parseFloat(document.getElementById('lh').value), la = parseFloat(document.getElementById('la').value);
-  const pool = Math.max(1, parseFloat(document.getElementById('poolVal').value) || 1);
-  const units = Math.max(1, parseFloat(document.getElementById('unitsTot').value) || 1);
-  const locked = document.getElementById('kickoffLocked').checked;
+  const odds = Math.max(1.01, parseFloat(document.getElementById('mktOdds').value) || 2.0);
   document.getElementById('lhLbl').textContent = lh.toFixed(2);
   document.getElementById('laLbl').textContent = la.toFixed(2);
-  let pH = 0, pD = 0, pA = 0;
-  for (let h = 0; h <= 7; h++) for (let a = 0; a <= 7; a++) { const p = poisson(h, lh) * poisson(a, la); if (h > a) pH += p; else if (h === a) pD += p; else pA += p; }
-  const nav = pool / units;
-  document.getElementById('probsGrid').innerHTML = `<div class="stat"><div class="muted">Home Win</div><div class="val">${(pH*100).toFixed(1)}%</div></div><div class="stat"><div class="muted">Draw</div><div class="val">${(pD*100).toFixed(1)}%</div></div><div class="stat"><div class="muted">Away Win</div><div class="val">${(pA*100).toFixed(1)}%</div></div>`;
-  document.getElementById('navGrid').innerHTML = `<div class="stat"><div class="muted">NAV / Unit</div><div class="val">EUR ${nav.toFixed(2)}</div></div><div class="stat"><div class="muted">Units for EUR 250</div><div class="val">+${(250/nav).toFixed(2)}</div></div><div class="stat"><div class="muted">Dashboard Mode</div><div class="val" style="font-size:16px;">Read-Only Next.js</div></div>`;
-  document.getElementById('lockBanner').innerHTML = locked ? `<div class="banner b-cyan">SLIP LOCK ENFORCED: Pre-kickoff freeze active; append-only ledger settlement.</div>` : `<div class="banner b-pink">UNLOCKED WARNING: Post-cutoff edits enabled.</div>`;
+  let pH = 0, pD = 0, pA = 0, pO25 = 0;
+  for (let h = 0; h <= 7; h++) for (let a = 0; a <= 7; a++) {
+    const p = poisson(h, lh) * poisson(a, la);
+    if (h > a) pH += p; else if (h === a) pD += p; else pA += p;
+    if (h + a > 2) pO25 += p;
+  }
+  const edge = (pH * odds - 1) * 100;
+  document.getElementById('xgStats').innerHTML = `
+    <div class="box"><div class="muted">Home Win</div><div class="val">${(pH*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Draw</div><div class="val">${(pD*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Away Win</div><div class="val">${(pA*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Over 2.5 Goals</div><div class="val">${(pO25*100).toFixed(1)}%</div></div>`;
+  document.getElementById('xgBanner').innerHTML = edge >= 3
+    ? `<div class="banner b-ok">POSITIVE EV (+${edge.toFixed(1)}% Edge): Model fair odds ${(1/pH).toFixed(2)} vs Market ${odds.toFixed(2)}. Eligible for Syndicate slip proposal.</div>`
+    : `<div class="banner b-err">NO EDGE (${edge.toFixed(1)}%): Below +3.0% minimum syndicate threshold. Pass recommended.</div>`;
 }
-recalc();
+function calcSlip() {
+  const v = parseInt(document.getElementById('yesVotes').value, 10);
+  const cutoff = document.getElementById('pastCutoff').checked;
+  document.getElementById('vLbl').textContent = v;
+  const pct = (v / 6) * 100;
+  const approved = pct >= 60;
+  document.getElementById('slipBanner').innerHTML = cutoff
+    ? `<div class="banner b-ok">STATE: LOCKED_PRE_KICKOFF — Cutoff passed. Slip selections and stakes are frozen server-side.</div>`
+    : (approved ? `<div class="banner b-ok">QUORUM MET (${pct.toFixed(0)}% Yes): Ready to lock at T-15m cutoff.</div>`
+                : `<div class="banner b-err">BELOW THRESHOLD (${pct.toFixed(0)}% Yes): Requires >=60% approval to lock.</div>`);
+  document.getElementById('slipCards').innerHTML = `
+    <div class="box"><strong>Governance Rule</strong><br>1 Active Member = 1 Vote</div>
+    <div class="box"><strong>Approval Ratio</strong><br>${v}/6 (${pct.toFixed(0)}%)</div>
+    <div class="box"><strong>Write Route</strong><br>${cutoff?'LOCKED (403 on edits)':'OPEN until T-15m'}</div>`;
+}
+function attemptEdit() {
+  const cutoff = document.getElementById('pastCutoff').checked;
+  document.getElementById('slipBanner').innerHTML = cutoff
+    ? `<div class="banner b-err">403 REJECTED: Pre-kickoff lock enforced. Post-cutoff edits are impossible; audit row logged.</div>`
+    : `<div class="banner b-ok">200 ALLOWED: Slip is still before T-15m cutoff. Edit accepted and versioned.</div>`;
+}
+let pool = 2500, units = 200;
+function renderNav() {
+  const nav = pool / units;
+  document.getElementById('navStats').innerHTML = `
+    <div class="box"><div class="muted">Total Pool Value</div><div class="val">€${pool.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">Total Active Units</div><div class="val">${units.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">NAV / Unit</div><div class="val">€${nav.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">Dashboard Boundary</div><div class="val" style="font-size:15px;">Read-Only Next.js</div></div>`;
+}
+function ledgerTx(type, amt) {
+  const nav = pool / units;
+  let uDelta = 0;
+  if (type === 'DEPOSIT') { uDelta = amt / nav; pool += amt; units += uDelta; }
+  else if (type === 'WITHDRAW') { if (pool + amt <= 100) return; uDelta = amt / nav; pool += amt; units += uDelta; }
+  else { pool = Math.max(100, pool + amt); }
+  const ts = new Date().toISOString().slice(11,19);
+  const el = document.getElementById('navLog');
+  el.innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:${amt>=0?'#21E0DC':'#F0245C'}">${type}</strong> cash=${amt>=0?'+':''}€${amt} | units=${uDelta>=0?'+':''}${uDelta.toFixed(2)} | new_NAV=€${(pool/units).toFixed(2)}</div>` + el.innerHTML;
+  renderNav();
+}
+calcXg(); calcSlip(); renderNav();
 </script>
 </body>
 </html>

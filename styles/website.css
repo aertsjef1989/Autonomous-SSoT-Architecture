@@ -156,3 +156,23 @@ body, .book, .book-body, .body-inner, .page-wrapper {
 .navigation:hover {
   color: var(--sig-cyan) !important;
 }
+
+/* Fix HonKit default white table rows & search bar */
+.markdown-section table tr {
+  background-color: var(--sig-panel) !important;
+}
+.markdown-section table tr:nth-child(2n) {
+  background-color: var(--sig-panel-alt) !important;
+}
+#book-search-input {
+  background: var(--sig-panel) !important;
+  border-bottom: 1px solid var(--sig-border) !important;
+}
+#book-search-input input,
+#book-search-input input:focus {
+  background: var(--sig-panel-alt) !important;
+  color: var(--sig-ink) !important;
+  border: 1px solid var(--sig-border) !important;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
