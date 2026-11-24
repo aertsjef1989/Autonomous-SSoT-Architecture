@@ -28,3 +28,10 @@ Balaerion enforces a hard separation between everyday/commercial prompting and c
 * **Zero-Hallucination Rule:** Legal entity names, VAT numbers, registry IDs (KBO/KvK), director names, pixels, and e-commerce platforms are extracted exclusively by deterministic code—never guessed by an LLM.
 * **Data Subject Rights:** Domain-keyed prospect workspaces support **GDPR Art. 15** (access export) and **Art. 17** (cascade erasure) alongside **Art. 35 DPIA** documentation.
 * **Human-in-the-Loop Governance:** AI recommends next actions and drafts deliverables, but **all lifecycle state transitions and external sends require explicit human approval**.
+
+---
+
+## 4. Zero-Public-Access Gate (Vercel Edge + Supabase)
+
+* **Edge Password Gate:** All frontend pages and `/api/*` endpoints on Vercel sit behind a mandatory password check enforced in Next.js middleware (`BALAERION_ACCESS_PASSWORD`), preventing unauthorized visitors or bots from accessing the workspace or consuming upstream API quotas.
+* **Invite-Only Identity:** Supabase Auth is configured with **public signups disabled**. Accounts are provisioned exclusively by the owner, and all database tables enforce strict Row-Level Security (RLS) tied to authenticated `user_id` claims.

@@ -30,3 +30,10 @@ For enterprise or air-gapped deployments requiring zero third-party cloud hostin
 * **Compute & Gateway:** Hetzner AX41 primary + **OmniRoute** (`:20128`) gateway + **LibreChat** UI behind **Cloudflare Access** (MFA) and **Cloudflare Tunnel** (zero open ports).
 * **Task Queue & Sandboxing:** Encrypted **SQLite** lease-based worker queue (`QUEUED` → `RUNNING` with 900s lease and automatic worker-death recovery) paired with **NsJail** ARM64 sandboxing for untrusted code execution.
 * **Remote Surfaces:** Telegram long-polling bridge wired to the same single-file agent registry.
+
+---
+
+## 4. Public Showcase vs. Private Live Access Boundary
+
+* **GitHub Pages (Public Mirror):** Every architectural change, schema update, and persona addition made in Vercel/Supabase is mirrored in this documentation site alongside sanitized, zero-backend HTML prototypes.
+* **Vercel Live Instance (Password-Protected):** The live Vercel deployment is **not** publicly accessible. Access is gated by default via Next.js edge middleware password protection (`HttpOnly` signed session cookie) combined with invite-only Supabase Auth, ensuring live LLM routes and OSINT connectors can only be accessed when explicitly authorized by the owner.
