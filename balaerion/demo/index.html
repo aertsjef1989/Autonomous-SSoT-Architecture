@@ -1,385 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balaerion — 6-Tab OmniRoute, Failover & MCP Console</title>
-<style>
-  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; --green:#22C55E; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
-  header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
-  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
-  .back { color:var(--cyan); text-decoration:none; font-size:12px; border:1px solid var(--border); padding:5px 10px; border-radius:5px; }
-  .back:hover { border-color:var(--cyan); }
-  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
-  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
-  .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:7px 11px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12px; }
-  .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
-  main { max-width:1240px; margin:22px auto; padding:0 20px 64px; }
-  .view { display:none; }
-  .view.active { display:block; }
-  .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
-  .card h3 { margin:0 0 8px; font-size:13.5px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
-  .muted { color:var(--muted); font-size:12px; }
-  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:16px; }
-  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-top:12px; }
-  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
-  .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
-  .box.ok { border-color:var(--cyan); }
-  .box.block { border-color:var(--pink); background:rgba(240,36,92,0.1); }
-  .box.warn { border-color:var(--amber); }
-  .val { font-size:20px; font-weight:800; color:var(--cyan); margin-top:3px; }
-  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
-  select, input[type="text"], button.act { background:var(--alt); color:var(--ink); border:1px solid var(--border); padding:7px 11px; border-radius:6px; font-size:12.5px; }
-  button.act { background:var(--cyan); color:var(--ground); font-weight:700; border:none; cursor:pointer; }
-  button.act.pink { background:var(--pink); color:#fff; }
-  label.chk { display:inline-flex; gap:7px; align-items:center; font-size:12.5px; cursor:pointer; }
-  .banner { padding:11px 14px; border-radius:6px; font-size:12.5px; font-weight:600; margin-top:12px; }
-  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
-  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
-  .b-warn { background:rgba(245,166,35,0.14); border:1px solid var(--amber); color:var(--amber); }
-  .log, pre.json { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:11.5px; overflow:auto; color:#c7d0dd; margin:0; }
-  .log { max-height:180px; }
-  pre.json { max-height:240px; }
-  .pill { display:inline-block; padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700; margin-right:5px; }
-  .p-c { background:rgba(33,224,220,0.15); color:var(--cyan); }
-  .p-p { background:rgba(240,36,92,0.15); color:var(--pink); }
-  .p-a { background:rgba(245,166,35,0.15); color:var(--amber); }
-  .bar-bg { background:#050609; border:1px solid var(--border); border-radius:4px; height:10px; overflow:hidden; margin-top:6px; }
-  .bar-fg { height:100%; background:var(--cyan); }
-  .slide-preview { border-radius:8px; padding:20px; border:1px solid var(--border); min-height:190px; }
-  .slide-dark { background:#08090D; color:#F2F5F9; border-color:#21E0DC; }
-  .slide-light { background:#F4F6FA; color:#0F172A; border-color:#CBD5E1; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balaerion v1 — Dual-Mode AI & ProspectHub Prototype</title>
+  <style>
+    :root {
+      --bg: #08090D;
+      --panel: #10131C;
+      --panel-2: #161A26;
+      --border: #23293A;
+      --text: #E8ECF4;
+      --muted: #8C96AD;
+      --cyan: #21E0DC;
+      --pink: #F0245C;
+      --green: #22C55E;
+      --amber: #F59E0B;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .badge.cyan { border-color: var(--cyan); color: var(--cyan); }
+    .badge.pink { border-color: var(--pink); color: var(--pink); }
+    .badge.green { border-color: var(--green); color: var(--green); }
+    .mode-switch { display: flex; gap: 8px; }
+    .btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { border-color: var(--cyan); }
+    .btn.active { background: rgba(33, 224, 220, 0.12); border-color: var(--cyan); color: var(--cyan); font-weight: 600; }
+    .btn.pink-active { background: rgba(240, 36, 92, 0.14); border-color: var(--pink); color: var(--pink); font-weight: 600; }
+    main { max-width: 1220px; margin: 22px auto; padding: 0 20px 40px; }
+    .grid { display: grid; grid-template-columns: 310px 1fr; gap: 18px; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .card h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .persona-item {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      background: var(--panel-2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+    }
+    .persona-item.selected { border-color: var(--cyan); background: rgba(33, 224, 220, 0.08); }
+    .lifecycle {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .state-pill {
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .state-pill.active {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(33, 224, 220, 0.12);
+      font-weight: 600;
+    }
+    .kv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .kv {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .kv label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+    .kv span { font-size: 0.88rem; font-weight: 600; }
+    .console {
+      background: #050609;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      min-height: 210px;
+      color: #D7E2F0;
+    }
+    .controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    .hidden { display: none; }
+    .notice {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-left: 3px solid var(--pink);
+      background: rgba(240, 36, 92, 0.08);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <a class="back" href="../../">← Back to Book</a>
-    <span class="dot" style="background:var(--pink)"></span>
-    <span class="dot" style="background:var(--cyan)"></span>
-    <span>BALAERION // 6-TAB OMNIROUTE, FAILOVER &amp; MCP CONSOLE</span>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="sw('t1',this)">1. OmniRoute &amp; GDPR</button>
-    <button class="tab-btn" onclick="sw('t2',this)">2. Infra &amp; Failover</button>
-    <button class="tab-btn" onclick="sw('t3',this)">3. 23-Agent MCP</button>
-    <button class="tab-btn" onclick="sw('t4',this)">4. ProspectHub OSINT</button>
-    <button class="tab-btn" onclick="sw('t5',this)">5. Signal Deck Builder</button>
-    <button class="tab-btn" onclick="sw('t6',this)">6. Cost &amp; Isolation</button>
-  </div>
-</header>
-<main>
-  <!-- TAB 1: OMNIROUTE & GDPR TRAFFIC INSPECTOR -->
-  <section id="t1" class="view active">
-    <div class="card">
-      <h3>OmniRoute Gateway — Per-Key GDPR Lane &amp; Prompt Isolation Inspector</h3>
-      <div class="muted">Unforked MIT OmniRoute (~340 providers, 90+ free tiers). One neutral global prompt; LibreChat owns per-context <code>SKILL.md</code> prompts.</div>
-      <div class="controls">
-        <label>Routing Lane:
-          <select id="laneSel" onchange="runT1()">
-            <option value="gdpr">NL/BE GDPR Client Lane (EU Opt-Out Only)</option>
-            <option value="osint">Public OSINT Pool (90+ Free Tiers)</option>
-            <option value="hobby">Hobby Router Quarantine (AgentRouter)</option>
-          </select>
-        </label>
-        <label>Upstream Provider:
-          <select id="provSel" onchange="runT1()">
-            <option value="scaleway">Scaleway Paris (EU, Opt-Out)</option>
-            <option value="mistral">Mistral EU (Paris, Opt-Out)</option>
-            <option value="gemini_free">Gemini Free Tier (Non-GDPR)</option>
-            <option value="deepseek">DeepSeek / China-Hosted API</option>
-          </select>
-        </label>
-        <label>LibreChat Skill:
-          <select id="skillSel" onchange="runT1()">
-            <option value="activate-company.md">SKILL: activate-company.md</option>
-            <option value="osint-registry.md">SKILL: osint-registry.md</option>
-            <option value="signal-deck.md">SKILL: signal-deck.md</option>
-          </select>
-        </label>
-        <button class="act" onclick="runT1(true)">Dispatch Request</button>
-      </div>
-      <div id="t1Banner"></div>
-      <div id="t1Cards" class="grid-4"></div>
+  <header>
+    <div class="brand">
+      <h1>Balaerion v1</h1>
+      <span class="badge cyan">Vercel + Supabase</span>
+      <span class="badge pink">Edge Password Gate: LOCKED</span>
+      <span class="badge">Static Mirror Demo</span>
     </div>
-    <div class="grid-2">
-      <div class="card"><h3>Effective OmniRoute Policy Evaluation</h3><pre id="t1Json" class="json"></pre></div>
-      <div class="card"><h3>Gateway Audit Stream</h3><div id="t1Log" class="log"></div></div>
+    <div class="mode-switch">
+      <button id="btn-mode-a" class="btn active" onclick="setMode('general')">Mode A: General AI Assistant</button>
+      <button id="btn-mode-b" class="btn" onclick="setMode('prospecthub')">Mode B: ProspectHub Multi-Persona</button>
     </div>
-  </section>
+  </header>
 
-  <!-- TAB 2: INFRASTRUCTURE & FAILOVER MAP -->
-  <section id="t2" class="view">
-    <div class="card">
-      <h3>Zero-Port-Exposure Topology — Hetzner AX41 Primary vs. Oracle ARM Standby</h3>
-      <div class="muted">Browser-only ingress (iOS Safari PWA, Chromebook, locked-down workstation) via Cloudflare Access MFA + Cloudflare Tunnel.</div>
-      <div class="controls">
-        <label>Client Device:
-          <select id="devSel" onchange="runT2()">
-            <option value="iOS Safari PWA">iOS Safari PWA (Zero Install)</option>
-            <option value="Chromebook">Chromebook (Browser IDE + UI)</option>
-            <option value="Locked Work PC">Locked-Down Work PC (Plain URL)</option>
-          </select>
-        </label>
-        <label class="chk"><input type="checkbox" id="mfaChk" checked onchange="runT2()"> Cloudflare Access MFA Valid</label>
-        <label class="chk"><input type="checkbox" id="axDown" onchange="runT2()"> Simulate Hetzner AX41 Outage</label>
-        <label class="chk"><input type="checkbox" id="kvmForce" onchange="runT2()"> Force Official KVM Interpreter on ARM</label>
-      </div>
-      <div id="t2Banner"></div>
-      <div id="t2Grid" class="grid-4"></div>
-    </div>
-    <div class="card"><h3>Node &amp; Sandbox Telemetry</h3><pre id="t2Trace" class="json"></pre></div>
-  </section>
-
-  <!-- TAB 3: 23-AGENT MCP ORCHESTRATOR -->
-  <section id="t3" class="view">
-    <div class="card">
-      <h3>Single-Process MCP Orchestrator (23 Active / 8 Benched) &amp; Evidence Gate</h3>
-      <div class="controls">
-        <label>Filter Capability:
-          <select id="capFilter" onchange="runT3()">
-            <option value="all">All Capabilities (23 Active / 8 Benched)</option>
-            <option value="osint">OSINT &amp; Registry Retrieval</option>
-            <option value="gtm">GTM &amp; Deck Generation</option>
-            <option value="ops">Ops, Drive &amp; Code Sandbox</option>
-            <option value="benched">Benched (8 Agents)</option>
-          </select>
-        </label>
-        <label class="chk"><input type="checkbox" id="bareTest" onchange="runT3()"> Inject Bare Conclusion (No Source URL)</label>
-        <button class="act" onclick="runT3()">Run Concurrent MCP Waterfall</button>
-      </div>
-      <div id="t3Banner"></div>
-      <div class="grid-2" style="margin-top:12px;">
-        <div class="card" style="margin:0;"><h3>Agent Fleet (`npx skills` Lock File)</h3><div id="agentList" class="log" style="max-height:230px;"></div></div>
-        <div class="card" style="margin:0;"><h3>Concurrent Execution Waterfall</h3><div id="waterfall"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 4: PROSPECTHUB OSINT & ACTIVATION -->
-  <section id="t4" class="view">
-    <div class="card">
-      <h3>ProspectHub — Automated NL/BE OSINT &amp; "Activate [Company]" Workflow</h3>
-      <div class="controls">
-        <label>Company: <input type="text" id="coName" value="Vlaamse Retail Groep NV" oninput="runT4()"></label>
-        <label>Auto-Detected Country:
-          <select id="coCountry" onchange="runT4()">
-            <option value="BE">Belgium (Tier 1 · KBO + NBB + VIES + GLEIF)</option>
-            <option value="NL">Netherlands (Tier 1 · KVK + VIES + GLEIF)</option>
-            <option value="EU">Other EU (Tier 2 · VIES + GLEIF)</option>
-          </select>
-        </label>
-        <button class="act" onclick="runT4()">Run Activate [Company]</button>
-      </div>
-      <div id="t4Cards" class="grid-4"></div>
-      <div class="grid-2" style="margin-top:14px;">
-        <div class="card" style="margin:0;"><h3>Parallel Registry Pulls (Raw Evidence)</h3><pre id="t4Reg" class="json"></pre></div>
-        <div class="card" style="margin:0;"><h3>Advisory Activation Brief (Signal Format)</h3><pre id="t4Brief" class="json"></pre></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 5: SIGNAL DECK BUILDER & EDITIONS -->
-  <section id="t5" class="view">
-    <div class="card">
-      <h3>PC-Only Manual-First Signal Deck Builder (50 Presets) &amp; 3 Product Editions</h3>
-      <div class="controls">
-        <label>Deck Preset:
-          <select id="presetSel" onchange="runT5()">
-            <option value="exec">Preset #01 — Executive Mandate &amp; KPIs</option>
-            <option value="osint">Preset #14 — OSINT Market Diagnostic</option>
-            <option value="arch">Preset #29 — Systems Topology &amp; Guardrails</option>
-            <option value="act">Preset #42 — 90-Day Activation Roadmap</option>
-          </select>
-        </label>
-        <label>Theme Tokens:
-          <select id="themeSel" onchange="runT5()">
-            <option value="dark">Signal Dark Console (#08090D / #21E0DC / #F0245C)</option>
-            <option value="light">Signal Light Blueprint (#F4F6FA / #0F172A)</option>
-          </select>
-        </label>
-        <label>Product Edition:
-          <select id="edSel" onchange="runT5()">
-            <option value="single">Edition 1: Single-Channel Activation</option>
-            <option value="multi">Edition 2: Multi-Social Suite</option>
-            <option value="rec">Edition 3: Sellable Channel-Recommender</option>
-          </select>
-        </label>
-      </div>
-      <div class="grid-2">
-        <div id="slideBox" class="slide-preview slide-dark"></div>
-        <div class="card" style="margin:0;"><h3>.pptx Export Manifest &amp; Edition Scope</h3><pre id="t5Json" class="json"></pre></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 6: COST, STORAGE & ISOLATION AUDIT -->
-  <section id="t6" class="view">
-    <div class="grid-4">
-      <div class="box ok"><div class="muted">Incremental Recurring Cost</div><div class="val">€0 / mo</div><div class="muted">Existing personal subs only</div></div>
-      <div class="box ok"><div class="muted">Local Inference</div><div class="val">0%</div><div class="muted">Hosted APIs only</div></div>
-      <div class="box ok"><div class="muted">Employer CRM / Hooks</div><div class="val">ZERO</div><div class="muted">Strict air-gap</div></div>
-      <div class="box ok"><div class="muted">Storage Wrapper</div><div class="val">OpenAPI</div><div class="muted">Direct Drive API + Personal OneDrive</div></div>
-    </div>
-    <div class="grid-2" style="margin-top:16px;">
-      <div class="card">
-        <h3>Telegram Long-Polling Bot — Single User ID Lockdown</h3>
-        <div class="controls">
-          <label>Simulated Sender ID: <input type="text" id="tgId" value="OWNER_ID_88412" oninput="runT6()"></label>
-          <button class="act" onclick="document.getElementById('tgId').value='OWNER_ID_88412';runT6()">Owner</button>
-          <button class="act pink" onclick="document.getElementById('tgId').value='UNKNOWN_99104';runT6()">Intruder</button>
+  <main>
+    <!-- MODE A: GENERAL AI ASSISTANT -->
+    <section id="mode-general">
+      <div class="grid">
+        <div class="card">
+          <h2>General Lane Routing</h2>
+          <div class="persona-item selected" onclick="selectGeneralModel(this, 'Groq · Llama-3.3-70B')">
+            <span>Groq · Llama-3.3-70B</span><span class="badge cyan">Fast</span>
+          </div>
+          <div class="persona-item" onclick="selectGeneralModel(this, 'Gemini 2.5 Pro')">
+            <span>Gemini 2.5 Pro</span><span class="badge">Reasoning</span>
+          </div>
+          <div class="persona-item" onclick="selectGeneralModel(this, 'DeepSeek R1')">
+            <span>DeepSeek R1</span><span class="badge">Code</span>
+          </div>
+          <div class="notice">
+            <strong>Lane Guardrail:</strong> Mode A runs on <code>lane: general</code>. Any prompt containing unmasked client PII is blocked before dispatch and redirected to <code>lane: safe</code>.
+          </div>
         </div>
-        <div id="t6Banner"></div>
+
+        <div class="card">
+          <h2>Everyday AI Workspace (Persistent Supabase Threads)</h2>
+          <div id="general-console" class="console">[ROUTER] Mode A active · Provider: Groq · Llama-3.3-70B · Lane: general
+[AUTH] Supabase Session verified (Invite-Only · RLS enforced)
+
+Ready for everyday engineering, SQL debugging, writing, or analysis tasks.
+Try typing a prompt below or click "Test PII Block" to see pre-dispatch lane enforcement.</div>
+          <div class="controls">
+            <input id="general-input" type="text" placeholder="Ask Balaerion anything (e.g., Write a Postgres RLS policy for workspaces)..." />
+            <button class="btn active" onclick="runGeneralPrompt()">Send</button>
+            <button class="btn pink-active" onclick="testPiiBlock()">Test PII Block</button>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3>Drive Integration &amp; Employer Isolation Checklist</h3>
-        <div class="box ok" style="margin-bottom:8px;"><strong>Direct Google Drive API (OpenAPI Tool):</strong> Bypasses official Drive MCP failures on personal Gmail accounts.</div>
-        <div class="box ok" style="margin-bottom:8px;"><strong>Personal OneDrive Only:</strong> Zero corporate tenant OAuth, zero employer SSO.</div>
-        <div class="box ok"><strong>Primary Subscription Credentials:</strong> Never routed through any third-party proxy gateway.</div>
+    </section>
+
+    <!-- MODE B: PROSPECTHUB MULTI-PERSONA SUITE -->
+    <section id="mode-prospecthub" class="hidden">
+      <div class="grid">
+        <div class="card">
+          <h2>Safe Lane Personas (EU Zero-Retention)</h2>
+          <div class="persona-item selected" onclick="selectPersona(this, 'research')">
+            <span>prospecthub-research-and-intel</span><span class="badge green">safe</span>
+          </div>
+          <div class="persona-item" onclick="selectPersona(this, 'activate')">
+            <span>activate (Post-Discovery)</span><span class="badge green">safe</span>
+          </div>
+          <div class="persona-item" onclick="selectPersona(this, 'watcher')">
+            <span>watcher (Signal Monitor)</span><span class="badge green">safe</span>
+          </div>
+
+          <h2 style="margin-top: 16px;">General Lane Personas (Commercial)</h2>
+          <div class="persona-item" onclick="selectPersona(this, 'cold-pitch')">
+            <span>prospecthub-cold-pitch-email</span><span class="badge cyan">general</span>
+          </div>
+          <div class="persona-item" onclick="selectPersona(this, 'roadmap')">
+            <span>prospecthub-scaling-roadmap</span><span class="badge cyan">general</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Domain-Keyed Workspace · Calibration Entity (Fictional)</h2>
+          <div class="kv-grid">
+            <div class="kv"><label>Entity</label><span>Kapsalon Vuurtoren BV</span></div>
+            <div class="kv"><label>Registry (KBO)</label><span>0123.456.789 (BE · 0.94)</span></div>
+            <div class="kv"><label>Stack & Pixels</label><span>Lightspeed eCom · Meta Pixel</span></div>
+            <div class="kv"><label>Readiness Score</label><span style="color: var(--cyan);">8.6 / 10 (Tier A)</span></div>
+          </div>
+
+          <h2>7-State Human-in-the-Loop Lifecycle</h2>
+          <div class="lifecycle" id="lifecycle-bar">
+            <span class="state-pill" onclick="setState(this, 'Cold')">1. Cold</span>
+            <span class="state-pill" onclick="setState(this, 'Auto-replied')">2. Auto-replied</span>
+            <span class="state-pill" onclick="setState(this, 'Agent-contacted')">3. Agent-contacted</span>
+            <span class="state-pill" onclick="setState(this, 'Discovery-booked')">4. Discovery-booked</span>
+            <span class="state-pill active" onclick="setState(this, 'Post-discovery')">5. Post-discovery</span>
+            <span class="state-pill" onclick="setState(this, 'In-nurture')">6. In-nurture</span>
+            <span class="state-pill" onclick="setState(this, 'Dormant')">7. Dormant</span>
+          </div>
+
+          <div id="ph-console" class="console">[OSINT · DETERMINISTIC] KBO 0123.456.789 verified via VIES/KBO/NBB Consult (BE confidence: 0.94).
+[LANE ENFORCEMENT] Persona: prospecthub-research-and-intel | Lane: safe (locked) | Endpoint: Mistral EU (Zero-Retention).
+[WORKSPACE STATE] Post-discovery (Human-approved transition).
+
+Summary:
+- Lightspeed eCom storefront detected; active organic content, zero paid conversion tracking.
+- Recommended next action: Run `activate` persona with discovery call deltas to generate client activation plan.</div>
+        </div>
       </div>
-    </div>
-  </section>
-</main>
-<script>
-function sw(id, btn) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
+    </section>
+  </main>
 
-// TAB 1
-function logT1(msg, ok) {
-  const el = document.getElementById('t1Log');
-  const ts = new Date().toISOString().slice(11,19);
-  el.innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:${ok?'#21E0DC':'#F0245C'}">${ok?'ALLOW':'BLOCK'}</strong> ${msg}</div>` + el.innerHTML;
-}
-function runT1(logIt) {
-  const lane = document.getElementById('laneSel').value;
-  const prov = document.getElementById('provSel').value;
-  const skill = document.getElementById('skillSel').value;
-  const isEu = (prov==='scaleway'||prov==='mistral');
-  const blocked = (lane==='gdpr' && !isEu) || (lane==='hobby' && skill==='activate-company.md');
-  document.getElementById('t1Banner').innerHTML = blocked
-    ? `<div class="banner b-err">403 POLICY DENIED: ${lane==='hobby'?'Hobby router quarantined from client activation skills.':'GDPR lane blocks non-EU/free-tier provider ('+prov+').'}</div>`
-    : `<div class="banner b-ok">200 ROUTED: Lane=${lane} -> ${prov} | Frontend prompt=${skill} | OmniRoute memory=OFF.</div>`;
-  document.getElementById('t1Cards').innerHTML = `
-    <div class="box ok"><strong>Global Prompt</strong><br>Neutral (Unforked OmniRoute)</div>
-    <div class="box ${blocked?'block':'ok'}"><strong>API Manager Rule</strong><br>${blocked?'blockedModels Intercept':'allowedModels Verified'}</div>
-    <div class="box ${isEu?'ok':'warn'}"><strong>Residency</strong><br>${isEu?'Paris EU · Training Opt-Out':'Non-EU / Free Retrieval'}</div>
-    <div class="box ok"><strong>Frontend Skill</strong><br>${skill}</div>`;
-  document.getElementById('t1Json').textContent = JSON.stringify({
-    lane, provider:prov, frontend_skill:skill, omniroute_memory:false,
-    eu_training_opt_out:isEu, status:blocked?403:200
-  }, null, 2);
-  if (logIt) logT1(`${lane} -> ${prov} [${skill}]`, !blocked);
-}
+  <script>
+    let activeModel = 'Groq · Llama-3.3-70B';
+    let currentState = 'Post-discovery';
 
-// TAB 2
-function runT2() {
-  const dev = document.getElementById('devSel').value;
-  const mfa = document.getElementById('mfaChk').checked;
-  const down = document.getElementById('axDown').checked;
-  const kvm = document.getElementById('kvmForce').checked;
-  const b = document.getElementById('t2Banner');
-  if (!mfa) b.innerHTML = `<div class="banner b-err">401 ACCESS DENIED: Cloudflare Access MFA (Email OTP / Google SSO) required for ${dev}.</div>`;
-  else if (down && kvm) b.innerHTML = `<div class="banner b-err">SANDBOX CRASH: Official KVM interpreter failed on Oracle ARM (no nested KVM). Use LibreCodeInterpreter (NsJail).</div>`;
-  else if (down) b.innerHTML = `<div class="banner b-warn">FAILOVER ACTIVE: Cloudflare Tunnel serving ${dev} from Oracle Always Free ARM + NsJail.</div>`;
-  else b.innerHTML = `<div class="banner b-ok">PRIMARY ONLINE: ${dev} -> Cloudflare Access -> Tunnel -> Hetzner AX41 (64GB NVMe).</div>`;
-  document.getElementById('t2Grid').innerHTML = `
-    <div class="box ok"><strong>Client Surface</strong><br>${dev}</div>
-    <div class="box ${mfa?'ok':'block'}"><strong>Edge MFA</strong><br>${mfa?'CF Access Verified':'Blocked (401)'}</div>
-    <div class="box ${down?'warn':'ok'}"><strong>Active Node</strong><br>${down?'Oracle ARM (2 OCPU, 12GB)':'Hetzner AX41 (Ryzen 5 3600)'}</div>
-    <div class="box ${down&&kvm?'block':'ok'}"><strong>Code Sandbox</strong><br>${down&&kvm?'KVM Error':'LibreCodeInterpreter (NsJail)'}</div>`;
-  document.getElementById('t2Trace').textContent = JSON.stringify({
-    client:dev, mfa_verified:mfa, public_ports_open:0,
-    active_host:down?"oracle-arm-standby":"hetzner-ax41-primary",
-    sandbox:kvm?"official-kvm-unsupported-on-arm":"usnavy13/LibreCodeInterpreter (ARM64 + NsJail)"
-  }, null, 2);
-}
+    function setMode(mode) {
+      document.getElementById('mode-general').classList.toggle('hidden', mode !== 'general');
+      document.getElementById('mode-prospecthub').classList.toggle('hidden', mode !== 'prospecthub');
+      document.getElementById('btn-mode-a').classList.toggle('active', mode === 'general');
+      document.getElementById('btn-mode-b').classList.toggle('active', mode === 'prospecthub');
+    }
 
-// TAB 3
-const AGENTS = [
-  {name:"kvk-registry-mcp",cap:"osint",st:"ACTIVE",ms:320},
-  {name:"kbo-nbb-belgium-mcp",cap:"osint",st:"ACTIVE",ms:380},
-  {name:"vies-vat-validator-mcp",cap:"osint",st:"ACTIVE",ms:210},
-  {name:"gleif-lei-lookup-mcp",cap:"osint",st:"ACTIVE",ms:290},
-  {name:"prospecthub-enricher",cap:"gtm",st:"ACTIVE",ms:450},
-  {name:"signal-pptx-builder",cap:"gtm",st:"ACTIVE",ms:510},
-  {name:"activate-company-advisor",cap:"gtm",st:"ACTIVE",ms:480},
-  {name:"direct-drive-openapi",cap:"ops",st:"ACTIVE",ms:260},
-  {name:"nsjail-code-runner",cap:"ops",st:"ACTIVE",ms:340},
-  {name:"telegram-owner-bridge",cap:"ops",st:"ACTIVE",ms:180},
-  {name:"legacy-a2a-mesh-exp",cap:"benched",st:"BENCHED",ms:0},
-  {name:"official-drive-mcp-broken",cap:"benched",st:"BENCHED",ms:0}
-];
-function runT3() {
-  const f = document.getElementById('capFilter').value;
-  const bare = document.getElementById('bareTest').checked;
-  const list = AGENTS.filter(a => f==='all' || a.cap===f);
-  document.getElementById('agentList').innerHTML = list.map(a =>
-    `<div style="margin-bottom:6px;"><span class="pill ${a.st==='ACTIVE'?'p-c':'p-p'}">${a.st}</span><strong>${a.name}</strong> <span class="muted">(${a.cap})</span></div>`
-  ).join('');
-  const active = list.filter(a=>a.st==='ACTIVE').slice(0,5);
-  document.getElementById('waterfall').innerHTML = active.map(a =>
-    `<div style="margin-bottom:8px;font-size:12px;"><strong>${a.name}</strong> — ${a.ms}ms (concurrent)<div class="bar-bg"><div class="bar-fg" style="width:${Math.min(100,a.ms/6)}%"></div></div></div>`
-  ).join('') || '<div class="muted">No active agents in this filter.</div>';
-  document.getElementById('t3Banner').innerHTML = bare
-    ? `<div class="banner b-err">EVIDENCE GATE BLOCKED: Free-tier retrieval worker returned a bare conclusion with 0 source URLs. Halted before Judgement tier.</div>`
-    : `<div class="banner b-ok">CONCURRENT MCP PASS OK: ${active.length} workers returned verbatim source evidence in parallel; handed to Primary Reasoning Model.</div>`;
-}
+    function selectGeneralModel(el, model) {
+      el.parentElement.querySelectorAll('.persona-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+      activeModel = model;
+      document.getElementById('general-console').textContent =
+        `[ROUTER] Switched provider to: ${activeModel} (lane: general)\n[STATUS] Ready for everyday AI tasks.`;
+    }
 
-// TAB 4
-function runT4() {
-  const co = document.getElementById('coName').value.trim() || "Example NV";
-  const c = document.getElementById('coCountry').value;
-  const regs = c==='BE' ? ["KBO","NBB","VIES","GLEIF"] : (c==='NL' ? ["KVK","VIES","GLEIF"] : ["VIES","GLEIF"]);
-  const tier = c==='EU' ? "Tier 2 (Pan-EU)" : "Tier 1 (Full NL/BE)";
-  document.getElementById('t4Cards').innerHTML = `
-    <div class="box ok"><strong>Target Account</strong><br>${co}</div>
-    <div class="box ok"><strong>Auto-Detected Market</strong><br>${c}</div>
-    <div class="box ok"><strong>Coverage Tier</strong><br>${tier}</div>
-    <div class="box ok"><strong>Active Registries</strong><br>${regs.join(' · ')}</div>`;
-  document.getElementById('t4Reg').textContent = JSON.stringify({
-    account:co, jurisdiction:c, registries_queried:regs,
-    evidence_attached:true, gdpr_lane:"Scaleway Paris / Mistral EU"
-  }, null, 2);
-  document.getElementById('t4Brief').textContent = JSON.stringify({
-    command:`Activate ${co}`, framing:"Advisory GTM Benchmark",
-    design_system:"Signal Embedded", next_deliverable:"PC Manual-First Signal Deck (.pptx)"
-  }, null, 2);
-}
+    function runGeneralPrompt() {
+      const input = document.getElementById('general-input');
+      const val = input.value.trim() || 'Generate a Supabase RLS policy restricting workspace rows to auth.uid().';
+      document.getElementById('general-console').textContent =
+        `[USER] ${val}\n\n[ROUTER] Dispatched via ${activeModel} (lane: general · 0 PII detected)\n[RESPONSE]\nCREATE POLICY "owner_only" ON workspaces\n  FOR ALL USING (auth.uid() = user_id);`;
+      input.value = '';
+    }
 
-// TAB 5
-function runT5() {
-  const p = document.getElementById('presetSel').value;
-  const th = document.getElementById('themeSel').value;
-  const ed = document.getElementById('edSel').value;
-  const titles = {exec:"Executive Mandate & KPIs",osint:"OSINT Market Diagnostic",arch:"Systems Topology & Guardrails",act:"90-Day Activation Roadmap"};
-  const eds = {single:"Edition 1: Single-Channel Activation",multi:"Edition 2: Multi-Social Suite",rec:"Edition 3: Sellable Channel-Recommender"};
-  const box = document.getElementById('slideBox');
-  box.className = 'slide-preview ' + (th==='dark'?'slide-dark':'slide-light');
-  box.innerHTML = `<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:0.75;">SIGNAL DECK BUILDER · PC MANUAL-FIRST (50 PRESETS)</div>
-    <h2 style="margin:8px 0;color:${th==='dark'?'#21E0DC':'#0F172A'}">${titles[p]}</h2>
-    <p style="font-size:13px;opacity:0.85;">Active Edition: <strong>${eds[ed]}</strong>. Native Signal tokens enforced across charts, tables, and .pptx export.</p>`;
-  document.getElementById('t5Json').textContent = JSON.stringify({
-    device_policy:"PC-Only Manual-First", total_presets:50, selected_preset:p,
-    theme:th, edition:eds[ed], exporter:"signal-pptx-builder"
-  }, null, 2);
-}
+    function testPiiBlock() {
+      document.getElementById('general-console').textContent =
+        `[USER] Draft an audit for client VAT BE0123.456.789 using Groq.\n\n` +
+        `[BLOCKED · PRE-DISPATCH GATE] Unmasked client identifier detected on lane: general.\n` +
+        `[ACTION] Request refused for ${activeModel}. Switch to Mode B (lane: safe · EU Zero-Retention) to process client records.`;
+    }
 
-// TAB 6
-function runT6() {
-  const id = document.getElementById('tgId').value.trim();
-  const ok = id === 'OWNER_ID_88412';
-  document.getElementById('t6Banner').innerHTML = ok
-    ? `<div class="banner b-ok">AUTHORIZED: Long-polling Telegram bot accepted command from whitelisted owner (${id}).</div>`
-    : `<div class="banner b-err">DROPPED SILENTLY: Unauthorized Telegram sender (${id}) rejected by single-user-ID lock.</div>`;
-}
+    function setState(el, state) {
+      document.querySelectorAll('.state-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      currentState = state;
+      document.getElementById('ph-console').textContent =
+        `[HUMAN-IN-THE-LOOP] Lifecycle state manually updated to: ${currentState}\n` +
+        `[AUDIT] Logged to Supabase prospect_events table with timestamp & actor_id.\n` +
+        `[RULE] AI recommends next actions; human operator owns all state transitions.`;
+    }
 
-runT1(true); runT2(); runT3(); runT4(); runT5(); runT6();
-</script>
+    function selectPersona(el, key) {
+      document.querySelectorAll('#mode-prospecthub .persona-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+      const outputs = {
+        research: `[OSINT · DETERMINISTIC] KBO 0123.456.789 verified (BE · 0.94).\n[LANE] safe (locked) -> Mistral EU Zero-Retention.\n[VERDICT] Tier A · Readiness 8.6/10 · Lightspeed eCom detected.`,
+        activate: `[PERSONA] activate | Lane: safe (locked) | State: ${currentState}\n[PROMPT] Pulling existing Kapsalon Vuurtoren BV brief. What changed in the discovery meeting?\n[DELIVERABLE] Phased Activation Plan: Start with Video Views to build retargeting pool before launching Conversion campaigns.`,
+        watcher: `[PERSONA] watcher | Lane: safe | Scheduled Footprint Check\n[SIGNALS] No new pixel removals. Detected +2 new landing pages on Lightspeed eCom.\n[QUEUE] Surfaced to daily-view action queue.`,
+        'cold-pitch': `[PERSONA] prospecthub-cold-pitch-email | Lane: general (anonymized brief)\n[LANGUAGE] NL (10-Language EU Parity)\n[DRAFT] Concise value-led outreach tailored to regional retail e-commerce benchmarks.`,
+        roadmap: `[PERSONA] prospecthub-scaling-roadmap | Lane: general\n[OUTPUT] 90-day phased testing roadmap (Creative Velocity -> Pixel Maturity -> Conversion Scaling).`
+      };
+      document.getElementById('ph-console').textContent = outputs[key];
+    }
+  </script>
 </body>
 </html>
