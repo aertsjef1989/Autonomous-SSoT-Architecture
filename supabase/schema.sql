@@ -188,3 +188,55 @@ ALTER TABLE syndicate_pool_ledger ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "owner_syndicate_fixtures" ON syndicate_fixtures FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "owner_syndicate_ledger" ON syndicate_pool_ledger FOR ALL USING (auth.uid() = user_id);
+
+-- ============================================================================
+-- 5. VECTOR RAG LAYER (pgvector · EU Safe Lane 1024-dim embeddings)
+-- ============================================================================
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE IF NOT EXISTS knowledge_embeddings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  pillar TEXT NOT NULL CHECK (pillar IN ('ssot', 'prospecthub', 'syndicate')),
+  source_id UUID NOT NULL,
+  source_title TEXT NOT NULL,
+  market_code TEXT,
+  is_stale BOOLEAN NOT NULL DEFAULT false,
+  chunk_text TEXT NOT NULL,
+  embedding vector(1024) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_embeddings_hnsw
+  ON knowledge_embeddings USING hnsw (embedding vector_cosine_ops);
+
+ALTER TABLE knowledge_embeddings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "owner_embeddings" ON knowledge_embeddings FOR ALL USING (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION match_knowledge(
+  query_embedding vector(1024),
+  target_pillar TEXT,
+  match_count INT DEFAULT 4
+)
+RETURNS TABLE (
+  id UUID,
+  source_title TEXT,
+  market_code TEXT,
+  is_stale BOOLEAN,
+  chunk_text TEXT,
+  similarity FLOAT
+)
+LANGUAGE sql STABLE AS $$
+  SELECT
+    ke.id,
+    ke.source_title,
+    ke.market_code,
+    ke.is_stale,
+    ke.chunk_text,
+    1 - (ke.embedding <=> query_embedding) AS similarity
+  FROM knowledge_embeddings ke
+  WHERE ke.pillar = target_pillar
+    AND ke.user_id = auth.uid()
+  ORDER BY ke.embedding <=> query_embedding
+  LIMIT match_count;
+$$;

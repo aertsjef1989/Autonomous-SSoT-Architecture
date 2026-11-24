@@ -474,8 +474,12 @@
 
       if (mode === 'general') {
         addMsg('ai', `Processed cleanly on <code>lane: general</code> (0 PII detected) and saved to your Supabase thread.<div class="info-card"><code>CREATE POLICY "owner_only" ON threads FOR ALL USING (auth.uid() = user_id);</code></div>`, document.getElementById('model-select').value);
+      } else if (mode === 'ssot') {
+        addMsg('ai', `<div class="info-card" style="margin-bottom:10px;border-left:3px solid var(--cyan);"><strong>pgvector Retrieval (Top-2 · SSoT)</strong><br>• <code>04_Markets/NL/Q4_Retail_Policy.md</code> · sim <strong>0.93</strong> · <span style="color:var(--green);">VERIFIED</span><br>• <code>03_Policy/Conversion_Tracking_v3.md</code> · sim <strong>0.87</strong> · <span style="color:var(--green);">VERIFIED</span></div>Synthesized answer grounded in verified SSoT chunks (0 stale docs referenced, FR-36 clean).`, 'Balaerion · pgvector RAG (SSoT)');
+      } else if (mode === 'syndicate') {
+        addMsg('ai', `<div class="info-card" style="margin-bottom:10px;border-left:3px solid var(--cyan);"><strong>pgvector Retrieval (Top-2 · Syndicate)</strong><br>• <code>matchday_xg_model_v4</code> · sim <strong>0.94</strong> · Edge +6.8%<br>• <code>pool_nav_ledger_latest</code> · sim <strong>0.89</strong> · Unit NAV +12.4%</div>Generated matchday breakdown using live Poisson/xG chunks and current pool exposure limits.`, 'Balaerion · pgvector RAG (Syndicate)');
       } else {
-        addMsg('ai', `Updated <strong>Kapsalon Vuurtoren BV</strong> deliverable under state <strong>${phState}</strong>.<div class="info-card"><strong>Recommended Plan:</strong> Launch Video Views first to build retargeting pool before enabling Conversion optimization.</div>`, 'ProspectHub · EU Safe Lane');
+        addMsg('ai', `<div class="info-card" style="margin-bottom:10px;border-left:3px solid var(--green);"><strong>pgvector Retrieval (Top-2 · ProspectHub EU Safe)</strong><br>• <code>kapsalon_vuurtoren_osint.json</code> · sim <strong>0.95</strong> · KBO 0123.456.789<br>• <code>discovery_notes_delta.md</code> · sim <strong>0.91</strong> · State: ${phState}</div>Updated <strong>Kapsalon Vuurtoren BV</strong> activation plan: Launch Video Views first to build a retargeting pool before enabling Conversion optimization.`, 'ProspectHub · pgvector EU Safe Lane');
       }
     }
 
