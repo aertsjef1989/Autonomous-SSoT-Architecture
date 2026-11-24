@@ -200,3 +200,19 @@ body, .book, .book-body, .body-inner, .page-wrapper {
   border-radius: 6px;
   padding: 6px 10px;
 }
+
+/* Clean Pillar Separation in HonKit Sidebar */
+.book-summary ul.summary li.header {
+  margin-top: 18px !important;
+  padding: 12px 15px 6px !important;
+  border-top: 1px solid #232836 !important;
+  color: #21E0DC !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.1px !important;
+  text-transform: uppercase !important;
+}
+.book-summary ul.summary li.header:first-child {
+  margin-top: 4px !important;
+  border-top: none !important;
+}
