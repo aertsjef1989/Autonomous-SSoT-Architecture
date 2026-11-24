@@ -10,7 +10,7 @@ Balaerion enforces a hard separation between everyday/commercial prompting and c
 
 | Lane | Permitted Workloads | Permitted Providers | Hard Constraint |
 | :--- | :--- | :--- | :--- |
-| **`lane: safe`** (`lane_locked: true`) | Client names, prospect briefs, call transcripts, OSINT synthesis, activation plans | EU zero-retention / non-training endpoints only (Mistral EU, Scaleway Paris) | **Zero fallback** to general/training providers |
+| **`lane: safe`** (`lane_locked: true`) | Client names, prospect briefs, call transcripts, OSINT synthesis, activation plans | Configurable EU zero-retention endpoints (private-production target; public POC enforces synthetic-only inputs) | **Zero fallback** to general/training providers |
 | **`lane: general`** | Everyday AI tasks (coding, writing, analysis), anonymized outreach templates, ideation | Rate-limit-aware multi-provider pool (Groq, Gemini, OpenRouter, DeepSeek) | **Blocked** from receiving unmasked client PII |
 
 ---

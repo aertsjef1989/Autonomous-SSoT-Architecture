@@ -4,7 +4,7 @@
 
 ---
 
-> **Live Clean-Room Demo:** [Launch the Interactive SSoT Workspace, Automation Simulator & Metrics Console](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
+> **Live Clean-Room Demo:** [Launch the Interactive SSoT Workspace, Automation Simulator & Metrics Console](demo/index.html)
 
 ## 1. What these are
 

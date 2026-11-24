@@ -60,3 +60,25 @@ Value tracking combines automated operational telemetry with external validation
 | **Weekly** | `T3` Gap Tracker Frequency Rollup | Market Champions | Top recurring gaps promoted into next sprint backlog |
 | **Monthly** | `T-KPI-01` Snapshot Trend + Active Roster Adoption (`>=80%`) | Regional Manager | Trigger targeted enablement if any market drops below 65% monthly active use |
 | **Quarterly** | External 30-Query Findability Audit (`>=90%` in <=3 clicks / 1 cmd) | Independent Assessor | Redesign folder taxonomy or `@Bot ask` facet weights if findability drops below 85% |
+
+
+---
+
+## ADR-010: Single-Repository Dual-Deployment Topology (X8)
+* **Decision:** Maintain one public GitHub repository serving a static HonKit book on GitHub Pages and a unified Next.js application (`balaerion-app/`) on an unlisted Vercel Hobby deployment.
+* **Guardrail:** GitHub Pages never references the Vercel URL and strips all AI-assist code. Vercel deployment URLs are kept off GitHub deployment panels and commit statuses.
+
+## ADR-011: Standardized Lean Reference Model (X2)
+* **Decision:** Replace all employer-derived metrics and proprietary workspace names in public documentation with a transparent, parameterized 100-seat Lean DMADV reference model.
+* **Rationale:** Eliminates confidentiality risk while allowing CTOs and recruiters to verify every calculation directly.
+
+## ADR-012: Self-Hosted ALTCHA Proof-of-Work for Bot Protection (X4)
+* **Decision:** Use self-hosted ALTCHA proof-of-work on the grant request endpoint instead of Cloudflare Turnstile.
+* **Rationale:** Preserves zero third-party script requests and zero third-party visitor IP telemetry while running free inside Vercel serverless routes.
+
+## ADR-013: Free-Only Config-Driven Model Registry and Telegram Control Plane (X7)
+* **Decision:** Admit only permanent, card-free free-tier LLM providers (Groq, Cloudflare Workers AI, OpenRouter `:free`) behind a config-driven registry. Reject providers requiring payment methods (such as Cerebras). Use Telegram Bot API (100% free) over WhatsApp Cloud API (paid templates) for owner monitoring and circuit-breaker control.
+
+## ADR-014: Browser-Native Charts and BI Export Over Server-Side Python Plotting
+* **Decision:** Render interactive SSoT and Syndicate dashboards using lightweight JavaScript charts in Next.js, paired with one-click normalized CSV/JSON exports for Tableau and Power BI.
+* **Rationale:** Keeps Vercel serverless bundles well under the 250 MB Hobby limit while delivering native datasets directly consumable by enterprise BI tools.

@@ -19,7 +19,7 @@ Balaerion is a **dual-mode AI platform** designed to serve two complementary pur
 | :--- | :--- | :--- |
 | **Frontend & API** | **Vercel** (Next.js + Serverless Functions) | Unified chat UI, ProspectHub workspace, and pre-dispatch lane router |
 | **State & Auth** | **Supabase** (PostgreSQL + Auth + RLS) | Persistent general chat threads, 7-state prospect workspaces, and RBAC |
-| **Safe Lane Models** | **EU Zero-Retention Providers** (Mistral EU / Scaleway Paris) | Client-facing intelligence, OSINT synthesis, and activation plans |
+| **Safe Lane Models** | **EU Zero-Retention Providers** (Configurable EU Zero-Retention Providers (private-production target; public POC runs synthetic-only on admitted free-tier providers)) | Client-facing intelligence, OSINT synthesis, and activation plans |
 | **General Lane Models** | **Multi-Provider Failover** (Groq, Gemini, OpenRouter, DeepSeek) | Everyday AI tasks, commercial drafting, and ideation |
 | **Design System** | **Signal Tokens** (`#08090D`, `#21E0DC`, `#F0245C`) | Unified high-contrast console aesthetic across docs and prototypes |
 
