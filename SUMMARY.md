@@ -29,18 +29,18 @@
 ## VI. Interfaces & Design System
 - [Failure-Mode Rehearsals & Interface Specs](10-Prototype-Manual.md)
 - [Signal Design System](11-Signal-Design-System.md)
-- [Interactive SSoT Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
+- [Interactive SSoT Demo](https://aertsjef1989.github.io/systems-design-portfolio/demo/)
 
 ## Balaerion (OmniRoute AI Gateway)
 - [Mandate & Core Stack](balaerion/01-Mandate-and-Core-Stack.md)
 - [Hosting, Failover & ARM64 Sandboxing](balaerion/02-Hosting-and-Failover-Topology.md)
 - [Security, MFA & GDPR Routing Lane](balaerion/03-Security-and-GDPR-Routing-Lane.md)
 - [MCP Agent Layer & GTM Product Surface](balaerion/04-MCP-Agents-and-Product-Layer.md)
-- [Interactive Balaerion Prototype](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/balaerion/demo/)
+- [Interactive Balaerion Prototype](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/)
 
 ## Syndicate (Matchday AI)
 - [Mandate & System Architecture](syndicate/01-Mandate-and-System-Architecture.md)
 - [Poisson & xG Probability Engine](syndicate/02-Poisson-and-xG-Probability-Engine.md)
 - [Group Tipgame & Slip Integrity](syndicate/03-Group-Tipgame-and-Slip-Integrity.md)
 - [Unit-Share NAV Ledger & Operations](syndicate/04-Unit-Share-NAV-Ledger-and-Operations.md)
-- [Interactive Syndicate Prototype](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/syndicate/demo/)
+- [Interactive Syndicate Prototype](https://aertsjef1989.github.io/systems-design-portfolio/syndicate/demo/)

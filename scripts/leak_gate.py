@@ -23,7 +23,7 @@ def scan_files(pattern: re.Pattern) -> list[str]:
     for root, dirs, files in os.walk("."):
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
         for fname in sorted(files):
-            if fname in SKIP_FILES or fname.endswith(".bak"):
+            if fname in SKIP_FILES or fname.endswith((".bak",".png",".jpg",".jpeg",".gif",".webp",".ico",".woff",".woff2",".ttf",".pdf",".zip")):
                 continue
             fpath = os.path.join(root, fname)
             if os.path.abspath(fpath) == os.path.abspath(TERMS_FILE):

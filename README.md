@@ -12,9 +12,9 @@
 
 | System | Core Focus | Key Guardrail | Interactive Surface |
 | :--- | :--- | :--- | :--- |
-| **SSoT** | Multi-market knowledge architecture, relational schema (`T1`–`T10`), bot commands, and self-healing governance | Move-then-confirm publish, container inheritance, and 30-day archive kill switch | [SSoT Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/) |
-| **Balaerion** | OmniRoute AI gateway + LibreChat, Hetzner/Oracle ARM failover, 23 MCP agents, and OSINT GTM layer | Cloudflare Access MFA, GDPR EU lane (Scaleway/Mistral EU), and evidence-only retrieval | [Balaerion Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/balaerion/demo/) |
-| **Syndicate** | Python Poisson/xG probability engine, read-only Next.js dashboard, group tipgame, and unit-share NAV ledger | Pre-kickoff slip lock, unit-share NAV pricing, and append-only ledger | [Syndicate Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/syndicate/demo/) |
+| **SSoT** | Multi-market knowledge architecture, relational schema (`T1`–`T10`), bot commands, and self-healing governance | Move-then-confirm publish, container inheritance, and 30-day archive kill switch | [SSoT Demo](https://aertsjef1989.github.io/systems-design-portfolio/demo/) |
+| **Balaerion** | OmniRoute AI gateway + LibreChat, Hetzner/Oracle ARM failover, 23 MCP agents, and OSINT GTM layer | Cloudflare Access MFA, GDPR EU lane (Scaleway/Mistral EU), and evidence-only retrieval | [Balaerion Demo](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) |
+| **Syndicate** | Python Poisson/xG probability engine, read-only Next.js dashboard, group tipgame, and unit-share NAV ledger | Pre-kickoff slip lock, unit-share NAV pricing, and append-only ledger | [Syndicate Demo](https://aertsjef1989.github.io/systems-design-portfolio/syndicate/demo/) |
 
 ---
 
@@ -35,7 +35,7 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 ## Live Design System & Architecture Surfaces
 
 - [Architecture Topology](ARCHITECTURE_FLOW.md)
-- [Launch Interactive SSoT Architecture Demo](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/demo/)
-- [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-studio.html)
-- [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-gallery.html)
+- [Launch Interactive SSoT Architecture Demo](https://aertsjef1989.github.io/systems-design-portfolio/demo/)
+- [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-studio.html)
+- [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-gallery.html)
 - [Signal Design System Specification](11-Signal-Design-System.md)

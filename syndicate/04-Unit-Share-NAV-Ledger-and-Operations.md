@@ -23,4 +23,4 @@ Existing members' per-unit value remains completely unchanged at the exact momen
 * **Reconciliation Invariant:** `SUM(ledger_cash_flows) == Total_Pool_Value` and `SUM(member_unit_deltas) == Total_Active_Units` are asserted on every transaction.
 
 ## 4. Interactive Architecture Prototype
-Launch the [Syndicate 3-Tab Interactive Prototype](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/syndicate/demo/) to test the Poisson/xG scoreline matrix, pre-kickoff slip voting locks, and unit-share NAV mint/burn ledger.
+Launch the [Syndicate 3-Tab Interactive Prototype](https://aertsjef1989.github.io/systems-design-portfolio/syndicate/demo/) to test the Poisson/xG scoreline matrix, pre-kickoff slip voting locks, and unit-share NAV mint/burn ledger.
