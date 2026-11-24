@@ -39,3 +39,16 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 - [Launch Signal Studio (Live Browser Editor)](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-studio.html)
 - [Browse Signal Device & Template Gallery](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-gallery.html)
 - [Signal Design System Specification](11-Signal-Design-System.md)
+
+---
+
+### Balaerion Core Agent Topology (Selected Personas)
+
+| Agent Persona | Primary Responsibility | Guardrail / Output Contract |
+| :--- | :--- | :--- |
+| **Scout** | Parallel firmographic, technographic, and OSINT signal research | Structured JSON account brief; zero unverified claims |
+| **Campaign Architect** | Maps account signals against the RAG Knowledge Base for custom plays | Territory- and vertical-scoped campaign blueprint |
+| **Voice & Outreach Engine** | Generates email/call drafts using per-rep **Voice Profiles** and regional RAG context | Staged draft only; LinkedIn automation and auto-send hard-blocked |
+| **Relay Agent** | Packages qualification state, objections, and context for SDR → AE → CS handovers & incubation | Deterministic handover brief triggered on state transition |
+| **Quant** | Monitors 7-state velocity, surfaces deal risk, and diagnoses campaign bottlenecks | Read-only telemetry & bottleneck alerts; no blind CRM mutations |
+| **Compliance Overlord** | Enforces regional regulations (GDPR Art. 15/17/35), channel bans, and schema validation | Hard circuit breaker (`#F0245C`) blocking non-compliant payloads |

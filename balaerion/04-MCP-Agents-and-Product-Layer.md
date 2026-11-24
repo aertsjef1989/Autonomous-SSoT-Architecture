@@ -1,27 +1,35 @@
-# Balaerion IV. MCP Agent Layer & GTM Product Surface
+# Balaerion IV. Multi-Agent Layer, ProspectHub & Remote Access
 
-**Focus:** 23 Active MCP Agents, Research-vs-Judgement Split, ProspectHub OSINT & Signal Studio
-
----
-
-## 1. Single-Process MCP Orchestrator
-Rather than adopting heavy agent-to-agent (A2A) network meshes, Balaerion wraps its agent fleet as **Model Context Protocol (MCP) servers** inside a single orchestrator process:
-* **Fleet Size:** **23 active agents** (8 benched), selected via a five-part usefulness test and sourced from the real skills ecosystem (`npx skills` CLI + lock file for deterministic versioning).
-* **Capability Selection & Concurrency:** Agents are invoked by capability tag, with **concurrent execution** treated as a mandatory product requirement so multi-source OSINT and verification run in parallel.
+**Focus:** Named RevOps Personas, 23 Active MCP Agents, ProspectHub OSINT, Rep Voice Profiles & Telegram Remote Access
 
 ---
 
-## 2. The Research-vs-Judgement Split
-To eliminate hallucinated synthesis while keeping API spend near zero:
-1. **Retrieval Tier (Free/Low-Cost Models):** Execute web, registry, and document lookups in parallel. Strictly constrained to return **raw source evidence, URLs, and verbatim extracts**—never a bare conclusion.
-2. **Judgement Tier (Primary Reasoning Model):** Audits the returned evidence, resolves conflicts, and writes the final deliverable.
+## 1. Core Agent Topology (Single-Process MCP Orchestrator)
+Balaerion wraps **23 active agents** (8 benched) as **Model Context Protocol (MCP) servers** inside a single orchestrator process with mandatory concurrent execution. The fleet is anchored by six flagship RevOps personas operating over a vendor-agnostic **Stateful Relational Workspace** and **RAG Vector Layer** across **EMEA, LATAM, and MENA**:
+
+| Agent Persona | Primary Responsibility | Guardrail / Output Contract |
+| :--- | :--- | :--- |
+| **Scout** | Parallel firmographic, technographic, and commercial signal research | Structured JSON account brief; raw source evidence required (zero bare conclusions) |
+| **Campaign Architect** | Maps account signals against the RAG Knowledge Base for custom plays | Territory- and vertical-scoped campaign blueprint |
+| **Voice & Outreach Engine** | Generates email/call drafts using per-rep **Voice Profiles** and regional RAG context | Staged draft only; LinkedIn automation and auto-send hard-blocked |
+| **Relay Agent** | Packages qualification state, objections, and context for SDR → AE → CS handovers & incubation | Deterministic handover brief triggered on state transition |
+| **Quant** | Monitors 7-state velocity, surfaces deal risk, and diagnoses campaign bottlenecks | Read-only telemetry & bottleneck alerts; no blind CRM mutations |
+| **Compliance Overlord** | Enforces regional regulations (GDPR Art. 15/17/35), channel bans, and schema validation | Hard circuit breaker (`#F0245C`) blocking non-compliant payloads |
 
 ---
 
-## 3. Embedded Product Layer
-* **Signal Design System:** Embedded natively so every deck, brief, and GTM artifact renders in one consistent visual language.
-* **ProspectHub (GTM + OSINT):** Upgraded into a full prospect-to-activation workspace adopting the Signal palette, with automatic country detection, coverage tiers, and direct European registry lookups (**KVK, KBO, NBB, VIES, GLEIF**).
-* **Deck Builder & Activation Skill:** PC-only manual-first deck builder with 50 fresh presets and native Signal `.pptx` export, paired with an `"Activate [company]"` advisory skill and multi-edition channel/image generation workflows.
+## 2. Full ProspectHub & Signal Product Layer
+* **ProspectHub (Prospect-to-Activation OSINT):** Automatic country detection with coverage tiers and parallel European registry lookups (**KVK, KBO, NBB, VIES, GLEIF**).
+* **Activation Workflow:** Triggered by `"Activate [company]"`, combining Scout evidence, Campaign Architect plays, and advisory framing.
+* **Signal Deck Builder:** PC-only manual-first deck builder (50 presets) with native Signal `.pptx` export and three product editions (Single-Channel, Multi-Social, Channel-Recommender).
 
-## 4. Interactive Architecture Prototype
-Launch the [Balaerion 6-Tab Interactive Console](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) to test OmniRoute GDPR routing, Hetzner/Oracle failover, and concurrent MCP agent orchestration.
+---
+
+## 3. Remote Access Architecture (Telegram & Zero-Install Web)
+* **Telegram Long-Polling Bot:** Dedicated bot process locked strictly to a single whitelisted owner `sender_id`. Supports remote `/scout`, `/activate`, `/status`, and Human-in-the-Loop (HITL) draft approvals without opening inbound server ports.
+* **Browser & Mobile PWA:** Plain web URL behind **Cloudflare Access MFA** (Email OTP / Google SSO) and **Cloudflare Tunnel**, accessible from iOS Safari PWA, Chromebook, or locked-down workstations.
+
+---
+
+## 4. Interactive Surface
+Launch the [Balaerion 6-Tab Interactive Console](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) (and upcoming limited-route Vercel live embed).
