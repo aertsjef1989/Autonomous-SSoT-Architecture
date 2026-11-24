@@ -1,5 +1,7 @@
 # Enterprise Knowledge Architecture (SSoT) & Systems Portfolio
 
+![SSoT, Balaerion & The Syndacate](assets/portfolio-logos.png)
+
 **Architected & Compiled by:** Jef Aerts
 **Methodology:** AI-Augmented Systems Architecture (Claude/LLM Orchestration)
 

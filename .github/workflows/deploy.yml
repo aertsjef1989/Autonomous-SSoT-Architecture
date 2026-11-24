@@ -34,6 +34,7 @@ jobs:
           fi
           if [ -d "DEMO" ]; then
             cp -r DEMO _book/demo
+          if [ -d "assets" ]; then cp -r assets _book/assets; fi
           fi
           if [ -d "balaerion/demo" ]; then
             cp -r balaerion/demo/* _book/balaerion/demo/
