@@ -173,3 +173,5 @@ The prototypes show **what the system does**. The testable specifications—Acce
 | Change a threshold | Search the constant. They are not abstracted, deliberately |
 
 Thresholds are hard-coded on purpose. **Abstracting them would hide the numbers the prototype exists to argue about.**
+## Interactive SSoT Demo
+* [Open Interactive SSoT Demo](DEMO/index.html)

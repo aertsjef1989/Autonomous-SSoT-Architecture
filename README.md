@@ -52,3 +52,8 @@ To prevent data decay without manual oversight, the system runs a 14-detector Se
 | **Relay Agent** | Packages qualification state, objections, and context for SDR → AE → CS handovers & incubation | Deterministic handover brief triggered on state transition |
 | **Quant** | Monitors 7-state velocity, surfaces deal risk, and diagnoses campaign bottlenecks | Read-only telemetry & bottleneck alerts; no blind CRM mutations |
 | **Compliance Overlord** | Enforces regional regulations (GDPR Art. 15/17/35), channel bans, and schema validation | Hard circuit breaker (`#F0245C`) blocking non-compliant payloads |
+
+## Interactive Standalone Prototypes
+* [Open Interactive SSoT Demo](DEMO/index.html)
+* [Open Interactive Balaerion Prototype](balaerion/demo/index.html)
+* [Open Interactive Syndicate Prototype](syndicate/demo/index.html)

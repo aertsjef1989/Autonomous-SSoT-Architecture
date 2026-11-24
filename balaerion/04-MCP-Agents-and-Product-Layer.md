@@ -33,3 +33,6 @@ Balaerion wraps **23 active agents** (8 benched) as **Model Context Protocol (MC
 
 ## 4. Interactive Surface
 Launch the [Balaerion 6-Tab Interactive Console](https://aertsjef1989.github.io/systems-design-portfolio/balaerion/demo/) (and upcoming limited-route Vercel live embed).
+
+## Interactive Balaerion Prototype
+* [Open Interactive Balaerion Prototype](demo/index.html)
