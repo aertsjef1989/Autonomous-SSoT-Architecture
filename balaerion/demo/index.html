@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balaerion — OmniRoute Gateway & MCP Prototype</title>
+<title>Balaerion — OmniRoute Gateway & MCP Interactive Lab</title>
 <style>
   :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
-  header { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px; }
   .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; }
+  .back { color:var(--cyan); text-decoration:none; font-size:12px; border:1px solid var(--border); padding:5px 10px; border-radius:5px; }
+  .back:hover { border-color:var(--cyan); }
   .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
   .tabs { display:flex; gap:8px; flex-wrap:wrap; }
   .tab-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; }
@@ -33,19 +35,17 @@
   .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
   .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
   .b-warn { background:rgba(245,166,35,0.14); border:1px solid var(--amber); color:var(--amber); }
-  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12px; max-height:160px; overflow-y:auto; color:#c7d0dd; }
+  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12px; max-height:170px; overflow-y:auto; color:#c7d0dd; }
   .muted { color:var(--muted); font-size:12px; }
-  .badge { display:inline-block; padding:2px 7px; border-radius:4px; font-size:11px; font-weight:700; }
-  .bg-c { background:rgba(33,224,220,0.15); color:var(--cyan); }
-  .bg-p { background:rgba(240,36,92,0.15); color:var(--pink); }
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
+    <a class="back" href="../../">← Back to Book</a>
     <span class="dot" style="background:var(--pink)"></span>
     <span class="dot" style="background:var(--cyan)"></span>
-    <span>BALAERION // OMNIROUTE GATEWAY &amp; MCP PROTOTYPE</span>
+    <span>BALAERION // OMNIROUTE &amp; MCP LAB</span>
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="sw('router',this)">1. OmniRoute &amp; GDPR Router</button>
@@ -54,11 +54,10 @@
   </div>
 </header>
 <main>
-  <!-- TAB 1 -->
   <section id="router" class="view active">
     <div class="card">
       <h3>OmniRoute API Manager — Per-Key GDPR Lane Enforcement</h3>
-      <div class="muted">Test how per-key <code>allowedModels</code> and <code>blockedModels</code> isolate NL/BE client data to EU-only providers with training opt-out.</div>
+      <div class="muted">Test how per-key <code>allowedModels</code> and <code>blockedModels</code> restrict NL/BE client data to Scaleway (Paris) &amp; Mistral EU with training opt-out.</div>
       <div class="controls">
         <label>API Key Profile:
           <select id="keyProfile" onchange="runRouter()">
@@ -66,7 +65,7 @@
             <option value="osint">KEY_PUBLIC_OSINT (Free-Tier Pool)</option>
           </select>
         </label>
-        <label>Requested Upstream Provider:
+        <label>Upstream Provider:
           <select id="providerSel" onchange="runRouter()">
             <option value="scaleway">Scaleway Paris (EU, Opt-Out)</option>
             <option value="mistral">Mistral EU (Paris, Opt-Out)</option>
@@ -85,21 +84,19 @@
     </div>
   </section>
 
-  <!-- TAB 2 -->
   <section id="failover" class="view">
     <div class="card">
       <h3>Hetzner AX41 Primary vs. Oracle ARM Standby (Cloudflare Tunnel)</h3>
       <div class="controls">
-        <label class="chk"><input type="checkbox" id="cfMfa" checked onchange="runFailover()"> Cloudflare Access MFA Verified (OTP / Google SSO)</label>
+        <label class="chk"><input type="checkbox" id="cfMfa" checked onchange="runFailover()"> Cloudflare Access MFA Verified</label>
         <label class="chk"><input type="checkbox" id="hetznerDown" onchange="runFailover()"> Simulate Hetzner AX41 Outage</label>
-        <label class="chk"><input type="checkbox" id="useKvm" onchange="runFailover()"> Force Official KVM Code Interpreter</label>
+        <label class="chk"><input type="checkbox" id="useKvm" onchange="runFailover()"> Force Official KVM Interpreter</label>
       </div>
       <div id="failoverBanner"></div>
       <div id="failoverGrid" class="grid-4"></div>
     </div>
   </section>
 
-  <!-- TAB 3 -->
   <section id="mcp" class="view">
     <div class="card">
       <h3>Single-Process MCP Orchestrator (23 Active / 8 Benched) &amp; ProspectHub OSINT</h3>
@@ -150,15 +147,10 @@ function runFailover() {
   const down = document.getElementById('hetznerDown').checked;
   const kvm = document.getElementById('useKvm').checked;
   const b = document.getElementById('failoverBanner');
-  if (!mfa) {
-    b.innerHTML = `<div class="banner b-err">EDGE BLOCKED: Cloudflare Access MFA required before reaching LibreChat, OmniRoute, or Browser IDE.</div>`;
-  } else if (down && kvm) {
-    b.innerHTML = `<div class="banner b-err">SANDBOX FAILURE: Official KVM interpreter crashed on Oracle ARM (no nested KVM). Switch to LibreCodeInterpreter (NsJail).</div>`;
-  } else if (down) {
-    b.innerHTML = `<div class="banner b-warn">FAILOVER ACTIVE: Traffic routed via Cloudflare Tunnel to Oracle Always Free ARM + LibreCodeInterpreter (NsJail).</div>`;
-  } else {
-    b.innerHTML = `<div class="banner b-ok">PRIMARY HEALTHY: Hetzner AX41 serving LibreChat, OmniRoute, MCP Orchestrator, and Browser IDE.</div>`;
-  }
+  if (!mfa) b.innerHTML = `<div class="banner b-err">EDGE BLOCKED: Cloudflare Access MFA required before reaching LibreChat, OmniRoute, or Browser IDE.</div>`;
+  else if (down && kvm) b.innerHTML = `<div class="banner b-err">SANDBOX FAILURE: Official KVM interpreter crashed on Oracle ARM (no nested KVM). Switch to LibreCodeInterpreter (NsJail).</div>`;
+  else if (down) b.innerHTML = `<div class="banner b-warn">FAILOVER ACTIVE: Traffic routed via Cloudflare Tunnel to Oracle Always Free ARM + LibreCodeInterpreter (NsJail).</div>`;
+  else b.innerHTML = `<div class="banner b-ok">PRIMARY HEALTHY: Hetzner AX41 serving LibreChat, OmniRoute, MCP Orchestrator, and Browser IDE.</div>`;
   document.getElementById('failoverGrid').innerHTML = `
     <div class="box ${mfa?'ok':'block'}"><strong>Cloudflare Access</strong><br>${mfa?'MFA Passed':'Denied (401)'}</div>
     <div class="box ${down?'warn':'ok'}"><strong>Active Host</strong><br>${down?'Oracle ARM (2 OCPU, 12GB)':'Hetzner AX41 (64GB NVMe)'}</div>

@@ -1,7 +1,6 @@
 ttk
 tiktok
 genpact
-PROTOTYPES
 lark
 bitable
 LW-TL-025
