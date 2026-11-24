@@ -8,8 +8,8 @@
 
 Both applications are zero-install, standalone HTML builds running directly in your browser:
 
-* **[Launch Signal Studio](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-studio.html)** — Full canvas editor with 6 switchable themes, 56 vector devices, 41 templates, and native `.pptx` export.
-* **[Launch Signal Gallery](https://aertsjef1989.github.io/systems-design-portfolio/signal/02_studio/signal-gallery.html)** — Interactive browser for the 56-machine visual vocabulary and template library.
+* **[Launch Signal Studio](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-studio.html)** — Full canvas editor with 6 switchable themes, 56 vector devices, 41 templates, and native `.pptx` export.
+* **[Launch Signal Gallery](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/signal/02_studio/signal-gallery.html)** — Interactive browser for the 56-machine visual vocabulary and template library.
 
 ---
 
