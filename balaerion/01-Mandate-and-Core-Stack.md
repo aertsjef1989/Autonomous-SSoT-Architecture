@@ -1,32 +1,30 @@
 # Balaerion I. Mandate & Core Stack
 
-**Focus:** Zero-Incremental-Cost AI Gateway, OmniRoute + LibreChat Split & Interface Boundaries
+**Focus:** Dual-Mode AI Workspace (Everyday Assistant + ProspectHub Multi-Persona Showcase) on Vercel & Supabase
 
 ---
 
-## 1. The Architectural Mandate
-Balaerion is a personal, browser-first AI gateway and orchestration workspace designed to unify multi-provider model routing, reusable skills, and structured GTM tooling without recurring infrastructure or per-seat SaaS costs beyond existing personal subscriptions.
+## 1. Architectural Mandate
 
-**Hard Design Constraints:**
-* **Zero Client Install:** Accessible via plain web URL from an iOS Safari PWA, Chromebook, or locked-down workstation.
-* **Hosted APIs Only:** Zero local LLM inference; every model call leaves the host under explicit routing and compliance policy.
-* **Strict Employer Isolation:** Zero CRM hooks, zero corporate SSO, and zero interference with employer systems.
+Balaerion is a **dual-mode AI platform** designed to serve two complementary purposes from a single interface and routing layer:
 
----
-
-## 2. Core Stack Topology
-
-| Layer | Component | License / Scope | Architectural Rationale |
-| :--- | :--- | :--- | :--- |
-| **API Gateway** | **OmniRoute** | MIT (~340 providers, 90+ free tiers) | Used as-is (unforked) for upstream provider routing, fallback, and per-key model allowlists/blocklists. |
-| **Frontend** | **LibreChat** | Open-source web UI | Native Skills (`SKILL.md`), GitHub Skill Sync, explicit new-chat control, and persistent history tab. |
-| **Mobile / Messaging** | **Telegram Bot** | `chatgpt-telegram-bot` (long-polling) | Separate lightweight process locked strictly to a single Telegram user ID. |
-| **Cloud Storage** | **Direct Drive API + OneDrive** | OpenAPI tool wrapper | Direct Google Drive API script wrapped as an OpenAPI tool (bypassing official Drive MCP failures on personal accounts). Personal OneDrive only. |
+1. **Mode A — General AI Assistant (Everyday Productivity):** A fast, model-agnostic chat and document workspace for daily engineering, writing, analysis, and brainstorming—allowing instant switching across configured LLM providers without vendor lock-in.
+2. **Mode B — ProspectHub Multi-Persona Agent Suite (Portfolio Showcase):** A domain-keyed B2B sales intelligence and activation engine embedded directly inside Balaerion, demonstrating deterministic OSINT, lane-enforced GDPR routing, and multi-persona execution.
 
 ---
 
-## 3. Prompt & Context Separation
-OmniRoute exposes **one global system prompt** across the gateway. Placing persona or task instructions at the gateway layer would contaminate unrelated sessions. Therefore:
-* **Gateway Layer (OmniRoute):** Handles transport, authentication, rate-limit failover, and model-level compliance rules exclusively.
-* **Frontend Layer (LibreChat):** Owns all per-context system prompts, `SKILL.md` definitions, and conversation history.
-* **Memory Discipline:** OmniRoute memory is disabled at launch to prevent silent cross-session leakage; custom personas are deferred to v2.0.
+## 2. v1 Production Stack (Serverless-First)
+
+| Layer | Technology (v1) | Role |
+| :--- | :--- | :--- |
+| **Frontend & API** | **Vercel** (Next.js + Serverless Functions) | Unified chat UI, ProspectHub workspace, and pre-dispatch lane router |
+| **State & Auth** | **Supabase** (PostgreSQL + Auth + RLS) | Persistent general chat threads, 7-state prospect workspaces, and RBAC |
+| **Safe Lane Models** | **EU Zero-Retention Providers** (Mistral EU / Scaleway Paris) | Client-facing intelligence, OSINT synthesis, and activation plans |
+| **General Lane Models** | **Multi-Provider Failover** (Groq, Gemini, OpenRouter, DeepSeek) | Everyday AI tasks, commercial drafting, and ideation |
+| **Design System** | **Signal Tokens** (`#08090D`, `#21E0DC`, `#F0245C`) | Unified high-contrast console aesthetic across docs and prototypes |
+
+---
+
+## 3. Single-File Agent Registry
+
+All personas—both everyday utilities and ProspectHub specialists—are declared in a single validated registry (`lane`, `allowedConnections`, `systemPrompt`, `capabilities`). Load-time schema validation ensures duplicate IDs, invalid capabilities, or misconfigured lane locks fail during CI rather than in production.

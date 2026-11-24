@@ -1,29 +1,32 @@
-# Balaerion II. Hosting, Failover & ARM64 Sandboxing
+# Balaerion II. Hosting, Failover & Phase 2 Sovereign Topology
 
-**Focus:** Hetzner AX41 Primary, Oracle ARM Standby, Cloudflare Tunnel & NsJail Code Execution
-
----
-
-## 1. Dual-Node Infrastructure Topology
-Balaerion pairs a dedicated x86_64 primary server with an Always Free ARM64 standby node behind Cloudflare Tunnel, eliminating public SSH/port exposure while preserving browser-based engineering access.
-
-| Role | Provider & Spec | Operating System | Primary Responsibilities |
-| :--- | :--- | :--- | :--- |
-| **Primary Node** | **Hetzner AX41** (Ryzen 5 3600, 64GB RAM, 2x512GB NVMe) | Ubuntu LTS | Runs OmniRoute, LibreChat, MCP orchestrator, browser-accessible terminal/IDE, and coding agent sessions. |
-| **Standby Node** | **Oracle Always Free ARM VM** (2 OCPU, 12GB RAM) | Ubuntu ARM64 | Warm standby behind Cloudflare Tunnel; hosts lightweight failover gateway and ARM64 code sandbox. |
+**Focus:** Vercel + Supabase Serverless Deployment (v1) & Self-Hosted OmniRoute Expansion (Phase 2)
 
 ---
 
-## 2. The ARM64 Code Execution Constraint
-Standard container-based code interpreters rely on hardware virtualization (**KVM**) for VM-level isolation. Oracle Always Free ARM instances do not expose nested KVM.
+## 1. v1 Live Topology (Vercel + Supabase)
 
-* **Rejected Approach:** Running unsandboxed Python/Node subprocesses directly inside the LibreChat container (unacceptable blast radius).
-* **Selected Architecture:** Deploy **`LibreCodeInterpreter` (ARM64 + NsJail)** on the Oracle ARM node. NsJail provides Linux namespace, cgroup, and seccomp-bpf syscall isolation without requiring KVM hardware extensions.
+Balaerion v1 eliminates infrastructure overhead by running entirely on managed serverless primitives:
+
+* **Edge & Compute (Vercel):** Handles UI rendering, streaming LLM responses, and API route handlers for deterministic OSINT lookups and lane enforcement.
+* **Persistence (Supabase):** Stores general AI conversation history alongside ProspectHub's domain-keyed account records, lifecycle states, and audit logs.
+* **Provider-Level Failover:** Rate-limit-aware routing automatically falls back across configured general-lane providers if an upstream API throttles or times out, while strictly refusing fallback from `lane: safe` to non-EU providers.
 
 ---
 
-## 3. Zero-Port-Exposure Ingress
-Neither node exposes public inbound ports (`80`, `443`, or `22`) on its raw IP address:
-1. All web UI, terminal, IDE, and API traffic terminates at **Cloudflare Edge**.
-2. Outbound **`cloudflared`** daemons on Hetzner and Oracle maintain encrypted tunnels to Cloudflare.
-3. Failover between Hetzner AX41 and Oracle ARM is controlled at the Cloudflare Tunnel routing layer without reconfiguring client bookmarks or PWA manifests.
+## 2. Request Path & Execution Flow
+
+1. **Client Request:** User submits either a general AI prompt or a ProspectHub persona command from the web UI.
+2. **Auth & Lane Inspection:** Supabase Auth validates the session; the API router inspects the active persona's `lane` (`safe` vs. `general`) and `allowedConnections` **before** dispatching any tokens.
+3. **Deterministic Enrichment (ProspectHub Mode):** Code-only OSINT connectors fetch registry, VAT, and web-stack facts prior to LLM synthesis.
+4. **State Commit:** Outputs and lifecycle deltas are persisted to Supabase with timestamps and actor attribution.
+
+---
+
+## 3. Phase 2 Roadmap: Sovereign Self-Hosted Expansion
+
+For enterprise or air-gapped deployments requiring zero third-party cloud hosting, Balaerion's architecture is designed to migrate cleanly to a self-hosted control plane:
+
+* **Compute & Gateway:** Hetzner AX41 primary + **OmniRoute** (`:20128`) gateway + **LibreChat** UI behind **Cloudflare Access** (MFA) and **Cloudflare Tunnel** (zero open ports).
+* **Task Queue & Sandboxing:** Encrypted **SQLite** lease-based worker queue (`QUEUED` → `RUNNING` with 900s lease and automatic worker-death recovery) paired with **NsJail** ARM64 sandboxing for untrusted code execution.
+* **Remote Surfaces:** Telegram long-polling bridge wired to the same single-file agent registry.

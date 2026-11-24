@@ -1,38 +1,62 @@
-# Balaerion IV. Multi-Agent Layer, ProspectHub & Remote Access
+# Balaerion IV. Dual-Mode Product Layer & ProspectHub Multi-Persona Suite
 
-**Focus:** Named RevOps Personas, 23 Active MCP Agents, ProspectHub OSINT, Rep Voice Profiles & Telegram Remote Access
-
----
-
-## 1. Core Agent Topology (Single-Process MCP Orchestrator)
-Balaerion wraps **23 active agents** (8 benched) as **Model Context Protocol (MCP) servers** inside a single orchestrator process with mandatory concurrent execution. The fleet is anchored by six flagship RevOps personas operating over a vendor-agnostic **Stateful Relational Workspace** and **RAG Vector Layer** across **EMEA, LATAM, and MENA**:
-
-| Agent Persona | Primary Responsibility | Guardrail / Output Contract |
-| :--- | :--- | :--- |
-| **Scout** | Parallel firmographic, technographic, and commercial signal research | Structured JSON account brief; raw source evidence required (zero bare conclusions) |
-| **Campaign Architect** | Maps account signals against the RAG Knowledge Base for custom plays | Territory- and vertical-scoped campaign blueprint |
-| **Voice & Outreach Engine** | Generates email/call drafts using per-rep **Voice Profiles** and regional RAG context | Staged draft only; LinkedIn automation and auto-send hard-blocked |
-| **Relay Agent** | Packages qualification state, objections, and context for SDR → AE → CS handovers & incubation | Deterministic handover brief triggered on state transition |
-| **Quant** | Monitors 7-state velocity, surfaces deal risk, and diagnoses campaign bottlenecks | Read-only telemetry & bottleneck alerts; no blind CRM mutations |
-| **Compliance Overlord** | Enforces regional regulations (GDPR Art. 15/17/35), channel bans, and schema validation | Hard circuit breaker (`#F0245C`) blocking non-compliant payloads |
+**Focus:** General AI Assistant, ProspectHub 7-State Lifecycle, 45-Market OSINT & Two-Lane Persona Registry
 
 ---
 
-## 2. Full ProspectHub & Signal Product Layer
-* **ProspectHub (Prospect-to-Activation OSINT):** Automatic country detection with coverage tiers and parallel European registry lookups (**KVK, KBO, NBB, VIES, GLEIF**).
-* **Activation Workflow:** Triggered by `"Activate [company]"`, combining Scout evidence, Campaign Architect plays, and advisory framing.
-* **Signal Deck Builder:** PC-only manual-first deck builder (50 presets) with native Signal `.pptx` export and three product editions (Single-Channel, Multi-Social, Channel-Recommender).
+## 1. Mode A — General AI Assistant
+
+Balaerion functions as a daily-driver AI workspace outside of sales workflows:
+* Multi-model chat for software engineering, SQL/Python debugging, technical writing, and document analysis.
+* Persistent threaded history in Supabase with one-click switching between general models and specialized ProspectHub personas.
 
 ---
 
-## 3. Remote Access Architecture (Telegram & Zero-Install Web)
-* **Telegram Long-Polling Bot:** Dedicated bot process locked strictly to a single whitelisted owner `sender_id`. Supports remote `/scout`, `/activate`, `/status`, and Human-in-the-Loop (HITL) draft approvals without opening inbound server ports.
-* **Browser & Mobile PWA:** Plain web URL behind **Cloudflare Access MFA** (Email OTP / Google SSO) and **Cloudflare Tunnel**, accessible from iOS Safari PWA, Chromebook, or locked-down workstations.
+## 2. Mode B — ProspectHub Multi-Persona Agent Suite
+
+ProspectHub operates as a **stateful, domain-keyed workspace** inside Balaerion. Every account is tracked through a **7-state human-in-the-loop lifecycle**:
+
+1. **`Cold`** — Domain entered; deterministic OSINT and qualification score (`/10`) generated.
+2. **`Auto-replied`** — Initial response logged; human review pending.
+3. **`Agent-contacted`** — Direct outreach initiated; discovery active.
+4. **`Discovery-booked`** — Call scheduled; pre-call briefing assembled.
+5. **`Post-discovery`** — Call transcribed (`call-transcriber`); meeting deltas fed into `activate` to build the client-ready activation plan.
+6. **`In-nurture`** — Long-cycle account placed on periodic re-engagement cadence.
+7. **`Dormant`** — Outreach paused; full research history preserved to eliminate redundant re-work.
 
 ---
 
-## 4. Interactive Surface
-Launch the [Balaerion 6-Tab Interactive Console](https://aertsjef1989.github.io/Autonomous-SSoT-Architecture/balaerion/demo/) (and upcoming limited-route Vercel live embed).
+## 3. Deterministic 45-Market OSINT Engine
+
+Before any persona drafts a brief, deterministic code queries public registries and web signals across 45 markets—including **KvK, KBO, NBB, VIES, GLEIF, SIRENE, BODACC, Wayback Machine, PageSpeed, and public Ad Libraries**—producing structured Entity Snapshots, Tech/Pixel Audits, Paid Media Verdicts, and Readiness Scores. *(Rule: language alone never determines country; NL vs. BE is resolved strictly via registry and legal-entity signals.)*
+
+---
+
+## 4. Two-Lane Persona Registry
+
+### Safe Lane Personas (`lane: safe` — Deterministic & Client-Facing)
+* **`prospecthub-research-and-intel`** (`lane_locked: true`): Synthesizes deterministic OSINT into structured account briefs.
+* **`activate`**: Pulls the existing brief, asks only *"What changed in the meeting?"*, and builds the post-discovery activation plan.
+* **`call-transcriber`**: Transcribes discovery recordings/voice notes (Deepgram-first) to feed verified deltas into `activate`.
+* **`watcher`**: Monitors footprint changes (`pixel added/removed`, `platform changed`, `ads started/stopped`, `site rebuilt`).
+* **`pipeline`**: Domain-keyed CRM record updates with a strict `<10s` write budget.
+* **`daily-view`**: Signal-prioritized action queue surfacing unacted `watcher` alerts first.
+* **`doc-reader`**: Extracts structured data from ad-account screenshots, PDF rate cards, and brand guidelines.
+
+### General Lane Personas (`lane: general` — Commercial Execution)
+* **`prospecthub-cold-pitch-email`**, **`prospecthub-follow-up-email`**, **`prospecthub-polish-emails`**, **`prospecthub-nurture-sequence`**
+* **`prospecthub-elevator-pitch`**, **`prospecthub-full-pitch-script`**, **`prospecthub-scaling-roadmap`**
+* **`deck-builder`** (structured slides for Signal Studio) & **`creative-concepts`** (strict dual `CONCEPT` labelling)
+
+---
+
+## 5. Governance, Calibration & 10-Language Parity
+
+* **10-Language EU Parity:** EN, NL, DE, FR, ES, IT, PT, PL, TR, RO.
+* **6 CTQ Metrics:** Output Quality Score (0–10 rubric), Cycle Time per Prospect, Cost per Prospect (EUR), Weekly Active Agent Rate (%), Compliance Incidents (target: 0/quarter), and Language Quality Parity.
+* **Calibration Benchmark (Fictional Entity):** Public demos and prompt evaluations run exclusively against sanitized fictional records such as ***Kapsalon Vuurtoren BV*** (KBO `0123.456.789`, BE confidence `0.94`, Tier A, Lightspeed eCom).
+
+---
 
 ## Interactive Balaerion Prototype
 * <a href="demo/index.html" target="_blank">Open Interactive Balaerion Prototype</a>

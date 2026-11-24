@@ -1,27 +1,30 @@
 # Balaerion III. Security, MFA & GDPR Routing Lane
 
-**Focus:** Cloudflare Access MFA, Credential Isolation & EU-Only Client Data Enforcement
+**Focus:** Pre-Dispatch Lane Enforcement, Supabase RLS, Zero-Hallucination OSINT & GDPR Compliance
 
 ---
 
-## 1. Authentication & Edge Security
-Because OmniRoute does not ship with native multi-factor authentication (MFA), relying on application-level passwords alone is insufficient for a browser-accessible control plane.
+## 1. Two-Lane Routing (`lane: safe` vs. `lane: general`)
 
-* **Edge MFA Gate:** **Cloudflare Access** sits in front of LibreChat, the browser terminal/IDE, and OmniRoute admin endpoints, enforcing **Email OTP or Google SSO** before any packet reaches the origin VM.
-* **Bot Lockdown:** The long-polling Telegram bot rejects all incoming messages whose `sender_id` does not match the single whitelisted owner ID.
+Balaerion enforces a hard separation between everyday/commercial prompting and client-data processing **before** any request leaves the API router:
 
----
-
-## 2. Credential & Subscription Isolation
-* **No Gateway Passthrough for Primary Subscriptions:** Personal primary subscription credentials are never routed through third-party proxy gateways.
-* **Hobby Router Quarantine:** Community/hobby routers (e.g., AgentRouter) are strictly quarantined to non-sensitive personal experiments and are hard-blocked from ever receiving client data.
-
----
-
-## 3. The GDPR-Safe NL/BE Client Data Lane
-Processing NL/BE commercial or client-adjacent context requires strict EU data residency and zero model-training guarantees. Balaerion enforces this technically inside OmniRoute's API Manager using per-key `allowedModels` and `blockedModels` policies:
-
-| Routing Lane | Permitted Providers | Hard-Blocked Providers | Data Governance Rule |
+| Lane | Permitted Workloads | Permitted Providers | Hard Constraint |
 | :--- | :--- | :--- | :--- |
-| **GDPR Client Lane (NL/BE)** | **Scaleway (Paris)**, **Mistral EU** (training opt-out enabled) | Gemini free tier, DeepSeek, China-hosted APIs, hobby routers | Enforced at API key level; requests to non-EU models return `403 Policy Denied`. |
-| **Public OSINT / Research Lane** | 90+ free-tier & standard hosted providers | None (public web/registry data only) | Retrieval-only; models must return raw source evidence, never unverified conclusions. |
+| **`lane: safe`** (`lane_locked: true`) | Client names, prospect briefs, call transcripts, OSINT synthesis, activation plans | EU zero-retention / non-training endpoints only (Mistral EU, Scaleway Paris) | **Zero fallback** to general/training providers |
+| **`lane: general`** | Everyday AI tasks (coding, writing, analysis), anonymized outreach templates, ideation | Rate-limit-aware multi-provider pool (Groq, Gemini, OpenRouter, DeepSeek) | **Blocked** from receiving unmasked client PII |
+
+---
+
+## 2. Authentication, Access Control & Hard Refusals
+
+* **Session Security:** Supabase Auth with MFA and Row-Level Security (RLS) isolating user threads and workspace records.
+* **Pre-Commit Leak Gate:** Automated CI scanning (`scripts/leak_gate.py`) blocks API keys, personal tokens, and real client data from ever entering the repository.
+* **Architectural Hard Refusals:** No consumer OAuth session hijacking through the gateway, no TLS impersonation/MITM proxies, and no silent degradation of `lane: safe` requests.
+
+---
+
+## 3. GDPR & Deterministic Fact Boundary
+
+* **Zero-Hallucination Rule:** Legal entity names, VAT numbers, registry IDs (KBO/KvK), director names, pixels, and e-commerce platforms are extracted exclusively by deterministic code—never guessed by an LLM.
+* **Data Subject Rights:** Domain-keyed prospect workspaces support **GDPR Art. 15** (access export) and **Art. 17** (cascade erasure) alongside **Art. 35 DPIA** documentation.
+* **Human-in-the-Loop Governance:** AI recommends next actions and drafts deliverables, but **all lifecycle state transitions and external sends require explicit human approval**.
