@@ -157,3 +157,34 @@ CREATE POLICY "owner_prospects" ON prospect_workspaces FOR ALL USING (auth.uid()
 CREATE POLICY "owner_events" ON prospect_events FOR SELECT USING (
   EXISTS (SELECT 1 FROM prospect_workspaces pw WHERE pw.id = workspace_id AND pw.user_id = auth.uid())
 );
+
+-- ============================================================================
+-- 4. PILLAR III: SYNDICATE MATCHDAY AI (xG FIXTURES & NAV POOL LEDGER)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS syndicate_fixtures (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  match_date TIMESTAMPTZ NOT NULL,
+  home_team TEXT NOT NULL,
+  away_team TEXT NOT NULL,
+  home_xg NUMERIC(4,2),
+  away_xg NUMERIC(4,2),
+  model_edge_pct NUMERIC(5,2),
+  slip_status TEXT NOT NULL DEFAULT 'open' CHECK (slip_status IN ('open', 'voted', 'settled')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS syndicate_pool_ledger (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  entry_date TIMESTAMPTZ NOT NULL DEFAULT now(),
+  nav_unit_value NUMERIC(10,4) NOT NULL,
+  pool_balance_eur NUMERIC(12,2) NOT NULL,
+  note TEXT
+);
+
+ALTER TABLE syndicate_fixtures ENABLE ROW LEVEL SECURITY;
+ALTER TABLE syndicate_pool_ledger ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "owner_syndicate_fixtures" ON syndicate_fixtures FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "owner_syndicate_ledger" ON syndicate_pool_ledger FOR ALL USING (auth.uid() = user_id);
