@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Balerion — 12-Agent RevOps Pipeline Demo</title>
+<style>
+  :root { --bg:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; padding:24px; }
+  .wrap { max-width:1040px; margin:0 auto; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:18px; margin-bottom:16px; }
+  h1,h3 { margin:0 0 10px; }
+  h3 { color:var(--cyan); font-size:14px; text-transform:uppercase; letter-spacing:0.6px; }
+  .controls { display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:12px 0; }
+  label { display:inline-flex; gap:7px; align-items:center; font-size:13px; cursor:pointer; }
+  button { background:var(--cyan); color:#08090D; border:none; border-radius:6px; padding:8px 14px; font-weight:700; cursor:pointer; }
+  .stages { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:14px; }
+  .stage { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; line-height:1.45; }
+  .stage.pass { border-color:var(--cyan); }
+  .stage.block { border-color:var(--pink); background:rgba(240,36,92,0.1); }
+  .banner { padding:12px 14px; border-radius:6px; font-size:13px; font-weight:600; margin-top:12px; }
+  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
+  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
+  .muted { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Project Balerion — 12-Agent Pipeline &amp; Guardrail Simulator</h1>
+    <div class="muted">Synthetic B2B RevOps walkthrough across Research, Outreach Sequencing, RevOps Handover, and Campaign Diagnostics.</div>
+    <div class="controls">
+      <label><input type="checkbox" id="unverifiedClaim"> Inject Unverified Account Claim</label>
+      <label><input type="checkbox" id="approvalMissing" checked> Require Human Gate Before Send/Sync</label>
+      <label><input type="checkbox" id="duplicateEvent"> Replay Duplicate Handover Key</label>
+      <button onclick="runPipeline()">Run Pipeline Simulation</button>
+    </div>
+    <div id="statusBanner"></div>
+    <div id="stageGrid" class="stages"></div>
+  </div>
+</div>
+<script>
+function runPipeline() {
+  const unverified = document.getElementById('unverifiedClaim').checked;
+  const gateOn = document.getElementById('approvalMissing').checked;
+  const dup = document.getElementById('duplicateEvent').checked;
+  const banner = document.getElementById('statusBanner');
+  const grid = document.getElementById('stageGrid');
+
+  const s1Blocked = unverified;
+  const s2Blocked = unverified || gateOn;
+  const s3Blocked = unverified || dup;
+
+  if (unverified || dup) {
+    banner.innerHTML = `<div class="banner b-err">GUARDRAIL TRIGGERED: ${unverified ? 'Unverified claim blocked before outreach dispatch. ' : ''}${dup ? 'Duplicate idempotency key intercepted; second CRM write suppressed.' : ''}</div>`;
+  } else if (gateOn) {
+    banner.innerHTML = `<div class="banner b-ok">QUEUED FOR APPROVAL: Research verified. Outreach held at human approval gate; read-only diagnostics active.</div>`;
+  } else {
+    banner.innerHTML = `<div class="banner b-ok">PIPELINE CLEAR: Verified brief, approved sequence, idempotent handover, and diagnostics telemetry active.</div>`;
+  }
+
+  grid.innerHTML = `
+    <div class="stage ${s1Blocked?'block':'pass'}"><strong>1. Research (3 Agents)</strong><br>${s1Blocked?'Blocked: missing verified source flag':'Verified account brief &amp; ICP score ready'}</div>
+    <div class="stage ${s2Blocked?'block':'pass'}"><strong>2. Outreach (3 Agents)</strong><br>${unverified?'Halted: unverified claim':(gateOn?'Held at Human Approval Gate':'Approved sequence ready for dispatch')}</div>
+    <div class="stage ${s3Blocked?'block':'pass'}"><strong>3. RevOps Handover (3 Agents)</strong><br>${dup?'Suppressed: idempotency key already committed':'Idempotent CRM state &amp; SLA packet synced'}</div>
+    <div class="stage pass"><strong>4. Diagnostics (3 Agents)</strong><br>Funnel conversion, revert rate &amp; anomaly watch active</div>`;
+}
+runPipeline();
+</script>
+</body>
+</html>
