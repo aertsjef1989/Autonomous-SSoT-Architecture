@@ -1,0 +1,3 @@
+{
+  "install": "sed -i '/case \\$- in/,/esac/d' ~/.bashrc 2>/dev/null || true; grep -qxF 'export PATH=\"/opt/nvm/current/bin:/opt/pyenv/shims:$PATH\"' ~/.bashrc 2>/dev/null || echo 'export PATH=\"/opt/nvm/current/bin:/opt/pyenv/shims:$PATH\"' >> ~/.bashrc; npm install --no-audit --no-fund --no-package-lock && npm --prefix balaerion-app install --no-audit --no-fund --no-package-lock && (command -v honkit >/dev/null 2>&1 || npm install -g --no-audit --no-fund honkit) && python3 -m pip install --no-input -r engine/requirements.txt"
+}
