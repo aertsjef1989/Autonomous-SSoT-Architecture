@@ -241,3 +241,28 @@ body {
     align-items: center;
   }
 }
+
+/* Mobile table readability & overflow polish */
+@media (max-width: 768px) {
+  .book-body,
+  .page-wrapper,
+  .page-inner,
+  .markdown-section {
+    max-width: 100% !important;
+    overflow-x: clip;
+  }
+  .markdown-section table {
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+  .markdown-section th,
+  .markdown-section td {
+    white-space: normal;
+    word-break: break-word;
+    min-width: 96px;
+  }
+  .markdown-section a {
+    min-height: 0;
+    display: inline;
+  }
+}
