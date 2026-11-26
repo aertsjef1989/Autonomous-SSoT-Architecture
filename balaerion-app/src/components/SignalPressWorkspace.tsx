@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { loadHandoffFromLocalStorage } from '../lib/signal-handoff';
+import { consumePressDocHandoffFromLocalStorage, loadHandoffFromLocalStorage } from '../lib/signal-handoff';
 import {
   PRESS_THEMES,
   estimateA4Pages,
@@ -229,6 +229,12 @@ export function SignalPressWorkspace({
   }, [assetBasePath]);
 
   useEffect(() => {
+    const directPressDoc = consumePressDocHandoffFromLocalStorage();
+    if (directPressDoc) {
+      setDoc(directPressDoc);
+      setStatusBanner(`Loaded workspace A4 handoff: "${directPressDoc.meta.title}".`);
+      return;
+    }
     const handoff = loadHandoffFromLocalStorage();
     if (handoff && handoff.slides.length > 0) {
       const converted: PressDocument = {
