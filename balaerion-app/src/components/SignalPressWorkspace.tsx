@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { consumePressDocHandoffFromLocalStorage, loadHandoffFromLocalStorage } from '../lib/signal-handoff';
 import {
+  ALL_HERO_ASSET_IDS,
   PRESS_THEMES,
   estimateA4Pages,
   validatePressDocument,
@@ -69,6 +70,17 @@ const UI_STRINGS = {
   },
 } as const;
 
+const CUSTOM_HERO_LABELS: Record<string, string> = {
+  glyph: 'Signal two-dot glyph',
+  H57: 'H57 · Multi-LLM Two-Lane Router',
+  H58: 'H58 · Pre-Dispatch PII & Lane Gate',
+  H59: 'H59 · Pixel + Server CAPI event_id Dedup',
+  H60: 'H60 · Readiness Radar & 7-State Funnel',
+  H61: 'H61 · Bivariate Poisson Scoreline Heatmap',
+  H62: 'H62 · Attack vs Defense xG Quadrant',
+  H63: 'H63 · Unit-Share NAV Waterfall',
+};
+
 const BLOCK_TYPES: PressBlockType[] = [
   'heading',
   'paragraph',
@@ -76,6 +88,11 @@ const BLOCK_TYPES: PressBlockType[] = [
   'numbered',
   'table',
   'kpi_row',
+  'comparison_matrix',
+  'timeline_roadmap',
+  'checklist_gate',
+  'two_column_split',
+  'stat_delta_strip',
   'callout',
   'quote',
   'hero_image',
@@ -114,6 +131,63 @@ function createDefaultBlock(type: PressBlockType, defaultSourceId?: string): Pre
           { label: 'Target Metric', value: '95%', note: 'Baseline target', sourceId: defaultSourceId },
           { label: 'Review Window', value: '30 days', note: 'Archive cutoff', sourceId: defaultSourceId },
         ],
+      };
+    case 'comparison_matrix':
+      return {
+        id,
+        type,
+        title: 'Architecture Option Comparison',
+        headers: ['Dimension', 'Legacy Manual', 'Signal Target'],
+        rows: [
+          ['Verification Cadence', 'Ad-hoc quarterly', 'Automated daily scan'],
+          ['Publish Gate', 'Unverified edits', 'Human sign-off required'],
+        ],
+        highlightCol: 2,
+        sourceId: defaultSourceId,
+      };
+    case 'timeline_roadmap':
+      return {
+        id,
+        type,
+        title: 'Implementation Roadmap',
+        milestones: [
+          { phase: 'Phase 1', title: 'Staging Tag & Event Hygiene', detail: 'Configure deterministic event_id on staging.', status: 'done' },
+          { phase: 'Phase 2', title: 'Province-Scope Activation', detail: 'Launch initial regional campaign structure.', status: 'active' },
+          { phase: 'Phase 3', title: 'Holdout Lift Review', detail: 'Verify conversion quality before scaling.', status: 'planned' },
+        ],
+        sourceId: defaultSourceId,
+      };
+    case 'checklist_gate':
+      return {
+        id,
+        type,
+        title: 'Pre-Launch Governance Gate',
+        checklist: [
+          { item: 'Owner assigned and escalation cadence active', state: 'pass', owner: 'Ops Lead' },
+          { item: 'Server-side event deduplication verified', state: 'pass', owner: 'Client Eng' },
+          { item: 'Human sign-off recorded prior to publish', state: 'pending', owner: 'Reviewer' },
+        ],
+        sourceId: defaultSourceId,
+      };
+    case 'two_column_split':
+      return {
+        id,
+        type,
+        leftTitle: 'Advisory Guidance',
+        leftItems: ['Provide structured technical playbook.', 'Validate staging payload schema.'],
+        rightTitle: 'Client Team Execution',
+        rightItems: ['Deploy tags inside client GTM container.', 'Approve regional campaign launch.'],
+        sourceId: defaultSourceId,
+      };
+    case 'stat_delta_strip':
+      return {
+        id,
+        type,
+        deltas: [
+          { metric: 'Automation Runs', baseline: '1,700/mo', target: '30/mo', delta: '-98.2%' },
+          { metric: 'Health Threshold', baseline: 'Unscored', target: '>= 80 pts', delta: '10/10 Controls' },
+        ],
+        sourceId: defaultSourceId,
       };
     case 'callout':
       return { id, type, variant: 'key', title: 'KEY POINT', text: 'State the single decision-critical takeaway.' };
@@ -865,12 +939,26 @@ export function SignalPressWorkspace({
                       <select
                         value={b.heroId ?? 'glyph'}
                         aria-label="Hero device"
-                        onChange={(e) => updateBlock(idx, { heroId: e.target.value as HeroAssetId })}
+                        onChange={(e) => {
+                          const nextHero = e.target.value as HeroAssetId;
+                          updateBlock(idx, { heroId: nextHero });
+                          if (!heroSvgs[nextHero] && (typeof navigator === 'undefined' || navigator.onLine !== false)) {
+                            fetch(`${assetBasePath}/heroes/${nextHero}.svg`)
+                              .then((r) => (r.ok ? r.text() : ''))
+                              .then((svg) => {
+                                if (svg.trim().startsWith('<svg') && !/<script/i.test(svg)) {
+                                  setHeroSvgs((prev) => ({ ...prev, [nextHero]: svg }));
+                                }
+                              })
+                              .catch(() => {});
+                          }
+                        }}
                       >
-                        <option value="glyph">Signal two-dot glyph</option>
-                        <option value="H01">Hero device H01</option>
-                        <option value="H02">Hero device H02</option>
-                        <option value="H03">Hero device H03</option>
+                        {ALL_HERO_ASSET_IDS.map((hid) => (
+                          <option key={hid} value={hid}>
+                            {CUSTOM_HERO_LABELS[hid] || `Hero device ${hid}`}
+                          </option>
+                        ))}
                       </select>
                       <input
                         type="text"
@@ -882,8 +970,17 @@ export function SignalPressWorkspace({
                     </>
                   )}
 
-                  {b.type === 'table' && (
+                  {(b.type === 'table' || b.type === 'comparison_matrix') && (
                     <>
+                      {b.type === 'comparison_matrix' && (
+                        <input
+                          type="text"
+                          value={b.title ?? ''}
+                          onChange={(e) => updateBlock(idx, { title: e.target.value })}
+                          placeholder="Matrix eyebrow title"
+                          aria-label="Matrix title"
+                        />
+                      )}
                       <input
                         type="text"
                         className="mono"
@@ -920,6 +1017,110 @@ export function SignalPressWorkspace({
                       }
                       aria-label="KPI items pipe separated"
                       placeholder="Label | Value | Note"
+                    />
+                  )}
+
+                  {b.type === 'timeline_roadmap' && (
+                    <>
+                      <input
+                        type="text"
+                        value={b.title ?? ''}
+                        onChange={(e) => updateBlock(idx, { title: e.target.value })}
+                        placeholder="Roadmap title"
+                        aria-label="Roadmap title"
+                      />
+                      <textarea
+                        className="mono"
+                        value={(b.milestones ?? []).map((m) => `${m.phase} | ${m.title} | ${m.detail} | ${m.status ?? 'planned'}`).join('\n')}
+                        onChange={(e) =>
+                          updateBlock(idx, {
+                            milestones: e.target.value.split('\n').map((line) => {
+                              const [phase = '', title = '', detail = '', rawSt = 'planned'] = line.split('|').map((s) => s.trim());
+                              const status = rawSt === 'done' || rawSt === 'active' ? rawSt : 'planned';
+                              return { phase, title, detail, status };
+                            }),
+                          })
+                        }
+                        aria-label="Roadmap milestones pipe separated"
+                        placeholder="Phase 1 | Title | Detail | done|active|planned"
+                      />
+                    </>
+                  )}
+
+                  {b.type === 'checklist_gate' && (
+                    <>
+                      <input
+                        type="text"
+                        value={b.title ?? ''}
+                        onChange={(e) => updateBlock(idx, { title: e.target.value })}
+                        placeholder="Gate checklist title"
+                        aria-label="Checklist title"
+                      />
+                      <textarea
+                        className="mono"
+                        value={(b.checklist ?? []).map((c) => `${c.state} | ${c.item} | ${c.owner ?? ''}`).join('\n')}
+                        onChange={(e) =>
+                          updateBlock(idx, {
+                            checklist: e.target.value.split('\n').map((line) => {
+                              const [rawState = 'pending', item = '', owner = ''] = line.split('|').map((s) => s.trim());
+                              const state = rawState === 'pass' || rawState === 'blocked' ? rawState : 'pending';
+                              return { state, item, owner: owner || undefined };
+                            }),
+                          })
+                        }
+                        aria-label="Checklist items pipe separated"
+                        placeholder="pass|pending|blocked | Gate item | Owner"
+                      />
+                    </>
+                  )}
+
+                  {b.type === 'two_column_split' && (
+                    <>
+                      <div className="row">
+                        <input
+                          type="text"
+                          value={b.leftTitle ?? ''}
+                          onChange={(e) => updateBlock(idx, { leftTitle: e.target.value })}
+                          placeholder="Left column title"
+                          aria-label="Left column title"
+                        />
+                        <input
+                          type="text"
+                          value={b.rightTitle ?? ''}
+                          onChange={(e) => updateBlock(idx, { rightTitle: e.target.value })}
+                          placeholder="Right column title"
+                          aria-label="Right column title"
+                        />
+                      </div>
+                      <textarea
+                        value={(b.leftItems ?? []).join('\n')}
+                        onChange={(e) => updateBlock(idx, { leftItems: e.target.value.split('\n') })}
+                        placeholder="Left column bullets (one per line)"
+                        aria-label="Left column items"
+                      />
+                      <textarea
+                        value={(b.rightItems ?? []).join('\n')}
+                        onChange={(e) => updateBlock(idx, { rightItems: e.target.value.split('\n') })}
+                        placeholder="Right column bullets (one per line)"
+                        aria-label="Right column items"
+                      />
+                    </>
+                  )}
+
+                  {b.type === 'stat_delta_strip' && (
+                    <textarea
+                      className="mono"
+                      value={(b.deltas ?? []).map((d) => `${d.metric} | ${d.baseline} | ${d.target} | ${d.delta}`).join('\n')}
+                      onChange={(e) =>
+                        updateBlock(idx, {
+                          deltas: e.target.value.split('\n').map((line) => {
+                            const [metric = '', baseline = '', target = '', delta = ''] = line.split('|').map((s) => s.trim());
+                            return { metric, baseline, target, delta };
+                          }),
+                        })
+                      }
+                      aria-label="Stat delta items pipe separated"
+                      placeholder="Metric | Baseline | Target | Delta"
                     />
                   )}
                 </div>

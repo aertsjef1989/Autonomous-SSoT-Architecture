@@ -29,7 +29,18 @@ export interface PressSource {
   classification: SourceClassification;
 }
 
-export type HeroAssetId = 'glyph' | 'H01' | 'H02' | 'H03';
+export const ALL_HERO_ASSET_IDS = [
+  'glyph',
+  'H01', 'H02', 'H03', 'H04', 'H05', 'H06', 'H07', 'H08', 'H09', 'H10',
+  'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20',
+  'H21', 'H22', 'H23', 'H24', 'H25', 'H26', 'H27', 'H28', 'H29', 'H30',
+  'H31', 'H32', 'H33', 'H34', 'H35', 'H36', 'H37', 'H38', 'H39', 'H40',
+  'H41', 'H42', 'H43', 'H44', 'H45', 'H46', 'H47', 'H48', 'H49', 'H50',
+  'H51', 'H52', 'H53', 'H54', 'H55', 'H56', 'H57', 'H58', 'H59', 'H60',
+  'H61', 'H62', 'H63',
+] as const;
+
+export type HeroAssetId = (typeof ALL_HERO_ASSET_IDS)[number];
 
 export type PressBlockType =
   | 'heading'
@@ -44,13 +55,38 @@ export type PressBlockType =
   | 'divider'
   | 'source_note'
   | 'page_break'
-  | 'toc';
+  | 'toc'
+  | 'comparison_matrix'
+  | 'timeline_roadmap'
+  | 'checklist_gate'
+  | 'two_column_split'
+  | 'stat_delta_strip';
 
 export interface PressKpiItem {
   label: string;
   value: string;
   note?: string;
   sourceId?: string;
+}
+
+export interface PressMilestoneItem {
+  phase: string;
+  title: string;
+  detail: string;
+  status?: 'done' | 'active' | 'planned';
+}
+
+export interface PressChecklistItem {
+  item: string;
+  state: 'pass' | 'pending' | 'blocked';
+  owner?: string;
+}
+
+export interface PressStatDeltaItem {
+  metric: string;
+  baseline: string;
+  target: string;
+  delta: string;
 }
 
 export interface PressBlock {
@@ -64,6 +100,13 @@ export interface PressBlock {
   rows?: string[][];
   highlightCol?: number;
   kpis?: PressKpiItem[];
+  milestones?: PressMilestoneItem[];
+  checklist?: PressChecklistItem[];
+  leftTitle?: string;
+  leftItems?: string[];
+  rightTitle?: string;
+  rightItems?: string[];
+  deltas?: PressStatDeltaItem[];
   variant?: 'key' | 'tip' | 'context';
   title?: string;
   heroId?: HeroAssetId;
@@ -197,6 +240,11 @@ const VALID_BLOCK_TYPES: readonly PressBlockType[] = [
   'source_note',
   'page_break',
   'toc',
+  'comparison_matrix',
+  'timeline_roadmap',
+  'checklist_gate',
+  'two_column_split',
+  'stat_delta_strip',
 ];
 
 export function parseInlineMarks(input: string): PressInlineRun[] {
@@ -349,6 +397,25 @@ export function estimateA4Pages(doc: PressDocument): { estimatedHeightMm: number
         break;
       case 'toc':
         h += 22;
+        break;
+      case 'comparison_matrix': {
+        const rowCount = (b.rows?.length ?? 0) + 1;
+        h += rowCount * 9 + 12;
+        break;
+      }
+      case 'timeline_roadmap':
+        h += Math.max(1, b.milestones?.length ?? 1) * 14 + 8;
+        break;
+      case 'checklist_gate':
+        h += Math.max(1, b.checklist?.length ?? 1) * 9 + 10;
+        break;
+      case 'two_column_split': {
+        const maxRows = Math.max(b.leftItems?.length ?? 1, b.rightItems?.length ?? 1);
+        h += maxRows * 7 + 16;
+        break;
+      }
+      case 'stat_delta_strip':
+        h += 28;
         break;
     }
   }

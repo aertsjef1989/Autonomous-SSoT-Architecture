@@ -132,6 +132,61 @@ export function renderPressToPrintHtml(doc: PressDocument, opts: PdfHtmlOptions)
           return `<div class="page-break" aria-hidden="true"></div>`;
         case 'source_note':
           return `<div class="block source-note">${renderInlineHtml(b.text ?? '', T.surface, T.muted, T.text2)}</div>`;
+        case 'comparison_matrix': {
+          const headers = b.headers ?? ['Dimension', 'Baseline', 'Target'];
+          const hiCol = b.highlightCol ?? headers.length - 1;
+          const ths = headers
+            .map(
+              (h, cIdx) =>
+                `<th scope="col" style="background:${cIdx === hiCol ? '#0A7571' : '#14161C'};color:#FFFFFF;">${esc(h)}</th>`
+            )
+            .join('');
+          const trs = (b.rows ?? [])
+            .map((r, rIdx) => {
+              const bg = rIdx % 2 === 1 ? T.surface : T.ground;
+              const tds = r
+                .map((c, cIdx) => {
+                  const hi = cIdx === hiCol;
+                  return `<td style="background:${hi ? T.tint2 : bg};color:${hi ? T.text2 : T.ink};font-weight:${hi ? 700 : 400};">${renderInlineHtml(c, T.surfaceDeep, T.ink, T.text1)}</td>`;
+                })
+                .join('');
+              return `<tr>${tds}</tr>`;
+            })
+            .join('');
+          return `<div class="block">${b.title ? `<div class="eyebrow">${esc(b.title)}</div>` : ''}<table class="sig-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+        }
+        case 'timeline_roadmap': {
+          const rows = (b.milestones ?? [])
+            .map((m) => {
+              const st = m.status ?? 'planned';
+              const stCol = st === 'done' ? T.text2 : st === 'active' ? T.text1 : T.muted;
+              return `<div style="display:grid;grid-template-columns:78px 1fr 78px;gap:10px;padding:7px 10px;border-bottom:1px solid ${T.border};align-items:start;"><div style="font-weight:700;color:${T.text2};font-size:9.5pt;">${esc(m.phase)}</div><div><div style="font-weight:700;color:${T.ink};">${esc(m.title)}</div><div style="font-size:9.5pt;color:${T.muted};">${renderInlineHtml(m.detail, T.surfaceDeep, T.ink, T.text1)}</div></div><div style="text-align:right;font-size:8.5pt;font-weight:700;text-transform:uppercase;color:${stCol};">${esc(st)}</div></div>`;
+            })
+            .join('');
+          return `<section class="block card" style="padding:10px 12px;">${b.title ? `<div class="eyebrow">${esc(b.title)}</div>` : ''}${rows}</section>`;
+        }
+        case 'checklist_gate': {
+          const rows = (b.checklist ?? [])
+            .map((c) => {
+              const stCol = c.state === 'pass' ? T.text2 : c.state === 'blocked' ? T.text1 : T.muted;
+              return `<div style="display:grid;grid-template-columns:68px 1fr auto;gap:10px;padding:6px 8px;border-bottom:1px solid ${T.border};align-items:center;"><span style="font-size:8.5pt;font-weight:700;text-transform:uppercase;color:${stCol};">[${esc(c.state)}]</span><span>${renderInlineHtml(c.item, T.surfaceDeep, T.ink, T.text1)}</span><span style="font-size:9pt;color:${T.muted};">${esc(c.owner ?? '')}</span></div>`;
+            })
+            .join('');
+          return `<section class="block card" style="padding:10px 12px;">${b.title ? `<div class="eyebrow" style="color:${T.text1};">${esc(b.title)}</div>` : ''}${rows}</section>`;
+        }
+        case 'two_column_split': {
+          const lItems = (b.leftItems ?? []).map((i) => `<li>${renderInlineHtml(i, T.surfaceDeep, T.ink, T.text1)}</li>`).join('');
+          const rItems = (b.rightItems ?? []).map((i) => `<li>${renderInlineHtml(i, T.surfaceDeep, T.ink, T.text1)}</li>`).join('');
+          return `<div class="block" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;break-inside:avoid;"><div class="card" style="border-top:3px solid ${T.accent2};"><div class="eyebrow">${esc(b.leftTitle || 'Column A')}</div><ul class="list-ul" style="margin-bottom:0;">${lItems}</ul></div><div class="card" style="border-top:3px solid ${T.accent1};"><div class="eyebrow" style="color:${T.text1};">${esc(b.rightTitle || 'Column B')}</div><ul class="list-ul" style="margin-bottom:0;">${rItems}</ul></div></div>`;
+        }
+        case 'stat_delta_strip': {
+          const tiles = (b.deltas ?? [])
+            .map(
+              (d) => `<div class="kpi-tile"><div class="kpi-label">${esc(d.metric)}</div><div style="font-size:9.5pt;color:${T.muted};margin-top:3px;">${esc(d.baseline)} -&gt; <strong style="color:${T.ink};">${esc(d.target)}</strong></div><div class="kpi-val" style="color:${T.text2};font-size:13.5pt;">${esc(d.delta)}</div></div>`
+            )
+            .join('');
+          return `<div class="block kpi-row">${tiles}</div>`;
+        }
       }
     })
     .join('\n');

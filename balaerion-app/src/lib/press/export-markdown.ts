@@ -113,6 +113,57 @@ export function exportPressToMarkdown(doc: PressDocument): string {
         lines.push('');
         break;
       }
+      case 'comparison_matrix': {
+        if (b.title) lines.push(`### ${b.title}`);
+        const headers = b.headers ?? ['Dimension', 'Baseline', 'Target'];
+        lines.push(`| ${headers.join(' | ')} |`);
+        lines.push(`| ${headers.map(() => ':---').join(' | ')} |`);
+        for (const r of b.rows ?? []) {
+          lines.push(`| ${r.join(' | ')} |`);
+        }
+        lines.push('');
+        break;
+      }
+      case 'timeline_roadmap': {
+        if (b.title) lines.push(`### ${b.title}`);
+        lines.push('| Phase | Milestone | Detail | Status |');
+        lines.push('| :--- | :--- | :--- | :--- |');
+        for (const m of b.milestones ?? []) {
+          lines.push(`| **${m.phase}** | ${m.title} | ${m.detail} | ${(m.status ?? 'planned').toUpperCase()} |`);
+        }
+        lines.push('');
+        break;
+      }
+      case 'checklist_gate': {
+        if (b.title) lines.push(`### ${b.title}`);
+        for (const c of b.checklist ?? []) {
+          const mark = c.state === 'pass' ? '[x]' : c.state === 'blocked' ? '[!]' : '[ ]';
+          lines.push(`- ${mark} **${c.state.toUpperCase()}** · ${c.item}${c.owner ? ` (${c.owner})` : ''}`);
+        }
+        lines.push('');
+        break;
+      }
+      case 'two_column_split': {
+        const lTitle = b.leftTitle || 'Column A';
+        const rTitle = b.rightTitle || 'Column B';
+        lines.push(`| ${lTitle} | ${rTitle} |`);
+        lines.push('| :--- | :--- |');
+        const maxLen = Math.max(b.leftItems?.length ?? 0, b.rightItems?.length ?? 0);
+        for (let i = 0; i < maxLen; i++) {
+          lines.push(`| ${b.leftItems?.[i] ?? ''} | ${b.rightItems?.[i] ?? ''} |`);
+        }
+        lines.push('');
+        break;
+      }
+      case 'stat_delta_strip': {
+        lines.push('| Metric | Baseline | Target | Delta |');
+        lines.push('| :--- | :--- | :--- | :--- |');
+        for (const d of b.deltas ?? []) {
+          lines.push(`| ${d.metric} | ${d.baseline} | **${d.target}** | **${d.delta}** |`);
+        }
+        lines.push('');
+        break;
+      }
     }
   }
 

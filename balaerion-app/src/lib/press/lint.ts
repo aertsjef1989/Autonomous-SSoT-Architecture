@@ -30,6 +30,13 @@ function collectBlockText(b: PressBlock): string {
   if (b.headers) parts.push(...b.headers);
   if (b.rows) b.rows.forEach((r) => parts.push(...r));
   if (b.kpis) b.kpis.forEach((k) => parts.push(k.label, k.value, k.note ?? ''));
+  if (b.milestones) b.milestones.forEach((m) => parts.push(m.phase, m.title, m.detail));
+  if (b.checklist) b.checklist.forEach((c) => parts.push(c.item, c.owner ?? ''));
+  if (b.leftTitle) parts.push(b.leftTitle);
+  if (b.leftItems) parts.push(...b.leftItems);
+  if (b.rightTitle) parts.push(b.rightTitle);
+  if (b.rightItems) parts.push(...b.rightItems);
+  if (b.deltas) b.deltas.forEach((d) => parts.push(d.metric, d.baseline, d.target, d.delta));
   return parts.join(' ');
 }
 
@@ -382,6 +389,27 @@ export function autoFixDashes(doc: PressDocument): PressDocument {
         label: clean(k.label) ?? k.label,
         value: clean(k.value) ?? k.value,
         note: clean(k.note),
+      })),
+      milestones: b.milestones?.map((m) => ({
+        ...m,
+        phase: clean(m.phase) ?? m.phase,
+        title: clean(m.title) ?? m.title,
+        detail: clean(m.detail) ?? m.detail,
+      })),
+      checklist: b.checklist?.map((c) => ({
+        ...c,
+        item: clean(c.item) ?? c.item,
+        owner: clean(c.owner),
+      })),
+      leftTitle: clean(b.leftTitle),
+      leftItems: b.leftItems?.map((i) => clean(i) ?? i),
+      rightTitle: clean(b.rightTitle),
+      rightItems: b.rightItems?.map((i) => clean(i) ?? i),
+      deltas: b.deltas?.map((d) => ({
+        metric: clean(d.metric) ?? d.metric,
+        baseline: clean(d.baseline) ?? d.baseline,
+        target: clean(d.target) ?? d.target,
+        delta: clean(d.delta) ?? d.delta,
       })),
     })),
   };

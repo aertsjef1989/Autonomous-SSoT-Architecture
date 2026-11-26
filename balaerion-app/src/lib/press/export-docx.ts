@@ -547,6 +547,332 @@ export async function exportPressToDocxBytes(doc: PressDocument, opts: DocxExpor
         );
         break;
       }
+
+      case 'comparison_matrix': {
+        if (b.title) {
+          children.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: b.title.toUpperCase(),
+                  font: fontName,
+                  size: 18,
+                  bold: true,
+                  color: '0A7571',
+                  language: { value: lang },
+                }),
+              ],
+              spacing: { before: 140, after: 60 },
+            })
+          );
+        }
+        const headers = b.headers ?? ['Dimension', 'Baseline', 'Target'];
+        const hiCol = b.highlightCol ?? headers.length - 1;
+        const colW = Math.floor(100 / Math.max(1, headers.length));
+        const headerRow = new TableRow({
+          tableHeader: true,
+          children: headers.map(
+            (h, cIdx) =>
+              new TableCell({
+                width: { size: colW, type: WidthType.PERCENTAGE },
+                shading: { type: ShadingType.CLEAR, color: 'auto', fill: cIdx === hiCol ? '0A7571' : '14161C' },
+                margins: { top: 100, bottom: 100, left: 120, right: 120 },
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: h,
+                        font: fontName,
+                        size: 20,
+                        bold: true,
+                        color: 'FFFFFF',
+                        language: { value: lang },
+                      }),
+                    ],
+                  }),
+                ],
+              })
+          ),
+        });
+        const dataRows = (b.rows ?? []).map((r, rIdx) => {
+          const baseFill = rIdx % 2 === 1 ? 'F5F6F8' : 'FFFFFF';
+          return new TableRow({
+            children: r.map((cellText, cIdx) => {
+              const hi = cIdx === hiCol;
+              return new TableCell({
+                width: { size: colW, type: WidthType.PERCENTAGE },
+                shading: { type: ShadingType.CLEAR, color: 'auto', fill: hi ? 'E4FAF9' : baseFill },
+                margins: { top: 90, bottom: 90, left: 120, right: 120 },
+                children: [
+                  new Paragraph({
+                    children: makeRuns(cellText, hi ? '0A7571' : '14161C', 20, hi),
+                  }),
+                ],
+              });
+            }),
+          });
+        });
+        children.push(
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [headerRow, ...dataRows],
+          })
+        );
+        children.push(new Paragraph({ text: '', spacing: { after: 140 } }));
+        break;
+      }
+
+      case 'timeline_roadmap': {
+        const ms = b.milestones ?? [];
+        if (ms.length > 0) {
+          children.push(
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: ms.map(
+                (m) =>
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 20, type: WidthType.PERCENTAGE },
+                        shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                        margins: { top: 90, bottom: 90, left: 110, right: 110 },
+                        children: [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: m.phase,
+                                font: fontName,
+                                size: 19,
+                                bold: true,
+                                color: '0A7571',
+                                language: { value: lang },
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 62, type: WidthType.PERCENTAGE },
+                        shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'FFFFFF' },
+                        margins: { top: 90, bottom: 90, left: 110, right: 110 },
+                        children: [
+                          new Paragraph({ children: makeRuns(m.title, '14161C', 21, true) }),
+                          new Paragraph({ children: makeRuns(m.detail, '5B6270', 19) }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 18, type: WidthType.PERCENTAGE },
+                        shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                        margins: { top: 90, bottom: 90, left: 110, right: 110 },
+                        children: [
+                          new Paragraph({
+                            alignment: AlignmentType.RIGHT,
+                            children: [
+                              new TextRun({
+                                text: (m.status ?? 'planned').toUpperCase(),
+                                font: fontName,
+                                size: 18,
+                                bold: true,
+                                color: m.status === 'active' ? 'C71048' : '0A7571',
+                                language: { value: lang },
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                  })
+              ),
+            })
+          );
+          children.push(new Paragraph({ text: '', spacing: { after: 140 } }));
+        }
+        break;
+      }
+
+      case 'checklist_gate': {
+        const cl = b.checklist ?? [];
+        if (cl.length > 0) {
+          children.push(
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: cl.map(
+                (c) =>
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 18, type: WidthType.PERCENTAGE },
+                        shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                        margins: { top: 80, bottom: 80, left: 100, right: 100 },
+                        children: [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: `[${c.state.toUpperCase()}]`,
+                                font: fontName,
+                                size: 18,
+                                bold: true,
+                                color: c.state === 'blocked' ? 'C71048' : '0A7571',
+                                language: { value: lang },
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 62, type: WidthType.PERCENTAGE },
+                        margins: { top: 80, bottom: 80, left: 100, right: 100 },
+                        children: [new Paragraph({ children: makeRuns(c.item, '14161C', 20) })],
+                      }),
+                      new TableCell({
+                        width: { size: 20, type: WidthType.PERCENTAGE },
+                        margins: { top: 80, bottom: 80, left: 100, right: 100 },
+                        children: [
+                          new Paragraph({
+                            alignment: AlignmentType.RIGHT,
+                            children: makeRuns(c.owner ?? '', '5B6270', 18),
+                          }),
+                        ],
+                      }),
+                    ],
+                  })
+              ),
+            })
+          );
+          children.push(new Paragraph({ text: '', spacing: { after: 140 } }));
+        }
+        break;
+      }
+
+      case 'two_column_split': {
+        children.push(
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                    margins: { top: 120, bottom: 120, left: 140, right: 140 },
+                    borders: { top: { style: BorderStyle.SINGLE, size: 18, color: '0A7571' } },
+                    children: [
+                      new Paragraph({
+                        children: [
+                          new TextRun({
+                            text: (b.leftTitle || 'Column A').toUpperCase(),
+                            font: fontName,
+                            size: 18,
+                            bold: true,
+                            color: '0A7571',
+                            language: { value: lang },
+                          }),
+                        ],
+                        spacing: { after: 60 },
+                      }),
+                      ...(b.leftItems ?? []).map(
+                        (it) =>
+                          new Paragraph({
+                            bullet: { level: 0 },
+                            children: makeRuns(it, '14161C', 20),
+                            spacing: { after: 50 },
+                          })
+                      ),
+                    ],
+                  }),
+                  new TableCell({
+                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                    margins: { top: 120, bottom: 120, left: 140, right: 140 },
+                    borders: { top: { style: BorderStyle.SINGLE, size: 18, color: 'C71048' } },
+                    children: [
+                      new Paragraph({
+                        children: [
+                          new TextRun({
+                            text: (b.rightTitle || 'Column B').toUpperCase(),
+                            font: fontName,
+                            size: 18,
+                            bold: true,
+                            color: 'C71048',
+                            language: { value: lang },
+                          }),
+                        ],
+                        spacing: { after: 60 },
+                      }),
+                      ...(b.rightItems ?? []).map(
+                        (it) =>
+                          new Paragraph({
+                            bullet: { level: 0 },
+                            children: makeRuns(it, '14161C', 20),
+                            spacing: { after: 50 },
+                          })
+                      ),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          })
+        );
+        children.push(new Paragraph({ text: '', spacing: { after: 140 } }));
+        break;
+      }
+
+      case 'stat_delta_strip': {
+        const deltas = b.deltas ?? [];
+        if (deltas.length > 0) {
+          const colW = Math.floor(100 / deltas.length);
+          children.push(
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: [
+                new TableRow({
+                  children: deltas.map(
+                    (d) =>
+                      new TableCell({
+                        width: { size: colW, type: WidthType.PERCENTAGE },
+                        shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'F5F6F8' },
+                        margins: { top: 110, bottom: 110, left: 120, right: 120 },
+                        children: [
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: d.metric.toUpperCase(),
+                                font: fontName,
+                                size: 17,
+                                bold: true,
+                                color: '5B6270',
+                                language: { value: lang },
+                              }),
+                            ],
+                          }),
+                          new Paragraph({
+                            children: makeRuns(`${d.baseline} -> ${d.target}`, '14161C', 19),
+                            spacing: { before: 30, after: 30 },
+                          }),
+                          new Paragraph({
+                            children: [
+                              new TextRun({
+                                text: d.delta,
+                                font: fontName,
+                                size: 26,
+                                bold: true,
+                                color: '0A7571',
+                                language: { value: lang },
+                              }),
+                            ],
+                          }),
+                        ],
+                      })
+                  ),
+                }),
+              ],
+            })
+          );
+          children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
+        }
+        break;
+      }
     }
   }
 

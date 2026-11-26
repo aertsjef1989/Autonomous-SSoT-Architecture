@@ -294,6 +294,140 @@ export function exportPressToEmailHtml(doc: PressDocument): string {
         `);
         break;
       }
+      case 'comparison_matrix': {
+        const headers = b.headers ?? ['Dimension', 'Baseline', 'Target'];
+        const hiCol = b.highlightCol ?? headers.length - 1;
+        const ths = headers
+          .map(
+            (h, cIdx) =>
+              `<th align="left" style="padding:9px 10px;background-color:${cIdx === hiCol ? '#0A7571' : '#14161C'};color:#FFFFFF;font-size:12px;font-weight:700;border:1px solid #14161C;font-family:${fontStack};">${esc(h)}</th>`
+          )
+          .join('');
+        const trs = (b.rows ?? [])
+          .map((r, rIdx) => {
+            const bg = rIdx % 2 === 1 ? '#F5F6F8' : '#FFFFFF';
+            const tds = r
+              .map((cell, cIdx) => {
+                const hi = cIdx === hiCol;
+                return `<td style="padding:8px 10px;background-color:${hi ? '#E4FAF9' : bg};border:1px solid #E1E4EA;font-size:13.5px;color:${hi ? '#0A7571' : '#14161C'};font-weight:${hi ? 700 : 400};font-family:${fontStack};">${renderInlineEmail(cell)}</td>`;
+              })
+              .join('');
+            return `<tr>${tds}</tr>`;
+          })
+          .join('');
+        rowsHtml.push(`
+          <tr>
+            <td style="padding:8px 28px 14px 28px;font-family:${fontStack};">
+              ${b.title ? `<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#0A7571;padding-bottom:6px;">${esc(b.title)}</div>` : ''}
+              <table role="table" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+                <thead><tr>${ths}</tr></thead>
+                <tbody>${trs}</tbody>
+              </table>
+            </td>
+          </tr>
+        `);
+        break;
+      }
+      case 'timeline_roadmap': {
+        const trs = (b.milestones ?? [])
+          .map((m) => {
+            const st = m.status ?? 'planned';
+            const badgeBg = st === 'done' ? '#0A7571' : st === 'active' ? '#C71048' : '#5B6270';
+            return `
+              <tr>
+                <td width="90" valign="top" style="padding:8px 10px;border-bottom:1px solid #E1E4EA;font-size:12px;font-weight:700;color:#0A7571;font-family:${fontStack};">${esc(m.phase)}</td>
+                <td valign="top" style="padding:8px 10px;border-bottom:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-family:${fontStack};"><strong>${esc(m.title)}</strong><div style="font-size:12.5px;color:#5B6270;padding-top:2px;">${renderInlineEmail(m.detail)}</div></td>
+                <td width="84" align="right" valign="top" style="padding:8px 10px;border-bottom:1px solid #E1E4EA;font-family:${fontStack};"><span style="display:inline-block;padding:2px 7px;border-radius:10px;background-color:${badgeBg};color:#FFFFFF;font-size:10.5px;font-weight:700;text-transform:uppercase;">${esc(st)}</span></td>
+              </tr>`;
+          })
+          .join('');
+        rowsHtml.push(`
+          <tr>
+            <td style="padding:8px 28px 14px 28px;font-family:${fontStack};">
+              ${b.title ? `<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#0A7571;padding-bottom:6px;">${esc(b.title)}</div>` : ''}
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#F5F6F8;border:1px solid #E1E4EA;border-radius:6px;">${trs}</table>
+            </td>
+          </tr>
+        `);
+        break;
+      }
+      case 'checklist_gate': {
+        const trs = (b.checklist ?? [])
+          .map((c) => {
+            const col = c.state === 'pass' ? '#0A7571' : c.state === 'blocked' ? '#C71048' : '#5B6270';
+            return `
+              <tr>
+                <td width="76" valign="top" style="padding:7px 10px;border-bottom:1px solid #E1E4EA;font-size:11px;font-weight:700;color:${col};text-transform:uppercase;font-family:${fontStack};">${esc(c.state)}</td>
+                <td valign="top" style="padding:7px 10px;border-bottom:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-family:${fontStack};">${renderInlineEmail(c.item)}</td>
+                <td width="110" align="right" valign="top" style="padding:7px 10px;border-bottom:1px solid #E1E4EA;font-size:12px;color:#5B6270;font-family:${fontStack};">${esc(c.owner ?? '')}</td>
+              </tr>`;
+          })
+          .join('');
+        rowsHtml.push(`
+          <tr>
+            <td style="padding:8px 28px 14px 28px;font-family:${fontStack};">
+              ${b.title ? `<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#C71048;padding-bottom:6px;">${esc(b.title)}</div>` : ''}
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#FFFFFF;border:1px solid #E1E4EA;border-radius:6px;">${trs}</table>
+            </td>
+          </tr>
+        `);
+        break;
+      }
+      case 'two_column_split': {
+        const leftHtml = (b.leftItems ?? []).map((i) => `<div style="padding:3px 0;font-size:13.5px;color:#14161C;">&bull; ${renderInlineEmail(i)}</div>`).join('');
+        const rightHtml = (b.rightItems ?? []).map((i) => `<div style="padding:3px 0;font-size:13.5px;color:#14161C;">&bull; ${renderInlineEmail(i)}</div>`).join('');
+        rowsHtml.push(`
+          <tr>
+            <td style="padding:8px 22px 14px 22px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="50%" valign="top" style="padding:6px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#F5F6F8;border-top:3px solid #0A7571;border-radius:4px;">
+                      <tr><td style="padding:12px;font-family:${fontStack};"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#0A7571;padding-bottom:6px;">${esc(b.leftTitle || 'Column A')}</div>${leftHtml}</td></tr>
+                    </table>
+                  </td>
+                  <td width="50%" valign="top" style="padding:6px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#F5F6F8;border-top:3px solid #C71048;border-radius:4px;">
+                      <tr><td style="padding:12px;font-family:${fontStack};"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:#C71048;padding-bottom:6px;">${esc(b.rightTitle || 'Column B')}</div>${rightHtml}</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        `);
+        break;
+      }
+      case 'stat_delta_strip': {
+        const deltas = b.deltas ?? [];
+        if (deltas.length > 0) {
+          const widthPct = Math.floor(100 / deltas.length);
+          const cells = deltas
+            .map(
+              (d) => `
+                <td width="${widthPct}%" valign="top" style="padding:6px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#F5F6F8;border:1px solid #E1E4EA;border-radius:6px;">
+                    <tr>
+                      <td style="padding:10px 12px;font-family:${fontStack};">
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#5B6270;">${esc(d.metric)}</div>
+                        <div style="font-size:12.5px;color:#5B6270;padding-top:3px;">${esc(d.baseline)} -&gt; <strong style="color:#14161C;">${esc(d.target)}</strong></div>
+                        <div style="font-size:16px;font-weight:700;color:#0A7571;padding-top:3px;">${esc(d.delta)}</div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>`
+            )
+            .join('');
+          rowsHtml.push(`
+            <tr>
+              <td style="padding:6px 22px 12px 22px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>${cells}</tr></table>
+              </td>
+            </tr>
+          `);
+        }
+        break;
+      }
     }
   }
 

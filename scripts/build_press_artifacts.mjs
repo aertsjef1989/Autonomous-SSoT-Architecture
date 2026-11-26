@@ -16,6 +16,7 @@ const STATIC_PRESS_OUT = path.join(STATIC_PRESS_SRC, 'public');
 
 fs.mkdirSync(DEV_DIR, { recursive: true });
 fs.mkdirSync(SAMPLES_DIR, { recursive: true });
+fs.rmSync(path.join(STATIC_PRESS_OUT, 'dist'), { recursive: true, force: true });
 fs.mkdirSync(path.join(STATIC_PRESS_OUT, 'dist'), { recursive: true });
 
 // 1. Bundle the TypeScript press library into .dev/press-lib.mjs for Node artifact generation & tests
@@ -54,8 +55,8 @@ const {
   exportPressToDocxBytes,
 } = pressLib;
 
-// Load PNG and SVG hero maps
-const heroIds = ['glyph', 'H01', 'H02', 'H03'];
+// Load PNG and SVG hero maps across glyph + all 63 Signal devices (H01..H63)
+const heroIds = ['glyph', ...Array.from({ length: 63 }, (_, i) => `H${String(i + 1).padStart(2, '0')}`)];
 const heroPngMap = {};
 const inlineHeroSvgs = {};
 for (const hid of heroIds) {

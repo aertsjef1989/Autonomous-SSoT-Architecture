@@ -100,22 +100,24 @@ def main() -> int:
     with sync_playwright() as pw:
         browser = pw.chromium.launch(
             executable_path="/usr/bin/google-chrome",
-            args=["--no-sandbox", "--disable-gpu"],
+            args=[
+                "--no-sandbox",
+                "--disable-gpu",
+                "--disable-dev-shm-usage",
+                "--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1",
+            ],
         )
         for w in widths:
             ctx = browser.new_context(viewport={"width": w, "height": 800})
             page = ctx.new_page()
             current_route = [None]
 
-            def on_route(route):
-                host = urlparse(route.request.url).hostname
+            def on_req(req):
+                host = urlparse(req.url).hostname
                 if host and host != "127.0.0.1":
-                    external_requests.setdefault(current_route[0], set()).add(route.request.url)
-                    route.abort()
-                else:
-                    route.continue_()
+                    external_requests.setdefault(current_route[0], set()).add(req.url)
 
-            page.route("**/*", on_route)
+            page.on("request", on_req)
 
             for r in honkit_and_demos + studio_rel:
                 current_route[0] = r

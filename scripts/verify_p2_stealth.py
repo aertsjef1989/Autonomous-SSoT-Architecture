@@ -109,7 +109,7 @@ def main() -> int:
         with sync_playwright() as pw:
             browser = pw.chromium.launch(
                 executable_path="/usr/bin/google-chrome",
-                args=["--no-sandbox", "--disable-gpu"],
+                args=["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
             )
             ctx = browser.new_context(viewport={"width": 320, "height": 800})
             page = ctx.new_page()
