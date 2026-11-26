@@ -9,8 +9,18 @@ export function normalizeLane(input: unknown, defaultLane: Lane = 'safe'): Lane 
 
 export const ALLOWED_PROVIDERS: Record<Lane, readonly string[]> = {
   // EU safe-lane only: zero fallback to general providers
-  safe: ['ovhcloud-eu', 'scaleway-paris', 'mistral-eu-free'] as const,
-  general: ['groq', 'cerebras', 'cloudflare-workers-ai', 'openrouter-free'] as const,
+  safe: ['ovhcloud-eu', 'mistral', 'mistral-eu-free', 'codestral', 'scaleway-paris'] as const,
+  general: [
+    'nvidia-nim',
+    'groq',
+    'cerebras',
+    'gemini',
+    'openrouter-free',
+    'cloudflare-workers-ai',
+    'cohere',
+    'fireworks',
+    'together',
+  ] as const,
 };
 
 const SYNTHETIC_EMAIL_DOMAINS = new Set([

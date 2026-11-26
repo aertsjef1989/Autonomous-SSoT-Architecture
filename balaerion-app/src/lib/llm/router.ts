@@ -1,8 +1,10 @@
 import { enforcePreDispatchGate, normalizeLane, type Lane, type LaneInput } from '../lane-guard';
 import {
+  assertModelPermitted,
   assertProviderPermitted,
   DEFAULT_PROVIDER_REGISTRY,
   isProviderConfiguredAndEnabled,
+  resolveProviderApiKey,
   type ProviderConfig,
 } from './registry';
 
@@ -14,6 +16,7 @@ export interface LlmMessage {
 export interface LlmDispatchOptions {
   lane?: LaneInput;
   preferredProviderId?: string;
+  modelOverride?: string;
   mode?: string;
   messages: LlmMessage[];
   maxOutputTokens?: number;
@@ -129,9 +132,11 @@ async function callSingleProvider(
   messages: LlmMessage[],
   maxOutputTokens: number,
   temperature: number,
-  env: NodeJS.ProcessEnv
+  env: NodeJS.ProcessEnv,
+  activeModelId: string
 ): Promise<{ ok: true; text: string; totalTokens: number } | { ok: false; status: number; reason: string }> {
   assertProviderPermitted(cfg);
+  assertModelPermitted(cfg.id, activeModelId, Boolean(cfg.requiresFreeModelSuffix));
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), cfg.timeoutMs);
@@ -140,7 +145,9 @@ async function callSingleProvider(
     if (cfg.protocol === 'cloudflare_workers_ai') {
       const token = cfg.apiKeyEnvVar ? env[cfg.apiKeyEnvVar] || '' : '';
       const accountId = cfg.accountIdEnvVar ? env[cfg.accountIdEnvVar] || '' : '';
-      const url = cfg.endpointUrl.replace('{ACCOUNT_ID}', encodeURIComponent(accountId));
+      const url = cfg.endpointUrl
+        .replace('{ACCOUNT_ID}', encodeURIComponent(accountId))
+        .replace(cfg.pinnedModelId, activeModelId);
       const resp = await fetch(url, {
         method: 'POST',
         headers: {
@@ -166,11 +173,11 @@ async function callSingleProvider(
       return { ok: true, text, totalTokens: estTokens };
     }
 
-    // OpenAI-compatible chat/completions protocol (OVHcloud EU, Groq, Cerebras, OpenRouter :free, Scaleway, Mistral)
+    // OpenAI-compatible chat/completions protocol across all EU & General free-tier providers
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    const keyVal = cfg.apiKeyEnvVar ? (env[cfg.apiKeyEnvVar] || (cfg.apiKeyEnvVar === 'OPENROUTER_FREE_API_KEY' ? env.OPENROUTER_API_KEY : '') || '') : '';
+    const keyVal = resolveProviderApiKey(cfg, env);
     if (keyVal) {
       headers.Authorization = `Bearer ${keyVal}`;
     }
@@ -179,7 +186,7 @@ async function callSingleProvider(
       method: 'POST',
       headers,
       body: JSON.stringify({
-        model: cfg.pinnedModelId,
+        model: activeModelId,
         messages,
         max_tokens: maxOutputTokens,
         temperature,
@@ -272,8 +279,14 @@ export async function dispatchLlmRequest(opts: LlmDispatchOptions): Promise<LlmD
       continue;
     }
 
+    const useOverride =
+      opts.modelOverride &&
+      opts.preferredProviderId === candidate.id &&
+      (!candidate.supportedModels || candidate.supportedModels.includes(opts.modelOverride.trim()));
+    const activeModelId = useOverride ? opts.modelOverride!.trim() : candidate.pinnedModelId;
+
     attempted.push(candidate.id);
-    const res = await callSingleProvider(candidate, opts.messages, maxOutputTokens, temperature, env);
+    const res = await callSingleProvider(candidate, opts.messages, maxOutputTokens, temperature, env, activeModelId);
     if (res.ok) {
       recordProviderOutcome(candidate, 200, true);
       const weighted = Math.max(1, Math.ceil(res.totalTokens * candidate.weightMultiplier));
@@ -282,7 +295,7 @@ export async function dispatchLlmRequest(opts: LlmDispatchOptions): Promise<LlmD
         replay: false,
         lane,
         providerId: candidate.id,
-        pinnedModelId: candidate.pinnedModelId,
+        pinnedModelId: activeModelId,
         content: res.text,
         usedTokensWeighted: weighted,
         attemptedProviders: attempted,

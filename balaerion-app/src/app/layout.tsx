@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { WorkspaceModeBadge } from '@/components/WorkspaceModeBadge';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -37,6 +38,7 @@ const navLinks = [
   { href: '/studio', label: 'Signal Studio' },
   { href: '/press', label: 'Signal Press' },
   { href: '/redeem', label: 'Redeem Grant' },
+  { href: '/admin', label: 'Owner' },
   { href: '/privacy', label: 'Privacy' },
 ];
 
@@ -94,19 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Link>
             ))}
           </nav>
-          <span
-            style={{
-              marginLeft: 'auto',
-              fontSize: '12px',
-              padding: '6px 12px',
-              borderRadius: '999px',
-              backgroundColor: '#171B24',
-              border: '1px solid #21E0DC',
-              color: '#21E0DC',
-            }}
-          >
-            Mode: Replay (No Grant Needed)
-          </span>
+          <WorkspaceModeBadge />
         </header>
         <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px 88px', boxSizing: 'border-box' }}>
           {children}

@@ -2,12 +2,15 @@ import type { Lane } from '../lane-guard';
 
 export interface ProviderConfig {
   id: string;
+  shortName?: string;
   displayName: string;
   lane: Lane;
   protocol: 'openai_compat' | 'cloudflare_workers_ai';
   endpointUrl: string;
   pinnedModelId: string;
+  supportedModels?: readonly string[];
   apiKeyEnvVar: string | null;
+  fallbackApiKeyEnvVar?: string;
   accountIdEnvVar?: string;
   allowAnonymousWhenKeyUnset?: boolean;
   requiresFreeModelSuffix?: boolean;
@@ -20,24 +23,23 @@ export interface ProviderConfig {
 }
 
 /**
- * Hard Constraint 1.1: Permanently excluded provider domains, env prefixes, and model families.
- * Any attempt to register or call these throws immediately before any network socket opens.
+ * Hard Constraint 1.1: Permanently excluded paid-only provider domains and unpinned/paid model families.
+ * Note: Google AI Studio Free Tier (generativelanguage.googleapis.com with Gemini 2.5 Flash) is card-free and admitted;
+ * GCP Vertex AI (aiplatform.googleapis.com) and paid Pro/Anthropic/OpenAI endpoints remain hard-blocked.
  */
 const FORBIDDEN_HOST_PATTERNS: RegExp[] = [
   /anthropic\.com/i,
-  /generativelanguage\.googleapis\.com/i,
-  /aiplatform\.googleapis\.com/i,
-  /aistudio\.google\.com/i,
+  /aiplatform\.googleapis\.com/i, // GCP Vertex AI requires billing account
   /(^|\.)api\.openai\.com$/i,
   /chatgpt\.com/i,
   /claude\.ai/i,
   /models\.inference\.ai\.azure\.com/i, // Retired GitHub Models endpoint
-  /router\.huggingface\.co/i, // Rejected: $0.00 Free tier credits as of 2026-11-25
+  /router\.huggingface\.co/i, // Rejected: $0.00 Free tier credits
 ];
 
 const FORBIDDEN_MODEL_PATTERNS: RegExp[] = [
   /^claude-/i,
-  /^gemini-/i,
+  /^gemini-.*-pro/i, // Paid/Vertex Pro tier excluded; card-free Flash models admitted
   /^gpt-4o/i,
   /^gpt-4\.1/i,
   /^o1-/i,
@@ -46,6 +48,25 @@ const FORBIDDEN_MODEL_PATTERNS: RegExp[] = [
   /^auto$/i,
   /^default$/i,
 ];
+
+export function assertModelPermitted(providerId: string, modelId: string, requiresFreeSuffix = false): void {
+  if (!modelId || modelId.trim().length < 3) {
+    throw new Error(`H7_UNPINNED_MODEL: Provider "${providerId}" is missing an explicit pinned model ID.`);
+  }
+  const clean = modelId.trim();
+  for (const mPat of FORBIDDEN_MODEL_PATTERNS) {
+    if (mPat.test(clean)) {
+      throw new Error(
+        `HARD_CONSTRAINT_1_1_OR_H7_BLOCK: Forbidden or unpinned model "${clean}" on "${providerId}".`
+      );
+    }
+  }
+  if (requiresFreeSuffix && !clean.endsWith(':free')) {
+    throw new Error(
+      `OPENROUTER_BILLING_GUARD: Provider "${providerId}" must pin a ":free" model slug, got "${clean}".`
+    );
+  }
+}
 
 export function assertProviderPermitted(cfg: ProviderConfig): void {
   let parsedUrl: URL;
@@ -64,54 +85,89 @@ export function assertProviderPermitted(cfg: ProviderConfig): void {
       );
     }
   }
-  if (!cfg.pinnedModelId || cfg.pinnedModelId.trim().length < 3) {
-    throw new Error(`H7_UNPINNED_MODEL: Provider "${cfg.id}" is missing an explicit pinned model ID.`);
-  }
-  for (const mPat of FORBIDDEN_MODEL_PATTERNS) {
-    if (mPat.test(cfg.pinnedModelId.trim())) {
-      throw new Error(
-        `HARD_CONSTRAINT_1_1_OR_H7_BLOCK: Forbidden or unpinned model "${cfg.pinnedModelId}" on "${cfg.id}".`
-      );
+  assertModelPermitted(cfg.id, cfg.pinnedModelId, Boolean(cfg.requiresFreeModelSuffix));
+  if (cfg.supportedModels) {
+    for (const altModel of cfg.supportedModels) {
+      assertModelPermitted(cfg.id, altModel, Boolean(cfg.requiresFreeModelSuffix));
     }
-  }
-  if (cfg.requiresFreeModelSuffix && !cfg.pinnedModelId.endsWith(':free')) {
-    throw new Error(
-      `OPENROUTER_BILLING_GUARD: Provider "${cfg.id}" must pin a ":free" model slug, got "${cfg.pinnedModelId}".`
-    );
   }
 }
 
+export function resolveProviderApiKey(cfg: ProviderConfig, env: NodeJS.ProcessEnv = process.env): string {
+  const primary = cfg.apiKeyEnvVar ? env[cfg.apiKeyEnvVar] || '' : '';
+  if (primary && primary.trim().length > 0) return primary.trim();
+  const fallback = cfg.fallbackApiKeyEnvVar ? env[cfg.fallbackApiKeyEnvVar] || '' : '';
+  if (fallback && fallback.trim().length > 0) return fallback.trim();
+  return '';
+}
+
 /**
- * Config-driven Free-Tier Provider Registry (X7, H1-H7).
- * Note per 1.1: A future private deployment could add a paid provider by config entry alone,
- * while assertProviderPermitted() blocks all excluded APIs in this POC.
+ * Config-driven 12+1 Card-Free Provider Registry (Track 2 Multi-LLM Pool).
+ * Safe (`eu`) lane: mistral, codestral, ovhcloud-eu (+ conditional scaleway-paris).
+ * General lane: nvidia-nim, groq, cerebras, gemini, openrouter-free, cloudflare-workers-ai, cohere, fireworks, together.
  */
 export const DEFAULT_PROVIDER_REGISTRY: readonly ProviderConfig[] = [
+  // === EU / SOVEREIGN SAFE LANE ===
+  {
+    id: 'mistral',
+    shortName: 'Mistral EU',
+    displayName: 'Mistral AI Experiment Free (EU Sovereign)',
+    lane: 'safe',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://api.mistral.ai/v1/chat/completions',
+    pinnedModelId: 'mistral-small-2503',
+    supportedModels: ['mistral-small-2503', 'ministral-8b-2410'],
+    apiKeyEnvVar: 'MISTRAL_API_KEY',
+    fallbackApiKeyEnvVar: 'MISTRAL_FREE_API_KEY',
+    enabledByDefault: true,
+    weightMultiplier: 1.0,
+    maxRpm: 10,
+    maxRpd: 500,
+    timeoutMs: 12000,
+  },
+  {
+    id: 'codestral',
+    shortName: 'Codestral EU',
+    displayName: 'Mistral Codestral Endpoint (EU Code & SQL)',
+    lane: 'safe',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://codestral.mistral.ai/v1/chat/completions',
+    pinnedModelId: 'codestral-2501',
+    supportedModels: ['codestral-2501'],
+    apiKeyEnvVar: 'CODESTRAL_API_KEY',
+    enabledByDefault: true,
+    weightMultiplier: 1.0,
+    maxRpm: 15,
+    maxRpd: 500,
+    timeoutMs: 12000,
+  },
   {
     id: 'ovhcloud-eu',
+    shortName: 'OVHcloud EU',
     displayName: 'OVHcloud AI Endpoints (EU Gravelines)',
     lane: 'safe',
     protocol: 'openai_compat',
     endpointUrl: 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions',
     pinnedModelId: 'Mistral-Nemo-Instruct-2407',
+    supportedModels: ['Mistral-Nemo-Instruct-2407', 'Meta-Llama-3_3-70B-Instruct'],
     apiKeyEnvVar: 'OVH_AI_ENDPOINTS_KEY',
-    // OVHcloud supports anonymous free 2 RPM calls OR higher free quota with OVH_AI_ENDPOINTS_KEY;
-    // require explicit OVH_ENABLE_LIVE=1 or OVH_AI_ENDPOINTS_KEY so offline/CI tests never hit external endpoints unexpectedly.
     allowAnonymousWhenKeyUnset: true,
     enabledByDefault: true,
     enableFlagEnvVar: 'OVH_ENABLE_LIVE',
     weightMultiplier: 1.0,
-    maxRpm: 2,
-    maxRpd: 200,
+    maxRpm: 12,
+    maxRpd: 400,
     timeoutMs: 12000,
   },
   {
     id: 'scaleway-paris',
-    displayName: 'Scaleway Generative APIs (EU Paris)',
+    shortName: 'Scaleway EU',
+    displayName: 'Scaleway Generative APIs (EU Paris, Conditional)',
     lane: 'safe',
     protocol: 'openai_compat',
     endpointUrl: 'https://api.scaleway.ai/v1/chat/completions',
     pinnedModelId: 'mistral-nemo-instruct-2407',
+    supportedModels: ['mistral-nemo-instruct-2407'],
     apiKeyEnvVar: 'SCALEWAY_API_KEY',
     enabledByDefault: false,
     enableFlagEnvVar: 'ENABLE_SCALEWAY_CARD_FREE_ORG',
@@ -120,56 +176,111 @@ export const DEFAULT_PROVIDER_REGISTRY: readonly ProviderConfig[] = [
     maxRpd: 500,
     timeoutMs: 12000,
   },
+
+  // === GENERAL FAST / REASONING LANE ===
   {
-    id: 'mistral-eu-free',
-    displayName: 'Mistral Studio Free Tier (EU, Opt-Out Required)',
-    lane: 'safe',
+    id: 'nvidia-nim',
+    shortName: 'NVIDIA NIM',
+    displayName: 'NVIDIA NIM (Qwen 3 235B / DeepSeek / Kimi)',
+    lane: 'general',
     protocol: 'openai_compat',
-    endpointUrl: 'https://api.mistral.ai/v1/chat/completions',
-    pinnedModelId: 'mistral-small-2503',
-    apiKeyEnvVar: 'MISTRAL_FREE_API_KEY',
-    enabledByDefault: false,
-    enableFlagEnvVar: 'ENABLE_MISTRAL_TRAINING_OPTED_OUT',
+    endpointUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
+    pinnedModelId: 'qwen/qwen3-235b-a22b',
+    supportedModels: [
+      'qwen/qwen3-235b-a22b',
+      'deepseek-ai/deepseek-r1',
+      'moonshotai/kimi-k2-instruct',
+    ],
+    apiKeyEnvVar: 'NVIDIA_API_KEY',
+    enabledByDefault: true,
     weightMultiplier: 1.0,
-    maxRpm: 2,
-    maxRpd: 250,
-    timeoutMs: 12000,
+    maxRpm: 30,
+    maxRpd: 1000,
+    timeoutMs: 14000,
   },
   {
     id: 'groq',
-    displayName: 'GroqCloud Free Tier',
+    shortName: 'Groq',
+    displayName: 'GroqCloud (Llama 3.3 70B / Qwen 3 32B / GPT-OSS 120B)',
     lane: 'general',
     protocol: 'openai_compat',
     endpointUrl: 'https://api.groq.com/openai/v1/chat/completions',
     pinnedModelId: 'llama-3.3-70b-versatile',
+    supportedModels: [
+      'llama-3.3-70b-versatile',
+      'qwen/qwen3-32b',
+      'openai/gpt-oss-120b',
+    ],
     apiKeyEnvVar: 'GROQ_API_KEY',
     enabledByDefault: true,
     weightMultiplier: 1.0,
-    maxRpm: 25,
-    maxRpd: 900,
+    maxRpm: 28,
+    maxRpd: 950,
     timeoutMs: 10000,
   },
   {
     id: 'cerebras',
-    displayName: 'Cerebras Shared Inference Free Tier',
+    shortName: 'Cerebras',
+    displayName: 'Cerebras Inference (Ultra-Fast Qwen 3 32B)',
     lane: 'general',
     protocol: 'openai_compat',
     endpointUrl: 'https://api.cerebras.ai/v1/chat/completions',
     pinnedModelId: 'qwen-3-32b',
+    supportedModels: ['qwen-3-32b', 'llama-3.3-70b'],
     apiKeyEnvVar: 'CEREBRAS_API_KEY',
     enabledByDefault: true,
     weightMultiplier: 1.0,
-    maxRpm: 25,
-    maxRpd: 900,
+    maxRpm: 28,
+    maxRpd: 950,
     timeoutMs: 10000,
   },
   {
+    id: 'gemini',
+    shortName: 'Gemini 2.5',
+    displayName: 'Google AI Studio Free (Gemini 2.5 Flash)',
+    lane: 'general',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+    pinnedModelId: 'gemini-2.5-flash',
+    supportedModels: ['gemini-2.5-flash', 'gemini-2.5-flash-lite'],
+    apiKeyEnvVar: 'GEMINI_API_KEY',
+    enabledByDefault: true,
+    weightMultiplier: 1.0,
+    maxRpm: 15,
+    maxRpd: 500,
+    timeoutMs: 12000,
+  },
+  {
+    id: 'openrouter-free',
+    shortName: 'OpenRouter :free',
+    displayName: 'OpenRouter Auto-Fallback (:free Pool)',
+    lane: 'general',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://openrouter.ai/api/v1/chat/completions',
+    pinnedModelId: 'meta-llama/llama-3.3-70b-instruct:free',
+    supportedModels: [
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'qwen/qwen3-235b-a22b:free',
+      'deepseek/deepseek-chat-v3-0324:free',
+    ],
+    apiKeyEnvVar: 'OPENROUTER_API_KEY',
+    fallbackApiKeyEnvVar: 'OPENROUTER_FREE_API_KEY',
+    requiresFreeModelSuffix: true,
+    enabledByDefault: true,
+    weightMultiplier: 1.2,
+    maxRpm: 10,
+    maxRpd: 45, // Strictly inside OpenRouter's 50/day free-account ceiling
+    timeoutMs: 14000,
+  },
+  {
     id: 'cloudflare-workers-ai',
+    shortName: 'Workers AI',
     displayName: 'Cloudflare Workers AI Free (10k Neurons/day, ZDR)',
     lane: 'general',
     protocol: 'cloudflare_workers_ai',
     endpointUrl: 'https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/meta/llama-3.1-8b-instruct',
     pinnedModelId: '@cf/meta/llama-3.1-8b-instruct',
+    supportedModels: ['@cf/meta/llama-3.1-8b-instruct', '@cf/qwen/qwen2.5-coder-32b-instruct'],
     apiKeyEnvVar: 'CLOUDFLARE_AI_API_TOKEN',
     accountIdEnvVar: 'CLOUDFLARE_ACCOUNT_ID',
     enabledByDefault: true,
@@ -179,18 +290,57 @@ export const DEFAULT_PROVIDER_REGISTRY: readonly ProviderConfig[] = [
     timeoutMs: 12000,
   },
   {
-    id: 'openrouter-free',
-    displayName: 'OpenRouter Free Models (:free enforced)',
+    id: 'cohere',
+    shortName: 'Cohere',
+    displayName: 'Cohere Trial Key (Command A)',
     lane: 'general',
     protocol: 'openai_compat',
-    endpointUrl: 'https://openrouter.ai/api/v1/chat/completions',
-    pinnedModelId: 'meta-llama/llama-3.3-70b-instruct:free',
-    apiKeyEnvVar: 'OPENROUTER_FREE_API_KEY',
-    requiresFreeModelSuffix: true,
+    endpointUrl: 'https://api.cohere.ai/compatibility/v1/chat/completions',
+    pinnedModelId: 'command-a-03-2025',
+    supportedModels: ['command-a-03-2025', 'command-r7b-12-2024'],
+    apiKeyEnvVar: 'COHERE_API_KEY',
     enabledByDefault: true,
-    weightMultiplier: 1.2,
-    maxRpm: 10,
-    maxRpd: 45, // Strictly inside OpenRouter's 50/day free-account ceiling
+    weightMultiplier: 1.0,
+    maxRpm: 18,
+    maxRpd: 300,
+    timeoutMs: 12000,
+  },
+  {
+    id: 'fireworks',
+    shortName: 'Fireworks',
+    displayName: 'Fireworks AI Free Starter (DeepSeek V3)',
+    lane: 'general',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://api.fireworks.ai/inference/v1/chat/completions',
+    pinnedModelId: 'accounts/fireworks/models/deepseek-v3',
+    supportedModels: [
+      'accounts/fireworks/models/deepseek-v3',
+      'accounts/fireworks/models/llama-v3p3-70b-instruct',
+    ],
+    apiKeyEnvVar: 'FIREWORKS_API_KEY',
+    enabledByDefault: true,
+    weightMultiplier: 1.0,
+    maxRpm: 15,
+    maxRpd: 300,
+    timeoutMs: 14000,
+  },
+  {
+    id: 'together',
+    shortName: 'Together Free',
+    displayName: 'Together AI Free Tier (Llama 3.3 70B Free)',
+    lane: 'general',
+    protocol: 'openai_compat',
+    endpointUrl: 'https://api.together.xyz/v1/chat/completions',
+    pinnedModelId: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free',
+    supportedModels: [
+      'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free',
+      'deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free',
+    ],
+    apiKeyEnvVar: 'TOGETHER_API_KEY',
+    enabledByDefault: true,
+    weightMultiplier: 1.0,
+    maxRpm: 15,
+    maxRpd: 300,
     timeoutMs: 14000,
   },
 ] as const;
@@ -213,8 +363,8 @@ export function isProviderConfiguredAndEnabled(
     return Boolean(token && acct);
   }
 
-  const keyVal = cfg.apiKeyEnvVar ? (env[cfg.apiKeyEnvVar] || (cfg.apiKeyEnvVar === 'OPENROUTER_FREE_API_KEY' ? env.OPENROUTER_API_KEY : '')) : '';
-  if (keyVal && keyVal.trim().length > 0) {
+  const keyVal = resolveProviderApiKey(cfg, env);
+  if (keyVal.length > 0) {
     return true;
   }
 

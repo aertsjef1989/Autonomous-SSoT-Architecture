@@ -1,32 +1,33 @@
-# Free-Tier LLM Provider Admission Table (P5 · V12 to V15 · Decision X7)
+# Free-Tier LLM Provider Admission Table (Track 2 · 12+1 Card-Free Multi-LLM Pool)
 
-> **Verification Date:** 2026-11-25 (all claims verified directly against primary documentation; zero third-party list assumptions).
-> **Hard Constraint 1.1:** Free-only, card-free APIs. Permanently excluded in code (`assertProviderPermitted`): Anthropic API, Google Gemini API, Google AI Studio API, paid OpenAI API, and any consumer subscription proxy.
-
----
-
-## 1. Candidate Evaluation & Admission Matrix
-
-| Provider ID | Candidate | Lane | Card-Free Free Tier? | Quota / Rate Limit (Observed from Docs) | Billing / Over-Limit Behavior | Retention & Training Terms | Status in Registry (`X7`) | Primary Source URLs (Accessed 2026-11-25) |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ovhcloud-eu` | **OVHcloud AI Endpoints** | `eu` (`safe`) | **Yes** (anonymous 2 RPM/IP/model + free AI Endpoints token) | Anonymous: `2 RPM` per IP/model; higher sandbox RPM with free AI Endpoints token | Returns `429` on rate limit; free tier requires no credit card | EU sovereign hosting (France); zero training on inference inputs/outputs | **ADMITTED (Default Primary `eu`)** · Pinned: `Mistral-Nemo-Instruct-2407` | https://docs.ovhcloud.com/en/guides/public-cloud/ai-machine-learning/ai-endpoints-capabilities and https://www.ovhcloud.com/en/public-cloud/free-ai-api/ |
-| `groq` | **GroqCloud Free Tier** | `general` | **Yes** | Model-specific RPM/RPD/TPM (e.g. `30 RPM`, `1,000 RPD` on flagship free models) | Returns HTTP `429 Too Many Requests`; Spend Limits page is paid-only because Free tier never bills | Does **not** retain inputs/outputs or train by default; up to 30d reliability/abuse log unless ZDR enabled in Data Controls | **ADMITTED (Primary `general`)** · Pinned: `llama-3.3-70b-versatile` | https://console.groq.com/docs/rate-limits , https://console.groq.com/docs/spend-limits , https://console.groq.com/docs/your-data |
-| `cerebras` | **Cerebras Shared Inference Free** | `general` | **Yes** | Shared Free Trial org-level RPM & uncached/total TPM limits | Returns HTTP `429 Too Many Requests` when either RPM or TPM bucket fills; no auto-upgrade | Shared Inference Free tier; synthetic non-sensitive inputs only | **ADMITTED (Secondary `general`)** · Pinned: `qwen-3-32b` | https://inference-docs.cerebras.ai/models/overview and https://inference-docs.cerebras.ai/support/rate-limits |
-| `cloudflare-workers-ai` | **Cloudflare Workers AI (Workers Free)** | `general` | **Yes** (on Workers Free plan for non-frontier open models) | **10,000 Neurons / day** free, resets `00:00 UTC` | *"If you exceed any one of the above limits, further operations will fail with an error"* (cannot bill without Workers Paid) | **Zero data retention** for standard inference + **no model training** on Customer Content | **ADMITTED (Tertiary `general`)** · Pinned: `@cf/meta/llama-3.1-8b-instruct` | https://developers.cloudflare.com/workers-ai/platform/pricing/ and https://developers.cloudflare.com/workers-ai/platform/data-usage/ |
-| `openrouter-free` | **OpenRouter `:free` Models** | `general` | **Yes** (`$0` credit balance account) | **50 `:free` requests / day** (`1,000/day` requires paid credits, which we do not use) | `429` on free request cap; `402` on non-free models (our adapter hard-enforces `:free` suffix!) | OpenRouter prompt logging off by default, though upstream `:free` providers vary; strictly `general` synthetic-only | **ADMITTED (Quaternary `general`, `:free` enforced)** · Pinned: `meta-llama/llama-3.3-70b-instruct:free` | https://openrouter.ai/docs/faq , https://openrouter.ai/docs/api_reference/limits , https://openrouter.ai/docs/guides/privacy/data-collection |
-| `scaleway-paris` | **Scaleway Generative APIs (`fr-par`)** | `eu` (`safe`) | **Caveat: Account verification normally requires card** | `1,000,000` free tokens across models | Token billing applies after free allocation if card is attached | EU Paris sovereign hosting; does not train on customer prompts | **CONDITIONAL (`enabledByDefault: false`)** · Enable only if card-free voucher org exists | https://www.scaleway.com/en/generative-apis/ and https://www.scaleway.com/en/docs/billing/concepts/ |
-| `mistral-eu-free` | **Mistral Studio Free Tier (formerly Experiment)** | `eu` (`safe`) | **Yes (requires phone verification, Manual Check `e`)** | Low trial RPM (~`2 RPM` observed on Free mode) | Throttles with `429`; no card required on Free tier | **Trains on Free inputs/outputs by default unless manually opted out in Admin -> Privacy**; 30d abuse log; ZDR is paid-only | **CONDITIONAL (`enabledByDefault: false`)** · Enable only after owner opts out of training + approves X7 | https://console.mistral.ai (see also Commercial Terms s. 4.2/4.3) |
-| `github-models` | **GitHub Models** | N/A | **Retired** | Retired July 30, 2026 | N/A | Service retired | **REJECTED (Service Retired)** | https://docs.github.com/en/github-models |
-| `huggingface-router` | **Hugging Face Inference Providers (`router.huggingface.co`)** | N/A | **No free monthly credits** | Free Users monthly credits = `None` (`$0.00`) | Requires purchased credits or paid PRO (`$9/mo`) | Pass-through to sub-providers | **REJECTED (Zero Free Credits)** | https://huggingface.co/docs/inference-providers/pricing |
-| `excluded-paid` | **Anthropic, Google Gemini / AI Studio, Paid OpenAI, Consumer Subscriptions** | N/A | **Excluded by Owner Decision 1.1** | N/A | N/A | Excluded | **HARD-BLOCKED IN CODE** | Master Prompt v3 Constraint `1.1` |
+> **Verification Date:** 2026-11-26 (verified against primary provider documentation; zero credit card required across all 12 primary entries).
+> **Hard Constraint 1.1:** Free-only, card-free APIs. Permanently excluded in code (`assertProviderPermitted`): Anthropic API, GCP Vertex AI (`aiplatform.googleapis.com` / paid Pro models), paid OpenAI API, retired GitHub Models, and `$0` Hugging Face Router.
 
 ---
 
-## 2. Effective Global Bottleneck & Routing Rules (`1.3`, Section H)
+## 1. Admitted Card-Free Provider Matrix
 
-1. **Tightest Daily Bottlenecks:**
-   * **Transactional Grant Emails:** Resend Free = `100/UTC day` -> capped in SQL (`reserve_daily_email_slot`) at **`40/UTC day`**.
-   * **`eu` (`safe`) Default Lane:** OVHcloud AI Endpoints anonymous = `2 RPM` (or higher with free `OVH_AI_ENDPOINTS_KEY` token). When throttled or unconfigured, the router **never crosses to `general`**; it serves deterministic Replay output and refunds reserved grant tokens.
-   * **`general` Lane:** OpenRouter `:free` = `50 RPD`, Cloudflare Workers AI = `10,000 Neurons/day`, Groq/Cerebras Free = ~`1,000 RPD` / `30 RPM`. Per-provider sliding counters + 60-second `429`/`5xx` circuit breakers fail over across `groq -> cerebras -> cloudflare-workers-ai -> openrouter-free -> Replay`.
-2. **Pinned Model IDs (H7):** Wildcard or floating tags (`:latest`, `auto`, `default`) are rejected by `assertProviderPermitted()`.
-3. **JSON Repair-Once (H6):** Structured outputs run strict schema validation; if invalid, at most **one** repair call is issued on the same lane before failing closed to Replay.
+| Provider ID | Candidate | Lane | Env Variable(s) | Pinned Default Model (`H7`) | Status in Registry | Primary Source URL |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `mistral` | **Mistral AI Experiment Free** | `eu` (`safe`) | `MISTRAL_API_KEY` | `mistral-small-2503` | **ADMITTED (Primary `eu`)** | https://console.mistral.ai |
+| `codestral` | **Mistral Codestral Endpoint** | `eu` (`safe`) | `CODESTRAL_API_KEY` | `codestral-2501` | **ADMITTED (`eu` Code/SQL)** | https://codestral.mistral.ai |
+| `ovhcloud-eu` | **OVHcloud AI Endpoints** | `eu` (`safe`) | `OVH_AI_ENDPOINTS_KEY` / `OVH_ENABLE_LIVE` | `Mistral-Nemo-Instruct-2407` | **ADMITTED (`eu` Sovereign)** | https://www.ovhcloud.com/en/public-cloud/free-ai-api/ |
+| `scaleway-paris` | **Scaleway Generative APIs (`fr-par`)** | `eu` (`safe`) | `SCALEWAY_API_KEY` + `ENABLE_SCALEWAY_CARD_FREE_ORG=1` | `mistral-nemo-instruct-2407` | **CONDITIONAL (`enabledByDefault: false`)** | https://www.scaleway.com/en/generative-apis/ |
+| `nvidia-nim` | **NVIDIA NIM Free Developer Tier** | `general` | `NVIDIA_API_KEY` | `qwen/qwen3-235b-a22b` | **ADMITTED (`general` Reasoning)** | https://build.nvidia.com |
+| `groq` | **GroqCloud Free Tier** | `general` | `GROQ_API_KEY` | `llama-3.3-70b-versatile` | **ADMITTED (`general` Low-Latency)** | https://console.groq.com/docs/rate-limits |
+| `cerebras` | **Cerebras Shared Inference Free** | `general` | `CEREBRAS_API_KEY` | `qwen-3-32b` | **ADMITTED (`general` Ultra-Fast)** | https://cloud.cerebras.ai |
+| `gemini` | **Google AI Studio Free Tier** | `general` | `GEMINI_API_KEY` | `gemini-2.5-flash` | **ADMITTED (`general` Long-Context)** | https://aistudio.google.com/apikey |
+| `openrouter-free` | **OpenRouter `:free` Pool** | `general` | `OPENROUTER_API_KEY` | `meta-llama/llama-3.3-70b-instruct:free` | **ADMITTED (`general`, `:free` enforced)** | https://openrouter.ai/keys |
+| `cloudflare-workers-ai` | **Cloudflare Workers AI Free** | `general` | `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_AI_API_TOKEN` | `@cf/meta/llama-3.1-8b-instruct` | **ADMITTED (`general`, 10k Neurons/day ZDR)** | https://developers.cloudflare.com/workers-ai/platform/pricing/ |
+| `cohere` | **Cohere Trial Key** | `general` | `COHERE_API_KEY` | `command-a-03-2025` | **ADMITTED (`general` RAG/Synthesis)** | https://dashboard.cohere.com/api-keys |
+| `fireworks` | **Fireworks AI Free Starter** | `general` | `FIREWORKS_API_KEY` | `accounts/fireworks/models/deepseek-v3` | **ADMITTED (`general` Starter Credit)** | https://fireworks.ai/account/api-keys |
+| `together` | **Together AI Free Tier** | `general` | `TOGETHER_API_KEY` | `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free` | **ADMITTED (`general` Free Models)** | https://api.together.ai/settings/api-keys |
+
+---
+
+## 2. Routing & Isolation Invariants
+
+1. **Cross-Lane Firewall:** `eu` (`safe`) requests route exclusively across `mistral`, `codestral`, `ovhcloud-eu` (and conditional `scaleway-paris`), falling back to deterministic Replay if unconfigured or throttled: never crossing into `general`.
+2. **Homepage Live Telemetry:** `GET /api/providers/status` surfaces `LIVE` vs `FALLBACK` state per provider without exposing secret material.
+3. **Pinned Model IDs (H7) & `:free` Guard:** Wildcard tags (`:latest`, `auto`, `default`) and non-`:free` OpenRouter slugs are rejected pre-socket by `assertProviderPermitted()`.
+4. **JSON Repair-Once (H6):** Structured outputs execute at most one repair call on the same lane before failing closed to Replay.

@@ -42,6 +42,8 @@ export default function AdminGrantsAndSyncPage() {
   const [syncCategoryHint, setSyncCategoryHint] = useState('Formats_and_Tools');
   const [syncBusy, setSyncBusy] = useState(false);
   const [syncResult, setSyncResult] = useState<string>('');
+  const [tgBusy, setTgBusy] = useState(false);
+  const [tgResult, setTgResult] = useState<string>('');
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +60,23 @@ export default function AdminGrantsAndSyncPage() {
     }
     setOwnerSecret('');
     setUnlocked(true);
-    setStatusMsg('Owner session active. Manage Drive-to-Supabase SSoT sync and single-use reviewer grants below.');
+    setStatusMsg('Owner session active (Unlimited Live LLM, Drive SSoT, Syndicate & Signal Press AI Assist unlocked).');
+  };
+
+  const handleTelegramPing = async () => {
+    setTgBusy(true);
+    setTgResult('');
+    try {
+      const res = await fetch('/api/admin/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: 'Manual ping from Owner Console' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      setTgResult(data.message || data.error || `HTTP ${res.status}`);
+    } finally {
+      setTgBusy(false);
+    }
   };
 
   const handleServiceAccountSync = async () => {

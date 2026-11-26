@@ -1,35 +1,36 @@
 import Link from 'next/link';
+import { ProviderStatusBar } from '@/components/ProviderStatusBar';
 
 const cards = [
   {
     href: '/ssot',
-    title: 'Pillar I: SSoT Wiki & Governance',
-    tag: '100-Seat Reference Model',
-    desc: 'DMADV lifecycle monitor, 14-detector status board, normalized BI CSV/JSON export, and synthetic records.',
+    title: 'Pillar I: SSoT Wiki & Conversational RAG',
+    tag: 'Drive -> Supabase Hybrid Search',
+    desc: 'Zero-commit Drive corpus (GLOBAL + NL/BE/FR inheritance), conversational /ask & /check chat with citations, and Signal Studio/Press handoff.',
   },
   {
     href: '/balaerion',
-    title: 'Pillar II: Balaerion & ProspectHub',
-    tag: 'EU vs General Lanes',
-    desc: 'Config-driven multi-provider gateway console, interactive PII gate tester, and 7-state synthetic account workspace.',
+    title: 'Pillar II: Balaerion Workbench & ProspectHub',
+    tag: '12-Provider EU & General Pool',
+    desc: 'Standalone multi-provider LLM workbench (Mode A) plus 7-state ProspectHub GTM suite (Mode B) with one-click Studio & Press handoff.',
   },
   {
     href: '/syndicate',
-    title: 'Pillar III: Syndicate Simulator',
-    tag: 'Simulation Only',
-    desc: 'Poisson/xG 1X2 and Over/Under probability calculator plus unit-share NAV mint/burn prototype (virtual units only).',
+    title: 'Pillar III: Syndicate Live Matchday AI',
+    tag: 'Live UCL Feeds + Poisson xG',
+    desc: 'Live football-data.org / The Odds API feed with automatic simulation fallback, Poisson edge calculator, NAV ledger, and grounded chat.',
   },
   {
     href: '/studio',
-    title: 'Signal Studio (Slide Handoff)',
-    tag: 'JSON Handoff v1',
-    desc: 'Slide deck composer, legacy DECK JSON adapter, and deterministic handoff to Signal Press.',
+    title: 'Signal Studio (16:9 Slide Composer)',
+    tag: '63 Devices · JSON Handoff v1',
+    desc: 'Interactive 16:9 deck preview with H01-H63 vector devices, slide editing, and deterministic handoff to Signal Press.',
   },
   {
     href: '/press',
-    title: 'Signal Press (Document Designer)',
-    tag: 'Offline-First',
-    desc: 'Client-side A4 document designer (DOCX, Google Docs, PDF, Email HTML, Markdown) with blocking pre-export lint.',
+    title: 'Signal Press (A4 Document Designer)',
+    tag: 'DOCX · Google Docs · PDF · Email',
+    desc: 'A4 document designer with 63 hero devices, rich comparison/timeline/checklist blocks, removable AI Assist, and blocking lint.',
   },
 ];
 
@@ -39,8 +40,8 @@ export default function HomePage() {
       <h1 style={{ marginTop: 0, fontSize: '26px', color: '#FFFFFF' }}>
         Systems Design Portfolio: Interactive Workspace
       </h1>
-      <p style={{ color: '#B9C0CE', maxWidth: '760px', lineHeight: 1.6, marginBottom: '16px' }}>
-        All three architecture pillars and both Signal design tools run inside one unlisted workspace. Anyone with this link can browse every page and run Replay or Offline tools without an account. Only live AI calls require a single-use grant redeemed on <Link href="/redeem" style={{ color: '#21E0DC' }}>/redeem</Link>.
+      <p style={{ color: '#B9C0CE', maxWidth: '780px', lineHeight: 1.6, marginBottom: '16px' }}>
+        All three architecture pillars and both Signal design tools run inside one unlisted workspace. Visitors can browse every surface in Replay Mode without an account; single-use grants unlock on <Link href="/redeem" style={{ color: '#21E0DC' }}>/redeem</Link>, and the unlocked <Link href="/admin" style={{ color: '#21E0DC' }}>/admin</Link> Owner session enables unlimited Live LLM, Drive SSoT, and Syndicate feeds.
       </p>
       <div
         style={{
@@ -51,11 +52,14 @@ export default function HomePage() {
           color: '#B9C0CE',
           fontSize: '13px',
           lineHeight: 1.5,
-          marginBottom: '24px',
+          marginBottom: '20px',
         }}
       >
-        <strong style={{ color: '#FFFFFF' }}>Security Boundary Note (D9):</strong> An unlisted URL provides obscurity against casual indexing, not access control. Every public or Replay dataset here is 100% synthetic, and live provider routes enforce cryptographic single-use grants, atomic token budgets, and a global daily circuit breaker.
+        <strong style={{ color: '#FFFFFF' }}>Security Boundary Note (D9):</strong> An unlisted URL provides obscurity against casual indexing, not access control. Public Replay mode serves synthetic data only, while live routes enforce Owner authentication or cryptographic single-use grants, atomic token budgets, and a global daily circuit breaker.
       </div>
+
+      <ProviderStatusBar />
+
       <div
         style={{
           display: 'grid',

@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { GRANT_COOKIE_NAME, verifyGrantSessionCookie } from '@/lib/grants-crypto';
 import { reconcileGrantTokens, reserveGrantTokensAtomic } from '@/lib/grants-store';
 import { enforcePreDispatchGate, normalizeLane, type LaneInput } from '@/lib/lane-guard';
+import { isOwnerAuthenticated } from '@/lib/session-access';
 import {
   buildReplayAssistOutput,
   runPressAssistAction,
@@ -71,6 +72,11 @@ export async function POST(request: NextRequest) {
     briefOrText,
     audience: body.audience === 'client' ? 'client' : 'internal',
   };
+
+  if (isOwnerAuthenticated(request)) {
+    const ownerResult = await runPressAssistAction(assistInput);
+    return NextResponse.json(ownerResult, { status: 200, headers: { 'Cache-Control': 'no-store' } });
+  }
 
   // Verify single-use grant session cookie; if ungranted, return 401 with synthetic Replay preview (still marked aiDraft: true!)
   const sessionSecret = process.env.GRANT_SESSION_SECRET ?? '';

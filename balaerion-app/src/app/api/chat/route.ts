@@ -3,12 +3,22 @@ import type { NextRequest } from 'next/server';
 import { enforcePreDispatchGate, normalizeLane, type LaneInput } from '@/lib/lane-guard';
 import { GRANT_COOKIE_NAME, verifyGrantSessionCookie } from '@/lib/grants-crypto';
 import { reconcileGrantTokens, reserveGrantTokensAtomic } from '@/lib/grants-store';
-import { dispatchLlmRequest } from '@/lib/llm/router';
+import { dispatchLlmRequest, type LlmMessage } from '@/lib/llm/router';
+import { isOwnerAuthenticated } from '@/lib/session-access';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  let body: { prompt?: unknown; lane?: unknown; provider?: unknown; mode?: unknown; reserveWeighted?: unknown };
+  let body: {
+    prompt?: unknown;
+    lane?: unknown;
+    provider?: unknown;
+    model?: unknown;
+    mode?: unknown;
+    systemPrompt?: unknown;
+    history?: unknown;
+    reserveWeighted?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
@@ -23,9 +33,15 @@ export async function POST(request: NextRequest) {
     typeof body.provider === 'string' && body.provider.trim().length > 0
       ? body.provider.trim()
       : lane === 'safe'
-        ? 'ovhcloud-eu'
+        ? 'mistral'
         : 'groq';
+  const modelOverride =
+    typeof body.model === 'string' && body.model.trim().length > 0 ? body.model.trim() : undefined;
   const mode = typeof body.mode === 'string' ? body.mode : 'general';
+  const customSystemPrompt =
+    typeof body.systemPrompt === 'string' && body.systemPrompt.trim().length > 0
+      ? body.systemPrompt.trim().slice(0, 4000)
+      : '';
 
   if (!prompt) {
     return NextResponse.json({ error: 'Prompt is required.' }, { status: 400 });
@@ -34,13 +50,65 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Prompt exceeds per-request input limit (16,000 chars).' }, { status: 413 });
   }
 
+  const priorTurns: LlmMessage[] = Array.isArray(body.history)
+    ? body.history
+        .slice(-8)
+        .filter(
+          (m): m is { role: 'user' | 'assistant'; content: string } =>
+            Boolean(m && typeof m === 'object' && ((m as { role?: string }).role === 'user' || (m as { role?: string }).role === 'assistant') && typeof (m as { content?: unknown }).content === 'string')
+        )
+        .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }))
+    : [];
+
+  const combinedInputForPii = [customSystemPrompt, ...priorTurns.map((t) => t.content), prompt].filter(Boolean).join('\n');
+
   // 1. Pre-dispatch deterministic lane and PII gate (blocks loudly before any provider or grant spend)
-  const gate = enforcePreDispatchGate(laneInput, preferredProvider, prompt);
+  const gate = enforcePreDispatchGate(laneInput, preferredProvider, combinedInputForPii);
   if (!gate.allowed) {
     return NextResponse.json({ blocked: true, error: gate.reason }, { status: 403 });
   }
 
-  // 2. Fail closed on live calls without a cryptographically valid redeemed single-use grant session cookie
+  const baseSystemContent = customSystemPrompt
+    ? `${customSystemPrompt}\nNever use em dashes or en dashes.`
+    : 'You are a concise systems engineering assistant inside an architecture workspace. Cite grounded context explicitly when provided. Never use em dashes or en dashes.';
+
+  const messages: LlmMessage[] = [
+    { role: 'system', content: baseSystemContent },
+    ...priorTurns,
+    { role: 'user', content: prompt },
+  ];
+
+  // 2A. Unlimited Live Mode for authenticated Owner session (Decision A1)
+  if (isOwnerAuthenticated(request)) {
+    const dispatched = await dispatchLlmRequest({
+      lane: laneInput,
+      preferredProviderId: preferredProvider,
+      modelOverride,
+      mode,
+      messages,
+      maxOutputTokens: 900,
+      temperature: 0.2,
+    });
+
+    return NextResponse.json(
+      {
+        replay: dispatched.replay,
+        grantAuthorized: true,
+        ownerUnlimited: true,
+        lane: dispatched.lane,
+        provider: dispatched.providerId,
+        model: dispatched.pinnedModelId,
+        fallbackReason: dispatched.fallbackReason ?? null,
+        chargedTokensWeighted: 0,
+        remainingTokensWeighted: null,
+        remainingCalls: null,
+        reply: dispatched.content,
+      },
+      { status: 200, headers: { 'Cache-Control': 'no-store' } }
+    );
+  }
+
+  // 2B. External visitors: fail closed on live calls without a redeemed single-use grant session cookie
   const sessionSecret = process.env.GRANT_SESSION_SECRET ?? '';
   const grantToken = request.cookies.get(GRANT_COOKIE_NAME)?.value ?? null;
   const claims = verifyGrantSessionCookie(sessionSecret, grantToken);
@@ -49,15 +117,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         replay: true,
-        error: 'Live AI calls require a redeemed single-use grant (/redeem). Serving Replay response.',
-        reply: `[REPLAY | mode=${mode} | lane=${lane}] Pre-dispatch PII gate passed. Redeem a single-use grant on /redeem to unlock Live AI calls.`,
+        error: 'Live AI calls require a redeemed single-use grant (/redeem) or Owner session (/admin). Serving Replay response.',
+        reply: `[REPLAY | mode=${mode} | lane=${lane}] Pre-dispatch PII gate passed. Redeem a single-use grant on /redeem or unlock Owner Console on /admin to enable Live AI calls.`,
       },
       { status: 401, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 
-  // 3. Atomic pre-call weighted token & call-count reservation (prevents concurrent budget overspend)
-  const estimatedInputTokens = Math.max(50, Math.ceil(prompt.length / 3.5));
+  // 3. Atomic pre-call weighted token & call-count reservation for external grant holders
+  const estimatedInputTokens = Math.max(50, Math.ceil(combinedInputForPii.length / 3.5));
   const requestedReserve =
     typeof body.reserveWeighted === 'number' && Number.isFinite(body.reserveWeighted)
       ? Math.floor(body.reserveWeighted)
@@ -87,16 +155,10 @@ export async function POST(request: NextRequest) {
   const dispatched = await dispatchLlmRequest({
     lane: laneInput,
     preferredProviderId: preferredProvider,
+    modelOverride,
     mode,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are a concise systems engineering assistant inside a non-commercial architecture portfolio POC. Operate strictly on synthetic inputs. Never use em dashes or en dashes.',
-      },
-      { role: 'user', content: prompt },
-    ],
-    maxOutputTokens: 600,
+    messages,
+    maxOutputTokens: 700,
     temperature: 0.2,
   });
 
@@ -116,6 +178,7 @@ export async function POST(request: NextRequest) {
     {
       replay: dispatched.replay,
       grantAuthorized: true,
+      ownerUnlimited: false,
       lane: dispatched.lane,
       provider: dispatched.providerId,
       model: dispatched.pinnedModelId,

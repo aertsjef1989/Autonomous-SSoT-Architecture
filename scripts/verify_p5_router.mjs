@@ -47,10 +47,13 @@ await esbuild.build({
 const llm = await import(`${bundleMjs}?t=${Date.now()}`);
 
 console.log('=== [1/5] Constraint 1.1 Excluded APIs, H7 Pinned Models & J3 Retrieval Slot ===');
-assert.equal(llm.DEFAULT_PROVIDER_REGISTRY.length, 7);
+assert.equal(llm.DEFAULT_PROVIDER_REGISTRY.length, 13);
 for (const cfg of llm.DEFAULT_PROVIDER_REGISTRY) {
   llm.assertProviderPermitted(cfg);
 }
+
+const openRouterEntry = llm.DEFAULT_PROVIDER_REGISTRY.find((c) => c.id === 'openrouter-free');
+const groqEntry = llm.DEFAULT_PROVIDER_REGISTRY.find((c) => c.id === 'groq');
 
 const forbiddenCases = [
   {
@@ -58,8 +61,8 @@ const forbiddenCases = [
     cfg: { ...llm.DEFAULT_PROVIDER_REGISTRY[0], id: 'bad-anthropic', endpointUrl: 'https://api.anthropic.com/v1/messages', pinnedModelId: 'claude-3-7-sonnet-20250219' },
   },
   {
-    label: 'Google Gemini / AI Studio API',
-    cfg: { ...llm.DEFAULT_PROVIDER_REGISTRY[0], id: 'bad-gemini', endpointUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', pinnedModelId: 'gemini-2.5-flash' },
+    label: 'Paid GCP Vertex AI / Gemini Pro Tier',
+    cfg: { ...llm.DEFAULT_PROVIDER_REGISTRY[0], id: 'bad-vertex', endpointUrl: 'https://aiplatform.googleapis.com/v1/projects/x/locations/us/publishers/google/models', pinnedModelId: 'gemini-2.5-pro' },
   },
   {
     label: 'Paid OpenAI API',
@@ -75,11 +78,11 @@ const forbiddenCases = [
   },
   {
     label: 'Unpinned :latest alias (H7)',
-    cfg: { ...llm.DEFAULT_PROVIDER_REGISTRY[3], id: 'bad-latest', pinnedModelId: 'llama-3.3-70b:latest' },
+    cfg: { ...groqEntry, id: 'bad-latest', pinnedModelId: 'llama-3.3-70b:latest', supportedModels: undefined },
   },
   {
     label: 'OpenRouter slug missing :free suffix',
-    cfg: { ...llm.DEFAULT_PROVIDER_REGISTRY[6], id: 'bad-or-paid', pinnedModelId: 'meta-llama/llama-3.3-70b-instruct' },
+    cfg: { ...openRouterEntry, id: 'bad-or-paid', pinnedModelId: 'meta-llama/llama-3.3-70b-instruct', supportedModels: undefined },
   },
 ];
 
@@ -95,7 +98,7 @@ for (const fc of forbiddenCases) {
 
 assert.equal(llm.defaultRetrievalSlot.enabled, false, 'X9/J3 retrieval slot must default to disabled');
 assert.deepEqual(await llm.defaultRetrievalSlot.retrieveContext('synthetic query', 'ssot'), []);
-console.log('  PASS: 7/7 admitted configs valid; 7/7 excluded/unpinned/non-free configs blocked; J3 slot disabled by default.');
+console.log('  PASS: 13/13 admitted configs valid; 7/7 excluded/unpinned/non-free configs blocked; J3 slot disabled by default.');
 
 // Spin up local mock upstream server for deterministic router/failover/benchmark tests
 const hitLog = [];
