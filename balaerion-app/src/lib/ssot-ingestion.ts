@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { generateFreeEmbeddings1024 } from './llm/embeddings';
 import { getSupabaseServer } from './supabase-server';
 
 export type SsotMarket = 'NL' | 'BE' | 'FR' | 'GLOBAL';
@@ -37,8 +38,32 @@ function getEphemeralSsotMap(): Map<string, SsotDocumentRecord> {
   return globalSsotMem.__balaerionEphemeralSsotByDriveId;
 }
 
+export function getEphemeralSsotDocuments(): SsotDocumentRecord[] {
+  return isEphemeralEnabled() ? Array.from(getEphemeralSsotMap().values()) : [];
+}
+
 function isEphemeralEnabled(): boolean {
   return !process.env.VERCEL && process.env.ALLOW_LOCAL_EPHEMERAL_STORE === '1';
+}
+
+export function chunkMarkdownForSsot(contentMd: string, maxChars = 950): string[] {
+  const normalized = (contentMd || '').replace(/\r\n/g, '\n').trim();
+  if (!normalized) return [];
+  const paragraphs = normalized.split(/\n{2,}/);
+  const chunks: string[] = [];
+  let current = '';
+  for (const p of paragraphs) {
+    const trimmed = p.trim();
+    if (!trimmed) continue;
+    if (current && current.length + trimmed.length + 2 > maxChars) {
+      chunks.push(current);
+      current = trimmed.slice(0, maxChars);
+    } else {
+      current = current ? `${current}\n\n${trimmed}` : trimmed.slice(0, maxChars);
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks.slice(0, 40);
 }
 
 function parseSimpleFrontmatter(md: string): { meta: Record<string, string>; body: string } {
@@ -61,6 +86,9 @@ export function normalizeCategory(rawFolder?: string): string {
   if (lower.includes('vertical')) return 'Verticals';
   if (lower.includes('polic')) return 'Policies';
   if (lower.includes('template')) return 'Templates';
+  if (lower.includes('campaign')) return 'Campaigns';
+  if (lower.includes('lifecycle')) return 'Lifecycle';
+  if (lower.includes('market')) return 'Markets';
   return cleaned.replace(/\s+/g, '_') || 'General';
 }
 
@@ -253,6 +281,30 @@ export async function upsertSsotDocumentsBatch(
           docIds: [],
           error: 'Supabase upsert into ssot_documents failed.',
         };
+      }
+
+      // Populate hybrid ssot_chunks (tsvector + optional card-free 1024-dim embeddings)
+      try {
+        for (const doc of toUpsert) {
+          const textChunks = chunkMarkdownForSsot(doc.content_md);
+          if (textChunks.length === 0) continue;
+          const vectors = await generateFreeEmbeddings1024(textChunks, 'search_document');
+          await sb.from('ssot_chunks').delete().eq('doc_id', doc.doc_id);
+          const chunkRows = textChunks.map((chunkText, idx) => ({
+            doc_id: doc.doc_id,
+            chunk_index: idx,
+            title: doc.title,
+            market: doc.market,
+            category: doc.category,
+            status: doc.status,
+            chunk_text: chunkText,
+            embedding: vectors?.[idx] ?? null,
+            updated_at: doc.updated_at,
+          }));
+          await sb.from('ssot_chunks').upsert(chunkRows, { onConflict: 'doc_id,chunk_index' });
+        }
+      } catch {
+        /* non-fatal if ssot_chunks migration not yet applied */
       }
     }
 

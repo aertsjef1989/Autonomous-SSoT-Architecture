@@ -13,10 +13,90 @@ CREATE TABLE IF NOT EXISTS ssot_documents (
   content_md TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'VERIFIED' CHECK (status IN ('VERIFIED', 'REVIEW_DUE', 'DRAFT')),
   drive_modified_at TIMESTAMPTZ,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  fts TSVECTOR GENERATED ALWAYS AS (
+    setweight(to_tsvector('simple', coalesce(doc_id, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(category, '')), 'B') ||
+    setweight(to_tsvector('simple', coalesce(content_md, '')), 'C')
+  ) STORED
 );
 
 CREATE INDEX IF NOT EXISTS idx_ssot_documents_market_category ON ssot_documents (market, category);
+CREATE INDEX IF NOT EXISTS idx_ssot_documents_fts ON ssot_documents USING gin (fts);
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Chunked Hybrid SSoT Retrieval Table (tsvector + optional 1024-dim BGE-M3 / Cohere v3 embeddings)
+-- RLS enabled below with ZERO public/anon policies (accessed strictly via server-side service_role).
+CREATE TABLE IF NOT EXISTS ssot_chunks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  doc_id TEXT NOT NULL REFERENCES ssot_documents(doc_id) ON DELETE CASCADE,
+  chunk_index INT NOT NULL CHECK (chunk_index >= 0),
+  title TEXT NOT NULL,
+  market TEXT NOT NULL CHECK (market IN ('NL', 'BE', 'FR', 'GLOBAL')),
+  category TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'VERIFIED',
+  chunk_text TEXT NOT NULL,
+  embedding vector(1024),
+  fts TSVECTOR GENERATED ALWAYS AS (
+    setweight(to_tsvector('simple', coalesce(doc_id, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('simple', coalesce(chunk_text, '')), 'B')
+  ) STORED,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (doc_id, chunk_index)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ssot_chunks_market ON ssot_chunks (market);
+CREATE INDEX IF NOT EXISTS idx_ssot_chunks_fts ON ssot_chunks USING gin (fts);
+CREATE INDEX IF NOT EXISTS idx_ssot_chunks_hnsw ON ssot_chunks USING hnsw (embedding vector_cosine_ops);
+ALTER TABLE ssot_chunks ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION search_ssot_hybrid(
+  p_query TEXT,
+  p_markets TEXT[] DEFAULT ARRAY['GLOBAL', 'NL', 'BE', 'FR'],
+  p_embedding vector(1024) DEFAULT NULL,
+  p_limit INT DEFAULT 5
+)
+RETURNS TABLE (
+  doc_id TEXT,
+  title TEXT,
+  market TEXT,
+  category TEXT,
+  status TEXT,
+  chunk_text TEXT,
+  score FLOAT
+)
+LANGUAGE sql STABLE AS $$
+  WITH q AS (
+    SELECT websearch_to_tsquery('simple', coalesce(nullif(trim(p_query), ''), 'governance')) AS tsq
+  )
+  SELECT
+    sc.doc_id,
+    sc.title,
+    sc.market,
+    sc.category,
+    sc.status,
+    sc.chunk_text,
+    (
+      ts_rank_cd(sc.fts, q.tsq) * 0.65 +
+      CASE
+        WHEN p_embedding IS NOT NULL AND sc.embedding IS NOT NULL
+          THEN GREATEST(0.0, 1.0 - (sc.embedding <=> p_embedding)) * 0.65
+        ELSE 0.0
+      END
+    )::FLOAT AS score
+  FROM ssot_chunks sc
+  CROSS JOIN q
+  WHERE sc.market = ANY(p_markets)
+    AND (
+      sc.fts @@ q.tsq
+      OR (p_embedding IS NOT NULL AND sc.embedding IS NOT NULL)
+    )
+  ORDER BY score DESC, sc.updated_at DESC
+  LIMIT GREATEST(1, LEAST(p_limit, 12));
+$$;
 
 -- Governance Approval & Cadence Reference Ledger (BR-02, FR-C01, FR-11, FR-36)
 CREATE TYPE ssot_doc_status AS ENUM ('draft', 'pending_approval', 'published', 'archived');
