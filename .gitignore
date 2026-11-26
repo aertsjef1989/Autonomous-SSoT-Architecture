@@ -1,0 +1,35 @@
+# GitBook / HonKit build output
+_book/
+
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Strictly excluded proprietary/working-hours code & heavy renders
+PROTOTYPES/
+TOOLING/
+PDF/
+EDITABLE_DOCX/
+*.pdf
+*.docx
+*.zip
+!balaerion-app/public/press-samples/*.pdf
+!balaerion-app/public/press-samples/*.docx
+!DESIGN_SYSTEM_Signal/07_press/public/press-samples/*.pdf
+!DESIGN_SYSTEM_Signal/07_press/public/press-samples/*.docx
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Vercel & local state (never commit)
+.vercel/
+.dev/
+balaerion-app/.next/
+balaerion-app/public/book/
+
+# Local environment secrets (never commit; keep .env.example allowed)
+.env
+.env*.local
+balaerion-app/.env
+balaerion-app/.env*.local

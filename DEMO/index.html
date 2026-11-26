@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Interactive Autonomous SSoT clean-room prototype: synthetic admin dashboards, 10 automated controls, and failure-mode rehearsals." />
+  <meta name="theme-color" content="#08090D" />
+  <title>Autonomous SSoT: Console Dashboards & Interactive Governance Flows</title>
+  <style>
+    :root {
+      --void: #08090D; --panel: #11141B; --panel2: #171B24;
+      --line: #242A36; --line2: #39414F;
+      --text: #E9ECF2; --muted: #79828F; --dim: #4E5764;
+      --pink: #F0245C; --cyan: #21E0DC; --amber: #F0A824;
+      --font: Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono: 'SF Mono', Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--void); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; min-height: 100dvh; }
+    ::selection { background: var(--cyan); color: var(--void); }
+
+    /* TOP NAV */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8,9,13,0.94); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .dots { display: flex; gap: 5px; }
+    .dots i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+    .dots i:first-child { background: var(--pink); }
+    .dots i:last-child { background: var(--cyan); }
+    .brand-name { font-size: 14px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      background: transparent; color: var(--muted); border: 1px solid var(--line2);
+      border-radius: 4px; padding: 10px 14px; min-height: 44px; font-size: 12.5px; font-family: var(--font);
+      cursor: pointer; transition: all .15s; display: inline-flex; align-items: center;
+    }
+    .tab-btn:hover { color: var(--text); border-color: var(--cyan); }
+    .tab-btn.active { background: var(--cyan); color: var(--void); border-color: var(--cyan); font-weight: 700; }
+
+    .balaerion-link, .back-link {
+      background: var(--panel); color: var(--cyan); border: 1px solid var(--cyan);
+      padding: 10px 14px; min-height: 44px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      text-decoration: none; letter-spacing: 0.4px; display: inline-flex; align-items: center;
+    }
+    .back-link { border-color: var(--line2); color: var(--text); border-radius: 6px; }
+    .balaerion-link:hover, .back-link:hover { background: var(--cyan); color: var(--void); border-color: var(--cyan); }
+
+    main {
+      max-width: 1220px; margin: 24px auto;
+      padding: 0 calc(16px + env(safe-area-inset-right)) calc(60px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+    }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* SUBTABS */
+    .subtabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+    .sub-btn {
+      background: var(--panel); color: var(--muted); border: 1px solid var(--line);
+      border-radius: 4px; padding: 10px 12px; min-height: 44px; font-size: 12px; cursor: pointer; font-family: var(--font);
+      display: inline-flex; align-items: center;
+    }
+    .sub-btn.active { border-color: var(--cyan); color: var(--cyan); background: var(--panel2); font-weight: 700; }
+
+    /* PRIMITIVES */
+    .head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+    .head h1 { font-size: 21px; font-weight: 700; }
+    .head p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .kicker { color: var(--cyan); font-size: 11px; font-weight: 700; letter-spacing: 2.2px; margin-bottom: 6px; text-transform: uppercase; }
+    .chip {
+      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.9px;
+      padding: 3px 9px; border-radius: 20px; white-space: nowrap; text-transform: uppercase;
+    }
+    .chip.cyan { background: var(--cyan); color: var(--void); }
+    .chip.pink { background: var(--pink); color: var(--void); }
+    .chip.amber { background: var(--amber); color: var(--void); }
+    .chip.muted { background: var(--line2); color: var(--text); }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; }
+    @media (max-width: 860px) { .grid-3, .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 16px;
+      max-width: 100%; overflow-x: auto;
+    }
+    .card.top-pink { background: var(--panel2); border-color: var(--pink); border-top: 3px solid var(--pink); }
+    .card.top-cyan { background: var(--panel2); border-color: var(--cyan); border-top: 3px solid var(--cyan); }
+    .card.top-amber { background: var(--panel2); border-color: var(--amber); border-top: 3px solid var(--amber); }
+    .card.left-pink { background: var(--panel2); border-color: var(--pink); border-left: 3px solid var(--pink); }
+    .card.left-cyan { background: var(--panel2); border-color: var(--cyan); border-left: 3px solid var(--cyan); }
+    .card.left-amber { background: var(--panel2); border-color: var(--amber); border-left: 3px solid var(--amber); }
+
+    .lab { color: var(--muted); font-size: 11.5px; margin-bottom: 8px; }
+    .big { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+    .big strong { font-size: 36px; font-weight: 700; line-height: 1; }
+    .big span { color: var(--muted); font-size: 12.5px; }
+    .foot { color: var(--dim); font-size: 10.5px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
+
+    .row { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+    .row:last-child { border-bottom: none; }
+    .row .k { color: var(--muted); }
+    .row .v { font-weight: 600; word-break: break-word; }
+    .mono { font-family: var(--mono); }
+
+    .btn {
+      background: transparent; color: var(--text); border: 1px solid var(--line2);
+      border-radius: 4px; padding: 10px 14px; min-height: 44px; font-size: 12.5px; font-family: var(--font);
+      cursor: pointer; transition: all .15s; display: inline-flex; align-items: center;
+    }
+    .btn:hover:not(:disabled) { border-color: var(--cyan); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn.cyan-on { background: var(--cyan); color: var(--void); border-color: var(--cyan); font-weight: 700; }
+    .btn.pink-on { background: var(--pink); color: var(--void); border-color: var(--pink); font-weight: 700; }
+    .btn.amber-on { background: var(--amber); color: var(--void); border-color: var(--amber); font-weight: 700; }
+
+    .step-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 4px; padding: 10px 14px; margin-bottom: 7px; transition: all .2s;
+    }
+    .step-item.on { background: var(--panel2); border-color: var(--cyan); }
+    .step-item.crit-on { background: var(--panel2); border-color: var(--pink); }
+    .step-item.fail { background: var(--panel2); border-color: var(--pink); }
+    .step-item.skipped { opacity: 0.3; }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 13px; flex-shrink: 0;
+      border: 1px solid var(--line2); display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+    }
+    .step-item.on .step-num { background: var(--cyan); border-color: var(--cyan); color: var(--void); }
+    .step-item.crit-on .step-num, .step-item.fail .step-num { background: var(--pink); border-color: var(--pink); color: var(--void); }
+
+    table { width: 100%; min-width: 480px; border-collapse: collapse; margin-top: 8px; }
+    th { color: var(--muted); font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; text-align: left; padding: 0 10px 8px 0; text-transform: uppercase; }
+    td { font-size: 12px; padding: 8px 10px 8px 0; border-top: 1px solid var(--line); }
+
+    .bars { display: flex; align-items: flex-end; gap: 5px; height: 64px; margin-top: 8px; }
+    .bar { flex: 1; border-radius: 2px; min-height: 3px; opacity: 0.88; }
+    .bar-labels { display: flex; gap: 5px; margin-top: 5px; }
+    .bar-labels span { flex: 1; text-align: center; font-size: 9.5px; color: var(--dim); font-family: var(--mono); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <a class="back-link" href="../index.html">Back to Book</a>
+      <div class="dots"><i></i><i></i></div>
+      <div class="brand-name">Autonomous SSoT · Console & Flows</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openMain('dashboards', this)">1. Console Dashboards</button>
+      <button class="tab-btn" onclick="openMain('flows1', this)">2. Flows 01 to 05 (Core)</button>
+      <button class="tab-btn" onclick="openMain('flows2', this)">3. Flows 06 to 13 (Governance)</button>
+    </div>
+    <a class="balaerion-link" href="../balaerion/demo/index.html">Analyze in Balaerion AI</a>
+  </header>
+
+  <main>
+    <div style="margin-bottom:14px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:8px;background:var(--panel);font-size:12.5px;color:var(--muted);">
+      <strong style="color:var(--text);">Prototype Notice ([Status: Prototype]):</strong> All dashboard figures, run counts, and fault queues below are <strong>illustrative synthetic data</strong> demonstrating target governance behavior across the standardized 100-seat, 40-market reference model.
+    </div>
+    <!-- ================= VIEW 1: CONSOLE DASHBOARDS ================= -->
+    <section id="view-dashboards" class="view active">
+      <div class="subtabs">
+        <button class="sub-btn active" onclick="openSub('dash','admin',this)">01 · Admin Daily</button>
+        <button class="sub-btn" onclick="openSub('dash','health',this)">02 · Verification & Cadence</button>
+        <button class="sub-btn" onclick="openSub('dash','faults',this)">03 · Faults & Controls (29)</button>
+      </div>
+
+      <!-- 01 ADMIN DAILY -->
+      <div id="dash-admin" class="subview">
+        <div class="head">
+          <div>
+            <h1>Administrator, daily (Synthetic Telemetry)</h1>
+            <p>Six checks, five minutes. One of them has a deadline.</p>
+          </div>
+          <span class="chip muted">ADM · PROTOTYPE</span>
+        </div>
+        <div class="grid-3">
+          <div class="card top-pink">
+            <div class="lab">Audit writer state</div>
+            <div class="big"><strong style="color:var(--amber);">1</strong><span>degraded (P2)</span></div>
+            <div class="foot" style="color:var(--amber);">F-013a retry latency buffered · 0 F-013b halts</div>
+          </div>
+          <div class="card top-cyan">
+            <div class="lab">Scheduled scanners (24h)</div>
+            <div class="big"><strong style="color:var(--cyan);">5/5</strong><span>daily runs + HB-001</span></div>
+            <div class="foot">1 platform trigger (SC-002) · 4 server cron</div>
+          </div>
+          <div class="card top-pink">
+            <div class="lab">Archive queue</div>
+            <div class="big"><strong style="color:var(--pink);">1</strong><span>archives tonight</span></div>
+            <div class="foot" style="color:var(--pink);">THE ONLY CHECK WITH A DEADLINE</div>
+          </div>
+          <div class="card">
+            <div class="lab">Failed deliveries</div>
+            <div class="big"><strong>3</strong><span>last 24h</span></div>
+            <div class="foot">2 retried, 1 sender inactive</div>
+          </div>
+          <div class="card top-cyan">
+            <div class="lab">State divergence</div>
+            <div class="big"><strong style="color:var(--cyan);">0</strong><span>F-027 · F-028</span></div>
+            <div class="foot">target gate: 14-night burn-in window</div>
+          </div>
+          <div class="card top-cyan">
+            <div class="lab">Permission drift</div>
+            <div class="big"><strong style="color:var(--cyan);">0</strong><span>divergent nodes</span></div>
+            <div class="foot">last SC-004 reconcile 02:30 UTC</div>
+          </div>
+        </div>
+        <div class="card left-pink" style="margin-top:16px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Everything else on this list can wait until tomorrow.</div>
+          <div style="color:var(--muted);font-size:12.5px;line-height:1.6;">
+            A file reaching Day 30 leaves circulation tonight. The window to intervene is today; after tonight, recovery requires re-approval through the staging gate (FR-C01).
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 HEALTH & CADENCE -->
+      <div id="dash-health" class="subview" style="display:none;">
+        <div class="head">
+          <div>
+            <h1>Verification cadence & retrieval (Illustrative Synthetic Data)</h1>
+            <p>BR-09 (verified, not recalled) · BR-10 (right answer in under a minute).</p>
+          </div>
+          <span class="chip cyan">40 REFERENCE MARKETS</span>
+        </div>
+        <div class="grid-3">
+          <div class="card top-cyan" style="display:flex;align-items:center;gap:18px;">
+            <svg width="92" height="92" viewBox="0 0 92 92">
+              <circle cx="46" cy="46" r="38" fill="none" stroke="#242A36" stroke-width="10"/>
+              <path d="M 46 8 A 38 38 0 1 1 32.1 10.6" fill="none" stroke="#21E0DC" stroke-width="10" stroke-linecap="round"/>
+              <text x="46" y="52" text-anchor="middle" fill="#E9ECF2" font-size="17" font-weight="700">94%</text>
+            </svg>
+            <div>
+              <div class="lab">Verified within cadence</div>
+              <div style="font-size:12.5px;color:var(--muted);">Target: 95% · 0 unowned files (BR-02)</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="lab">Retrieval latency (seconds, 12-week synthetic series)</div>
+            <svg viewBox="0 0 190 46" style="width:100%;height:46px;">
+              <line x1="0" y1="16" x2="190" y2="16" stroke="#F0245C" stroke-width="1" stroke-dasharray="3 3"/>
+              <polyline points="0,38 22,34 44,30 66,27 88,22 110,20 132,18 154,15 176,12 190,11" fill="none" stroke="#21E0DC" stroke-width="2.2"/>
+            </svg>
+            <div class="foot">Median: 18s (1 command / 3 clicks · dashed line = 60s target)</div>
+          </div>
+          <div class="card">
+            <div class="lab">Stale queue by market cluster</div>
+            <div class="bars">
+              <div class="bar" style="height:28%;background:var(--cyan);"></div>
+              <div class="bar" style="height:42%;background:var(--cyan);"></div>
+              <div class="bar" style="height:88%;background:var(--pink);"></div>
+              <div class="bar" style="height:35%;background:var(--cyan);"></div>
+              <div class="bar" style="height:22%;background:var(--cyan);"></div>
+            </div>
+            <div class="bar-labels"><span>NL</span><span>BE</span><span>DE</span><span>FR</span><span>ES</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 FAULTS & CONTROLS -->
+      <div id="dash-faults" class="subview" style="display:none;">
+        <div class="head">
+          <div>
+            <h1>Fault register & automated controls</h1>
+            <p>10 automated controls (5 scheduled scanners, 5 event detectors) plus HB-001 external heartbeat · 29 defined fault types.</p>
+          </div>
+          <span class="chip amber">1 DEGRADED · 0 HALTED</span>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Fault ID</th><th>Severity</th><th>Control</th><th>Summary</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono" style="color:var(--amber);">F-013a</td><td><span class="chip amber">P2</span></td><td>DT-001 Audit Guard</td><td>Degraded: T10 write retry latency &gt;90s (buffered in queue; F-013b persistent failure halts writes)</td><td style="color:var(--amber);">Buffered (41m)</td></tr>
+              <tr><td class="mono" style="color:var(--cyan);">F-027</td><td><span class="chip cyan">P1</span></td><td>SC-003 Reconciler</td><td>Register state vs. Wiki node parentage divergence</td><td style="color:var(--cyan);">0 incidents (synthetic)</td></tr>
+              <tr><td class="mono" style="color:var(--cyan);">F-028</td><td><span class="chip cyan">P2</span></td><td>SC-003 Reconciler</td><td>Orphaned staging node missing parent pointer</td><td style="color:var(--cyan);">0 incidents (synthetic)</td></tr>
+              <tr><td class="mono" style="color:var(--amber);">F-004</td><td><span class="chip amber">P2</span></td><td>DT-003 Leaver Gate</td><td>Owner offboarded without transfer (BR-02)</td><td style="color:var(--cyan);">Blocked at gate</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: FLOWS 01-05 ================= -->
+    <section id="view-flows1" class="view">
+      <div class="subtabs">
+        <button class="sub-btn active" onclick="openSub('f1','publish',this)">Flow 01 · Publish Sequence</button>
+        <button class="sub-btn" onclick="openSub('f1','ask',this)">Flow 02 · ask Command & Staleness</button>
+        <button class="sub-btn" onclick="openSub('f1','escalate',this)">Flow 04 · Escalation Clock</button>
+      </div>
+
+      <!-- FLOW 01: PUBLISH -->
+      <div id="f1-publish" class="subview">
+        <div class="kicker">FLOW 01 · PUBLISH SEQUENCE</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Two systems, no transaction between them. Step through it, then break the move and watch what happens when state is written first.</p>
+
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+          <button id="pub-next" class="btn cyan-on" onclick="pubStep()">Start</button>
+          <button class="btn" onclick="pubReset()">Reset</button>
+          <div style="flex:1;"></div>
+          <button id="btn-break" class="btn" onclick="toggleBreak()">Break the move</button>
+          <button id="btn-buggy" class="btn" onclick="toggleBuggy()">Write state first (Buggy order)</button>
+        </div>
+
+        <div class="grid-2">
+          <div id="pub-steps"></div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div id="pub-register" class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <strong>The Register</strong>
+                <span id="reg-chip" class="chip muted">AWAITING APPROVAL</span>
+              </div>
+              <div class="row"><span class="k">Recorded status</span><span id="reg-status" class="v mono">pending_approval</span></div>
+              <div class="row"><span class="k">Actual Wiki node</span><span id="node-status" class="v mono">in _STAGING</span></div>
+              <div class="row"><span class="k">Truth alignment</span><span id="truth-status" class="v">Consistent</span></div>
+            </div>
+            <div id="pub-note" class="card left-cyan">
+              <div style="color:var(--cyan);font-size:13.5px;font-weight:700;margin-bottom:6px;">FR-37 · Verify parentage before writing Published</div>
+              <div style="color:var(--muted);font-size:12.5px;line-height:1.6;">
+                In the correct sequence, if the move times out at Step 5, fault <code>F-027</code> is raised and the register never claims the file is published. Toggle both red buttons above to see silent state divergence.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLOW 02: ASK COMMAND -->
+      <div id="f1-ask" class="subview" style="display:none;">
+        <div class="kicker">FLOW 02 · ASK COMMAND & STALENESS BANNER (FR-C03 / FR-36)</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Every query is market-scoped. Overdue results are never served silently: a staleness warning is injected automatically.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <button class="btn cyan-on" onclick="runAsk('fresh')">Query Verified Doc (NL)</button>
+          <button class="btn amber-on" onclick="runAsk('stale')">Query Overdue Doc (DE · Day 34)</button>
+          <button class="btn pink-on" onclick="runAsk('missing')">Query Missing Topic (Logs Gap to T3)</button>
+        </div>
+        <div id="ask-out" class="card left-cyan">
+          <div class="row"><span class="k">Command</span><span class="v mono">/ask market:NL "Q4 retail conversion policy"</span></div>
+          <div class="row"><span class="k">Status</span><span class="v" style="color:var(--cyan);">VERIFIED (12 days ago · Owner: QAS_NL_01 [Fictional])</span></div>
+          <div class="row"><span class="k">Latency</span><span class="v mono">1.4s (BR-10 compliant)</span></div>
+        </div>
+      </div>
+
+      <!-- FLOW 04: ESCALATION -->
+      <div id="f1-escalate" class="subview" style="display:none;">
+        <div class="kicker">FLOW 04 · VERIFICATION ESCALATION CLOCK (FR-11)</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Drag the clock past Day 14 and Day 30 to observe automatic escalation and reversible archiving.</p>
+        <input id="esc-slider" type="range" min="0" max="32" value="0" oninput="renderEsc()" style="width:100%;accent-color:var(--cyan);margin-bottom:14px;" />
+        <div id="esc-card" class="card left-cyan"></div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 3: FLOWS 06-13 ================= -->
+    <section id="view-flows2" class="view">
+      <div class="subtabs">
+        <button class="sub-btn active" onclick="openSub('f2','triage',this)">Flow 06 · Triage (10-Day Default)</button>
+        <button class="sub-btn" onclick="openSub('f2','mover',this)">Flow 07 · Mover (Revoke Before Grant)</button>
+        <button class="sub-btn" onclick="openSub('f2','offboard',this)">Flow 11 · Offboarding (BR-02 Gate)</button>
+      </div>
+
+      <!-- FLOW 06: TRIAGE -->
+      <div id="f2-triage" class="subview">
+        <div class="kicker">FLOW 06 · TRIAGE AND THE TEN-DAY DEFAULT</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Every stalled migration stalls in the same place. Run the clock past Day 10 and watch the undecided pile clear itself.</p>
+        <input id="triage-slider" type="range" min="0" max="14" value="0" oninput="renderTriage()" style="width:100%;accent-color:var(--cyan);margin-bottom:6px;" />
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:18px;">
+          <span>day 0</span><span>day 5</span><span style="color:var(--amber);">day 10 · default fires</span><span>day 14</span>
+        </div>
+        <div class="grid-2">
+          <div id="triage-list"></div>
+          <div id="triage-summary" style="display:flex;flex-direction:column;gap:14px;"></div>
+        </div>
+      </div>
+
+      <!-- FLOW 07: MOVER -->
+      <div id="f2-mover" class="subview" style="display:none;">
+        <div class="kicker">FLOW 07 · MOVER & SCOPE TRANSFER</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Compare revoking old markets first vs. granting new markets first (which creates silent permission sprawl if Step 2 fails).</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <button id="mv-ok" class="btn cyan-on" onclick="renderMover('correct')">Correct Order (Revoke -> Grant)</button>
+          <button id="mv-bad" class="btn" onclick="renderMover('buggy')">Buggy Order (Grant -> Revoke)</button>
+        </div>
+        <div id="mover-out" class="card left-cyan"></div>
+      </div>
+
+      <!-- FLOW 11: OFFBOARDING -->
+      <div id="f2-offboard" class="subview" style="display:none;">
+        <div class="kicker">FLOW 11 · OFFBOARDING & ZERO-UNOWNED GATE (BR-02)</div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px;">Access cannot be closed while the departing user still owns active SSoT files.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <button class="btn pink-on" onclick="renderOffboard(false)">Attempt Revoke With 4 Owned Files</button>
+          <button class="btn cyan-on" onclick="renderOffboard(true)">Reassign Ownership -> Revoke Access</button>
+        </div>
+        <div id="off-out" class="card left-pink"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function openMain(id, btn) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + id).classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    function openSub(group, id, btn) {
+      btn.parentElement.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      btn.closest('.view').querySelectorAll('.subview').forEach(v => v.style.display = 'none');
+      document.getElementById(group + '-' + id).style.display = 'block';
+    }
+
+    /* ===== FLOW 01: PUBLISH ===== */
+    const PUB_STEPS = [
+      { n:1, t:"Reviewer approves", d:"approval card is actioned (FR-C01)" },
+      { n:2, t:"Acknowledge callback", d:"within 3 seconds to prevent webhook retries" },
+      { n:3, t:"Resolve object token", d:"get_node lookup" },
+      { n:4, t:"Call the move", d:"move_docs_to_wiki (_STAGING -> Published)" },
+      { n:5, t:"Poll the task", d:"2s, 4s, 6s, 8s, 10s backoff" },
+      { n:6, t:"Verify parentage", d:"re-read node, assert target parent (FR-37)", crit:true },
+      { n:7, t:"Write Published", d:"state, tokens, confirmation timestamp", crit:true },
+      { n:8, t:"Write audit row", d:"append immutable entry to T10" }
+    ];
+    let pStep = 0, pBreak = false, pBuggy = false;
+
+    function renderPub() {
+      const failedAt = pBreak ? 5 : null;
+      const maxStep = failedAt ? failedAt : 8;
+      const reached = n => (failedAt && n > failedAt ? false : pStep >= n);
+      const regPub = pBuggy ? pStep >= 4 : reached(7);
+      const nodeMoved = !pBreak && pStep >= 5;
+      const lying = regPub && !nodeMoved;
+
+      document.getElementById('pub-next').textContent = pStep === 0 ? 'Start' : pStep >= maxStep ? 'Complete' : `Step ${pStep + 1}`;
+      document.getElementById('pub-next').disabled = pStep >= maxStep;
+      document.getElementById('btn-break').className = pBreak ? 'btn pink-on' : 'btn';
+      document.getElementById('btn-break').textContent = pBreak ? 'Move is broken (ON)' : 'Break the move';
+      document.getElementById('btn-buggy').className = pBuggy ? 'btn pink-on' : 'btn';
+      document.getElementById('btn-buggy').textContent = pBuggy ? 'Buggy order (ON)' : 'Write state first (Buggy order)';
+
+      document.getElementById('pub-steps').innerHTML = PUB_STEPS.map(s => {
+        const on = reached(s.n);
+        const isFail = failedAt === s.n && pStep >= s.n;
+        const skipped = failedAt && s.n > failedAt && pStep >= failedAt;
+        const cls = isFail ? 'step-item fail' : on ? (s.crit ? 'step-item crit-on' : 'step-item on') : (skipped ? 'step-item skipped' : 'step-item');
+        const sub = isFail ? 'TIMED OUT · fault F-027 raised' : skipped ? 'never reached' : s.d;
+        return `<div class="${cls}">
+          <div class="step-num">${s.n}</div>
+          <div style="flex:1;">
+            <div style="font-size:13.5px;font-weight:600;">${s.t}</div>
+            <div style="font-size:11.5px;color:${isFail ? 'var(--pink)' : 'var(--muted)'};margin-top:2px;">${sub}</div>
+          </div>
+          ${s.crit ? '<span class="chip pink">GATE</span>' : ''}
+        </div>`;
+      }).join('');
+
+      document.getElementById('reg-chip').className = regPub ? (lying ? 'chip pink' : 'chip cyan') : 'chip muted';
+      document.getElementById('reg-chip').textContent = regPub ? 'PUBLISHED' : 'AWAITING APPROVAL';
+      document.getElementById('reg-status').textContent = regPub ? 'published' : 'pending_approval';
+      document.getElementById('node-status').textContent = nodeMoved ? 'in 04_Markets/NL' : 'stuck in _STAGING';
+      document.getElementById('truth-status').textContent = lying ? 'LYING (F-027 Divergence!)' : 'Consistent';
+      document.getElementById('truth-status').style.color = lying ? 'var(--pink)' : 'var(--cyan)';
+      document.getElementById('pub-register').className = lying ? 'card left-pink' : 'card';
+    }
+    function pubStep() { pStep++; renderPub(); }
+    function pubReset() { pStep = 0; renderPub(); }
+    function toggleBreak() { pBreak = !pBreak; pStep = 0; renderPub(); }
+    function toggleBuggy() { pBuggy = !pBuggy; pStep = 0; renderPub(); }
+
+    /* ===== FLOW 02: ASK ===== */
+    function runAsk(type) {
+      const box = document.getElementById('ask-out');
+      if (type === 'fresh') {
+        box.className = 'card left-cyan';
+        box.innerHTML = `<div class="row"><span class="k">Command</span><span class="v mono">/ask market:NL "Q4 retail conversion policy"</span></div>
+          <div class="row"><span class="k">Verification</span><span class="v" style="color:var(--cyan);">VERIFIED (12 days ago · Owner: QAS_NL_01 [Fictional])</span></div>
+          <div class="row"><span class="k">Result</span><span class="v">Clean answer returned in 1.4s with canonical link.</span></div>`;
+      } else if (type === 'stale') {
+        box.className = 'card left-amber';
+        box.innerHTML = `<div class="row"><span class="k">Command</span><span class="v mono">/ask market:DE "Regional pricing guidelines"</span></div>
+          <div class="row"><span class="k">FR-36 Warning</span><span class="v" style="color:var(--amber);">STALE (+4 days overdue · Verification required)</span></div>
+          <div class="row"><span class="k">Action</span><span class="v">Result returned with amber staleness banner; owner pinged.</span></div>`;
+      } else {
+        box.className = 'card left-pink';
+        box.innerHTML = `<div class="row"><span class="k">Command</span><span class="v mono">/ask market:BE "New Q2 rebate tier"</span></div>
+          <div class="row"><span class="k">Result</span><span class="v" style="color:var(--pink);">No verified document found (zero hallucination fallback)</span></div>
+          <div class="row"><span class="k">Gap Logged</span><span class="v mono">Inserted row into T3 FAQ & Gap Register for market lead.</span></div>`;
+      }
+    }
+
+    /* ===== FLOW 04: ESCALATION ===== */
+    function renderEsc() {
+      const d = +document.getElementById('esc-slider').value;
+      const box = document.getElementById('esc-card');
+      if (d < 14) {
+        box.className = 'card left-cyan';
+        box.innerHTML = `<div class="row"><span class="k">Clock</span><span class="v mono">Day ${d} of 30</span></div><div class="row"><span class="k">Stage</span><span class="v" style="color:var(--cyan);">DAY_0_CURRENT: Owner reminder active</span></div>`;
+      } else if (d < 30) {
+        box.className = 'card left-amber';
+        box.innerHTML = `<div class="row"><span class="k">Clock</span><span class="v mono">Day ${d} of 30</span></div><div class="row"><span class="k">Stage</span><span class="v" style="color:var(--amber);">DAY_14_ESCALATE: Manager pinged + FR-36 warning active</span></div>`;
+      } else {
+        box.className = 'card left-pink';
+        box.innerHTML = `<div class="row"><span class="k">Clock</span><span class="v mono">Day ${d} of 30</span></div><div class="row"><span class="k">Stage</span><span class="v" style="color:var(--pink);">DAY_30_AUTO_ARCHIVE: Moved to _ARCHIVE (reversible, nothing deleted)</span></div>`;
+      }
+    }
+
+    /* ===== FLOW 06: TRIAGE ===== */
+    const TRIAGE_DOCS = [
+      { id:1, n:"Expense policy v3", d:"Keep as is", c:"cyan" },
+      { id:2, n:"Expense policy (Sept)", d:"Merge", c:"pink" },
+      { id:3, n:"Onboarding deck 2024", d:"Archive", c:"muted" },
+      { id:4, n:"Client escalation notes", d:"Undecided", c:"amber", un:true },
+      { id:5, n:"Team sync 12 Mar", d:"Archive", c:"muted" },
+      { id:6, n:"Pricing approach draft", d:"Undecided", c:"amber", un:true },
+      { id:7, n:"Tooling access guide", d:"Rework", c:"cyan" }
+    ];
+    function renderTriage() {
+      const day = +document.getElementById('triage-slider').value;
+      const expired = day >= 10;
+      document.getElementById('triage-list').innerHTML = TRIAGE_DOCS.map(doc => {
+        const flipped = doc.un && expired;
+        const chipCls = flipped ? 'chip muted' : 'chip ' + doc.c;
+        const label = flipped ? 'ARCHIVE (auto)' : doc.d;
+        return `<div class="step-item" style="opacity:${flipped ? 0.55 : 1};border-color:${flipped ? 'var(--line)' : 'var(--' + doc.c + ')'};">
+          <span class="mono" style="color:var(--dim);font-size:11px;width:16px;">${doc.id}</span>
+          <span style="flex:1;font-size:13px;">${doc.n}</span>
+          <span class="${chipCls}">${label}</span>
+        </div>`;
+      }).join('');
+
+      document.getElementById('triage-summary').innerHTML = `
+        <div class="card ${expired ? 'left-cyan' : 'left-amber'}">
+          <div class="row"><span class="k">Documents in batch</span><span class="v">7</span></div>
+          <div class="row"><span class="k">Decided</span><span class="v" style="color:var(--cyan);">${expired ? 7 : 5}</span></div>
+          <div class="row"><span class="k">Undecided</span><span class="v" style="color:${expired ? 'var(--cyan)' : 'var(--amber)'};">${expired ? 0 : 2}</span></div>
+          <div class="row"><span class="k">Clock</span><span class="v mono">${expired ? 'EXPIRED (Day ' + day + ')' : (10 - day) + ' days left'}</span></div>
+        </div>
+        <div class="card ${expired ? 'left-cyan' : 'left-amber'}">
+          <div style="font-size:13.5px;font-weight:700;color:${expired ? 'var(--cyan)' : 'var(--amber)'};margin-bottom:6px;">
+            ${expired ? 'The default fired on its own.' : 'Two documents nobody will decide about.'}
+          </div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.6;">
+            ${expired
+              ? 'Archiving is reversible and nothing is deleted, so the default is safe. A default that requires someone to invoke it is not a default.'
+              : 'This is where migrations die: not at ten percent, at sixty. Drag the slider to Day 10 to trigger the automatic archive default.'}
+          </div>
+        </div>`;
+    }
+
+    /* ===== FLOW 07: MOVER ===== */
+    function renderMover(mode) {
+      document.getElementById('mv-ok').className = mode === 'correct' ? 'btn cyan-on' : 'btn';
+      document.getElementById('mv-bad').className = mode === 'buggy' ? 'btn pink-on' : 'btn';
+      const box = document.getElementById('mover-out');
+      if (mode === 'correct') {
+        box.className = 'card left-cyan';
+        box.innerHTML = `<div class="row"><span class="k">Step 1</span><span class="v" style="color:var(--cyan);">Revoke old scope (NL, BE grants removed first)</span></div>
+          <div class="row"><span class="k">Step 2</span><span class="v">Grant new scope (DE, AT grants added)</span></div>
+          <div class="row"><span class="k">Result</span><span class="v" style="color:var(--cyan);">Zero permission sprawl even if Step 2 fails.</span></div>`;
+      } else {
+        box.className = 'card left-pink';
+        box.innerHTML = `<div class="row"><span class="k">Step 1</span><span class="v" style="color:var(--pink);">Grant new scope (DE, AT added while NL, BE still active)</span></div>
+          <div class="row"><span class="k">Step 2</span><span class="v" style="color:var(--pink);">API timeout before revoke completes</span></div>
+          <div class="row"><span class="k">Result</span><span class="v" style="color:var(--pink);">VIOLATION: User holds 4 markets (silent privilege creep).</span></div>`;
+      }
+    }
+
+    /* ===== FLOW 11: OFFBOARDING ===== */
+    function renderOffboard(reassigned) {
+      const box = document.getElementById('off-out');
+      if (!reassigned) {
+        box.className = 'card left-pink';
+        box.innerHTML = `<div class="row"><span class="k">Gate Check (BR-02)</span><span class="v" style="color:var(--pink);">BLOCKED · 4 active files still owned by departing user</span></div>
+          <div class="row"><span class="k">Rule</span><span class="v">Zero unowned files permitted. Reassign ownership before closing account.</span></div>`;
+      } else {
+        box.className = 'card left-cyan';
+        box.innerHTML = `<div class="row"><span class="k">Step 1</span><span class="v" style="color:var(--cyan);">4 files transferred to Marcus K. (logged in T1 & T10)</span></div>
+          <div class="row"><span class="k">Step 2</span><span class="v" style="color:var(--cyan);">Access revoked across all 6 tiers · Unowned count: 0</span></div>`;
+      }
+    }
+
+    renderPub(); renderEsc(); renderTriage(); renderMover('correct'); renderOffboard(false);
+  </script>
+</body>
+</html>

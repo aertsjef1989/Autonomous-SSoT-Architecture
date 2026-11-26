@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "description": "Canonical Portfolio Headline Numbers Registry (Phase Q2 R8 & Q3 R23)",
+  "facts": [
+    {
+      "id": "ssot_reference_seats",
+      "canonical_value": 100,
+      "unit": "seats",
+      "definition": "Standardized active enterprise reference team (60 frontline AGT seats + 40 QAS/FLM/MGR/UPM/ADM seats).",
+      "derived_in": "01-Business-Case-and-ROI.md#2-reference-scenario-parameters",
+      "required_pattern": "100\\s+seats|100-seat",
+      "conflict_patterns": ["200-person\\s+active\\s+roster", "~70\\s+frontline\\s+agents", "~140\\s+users\\s+editing"]
+    },
+    {
+      "id": "ssot_reference_markets",
+      "canonical_value": 40,
+      "unit": "markets",
+      "definition": "Parameterized multi-region reference market topology (1 Stage-6 validation market + 39 Stage-7 scale-out markets).",
+      "derived_in": "02-System-Architecture.md#32-folder-tree--file-limits",
+      "required_pattern": "40`?\\s+(?:reference\\s+)?markets|40-market",
+      "conflict_patterns": ["\\b45\\s+markets\\b", "remaining\\s+44\\s+markets", "\\b45\\s+ISO\\s+codes\\b"]
+    },
+    {
+      "id": "ssot_public_nodes",
+      "canonical_value": 3055,
+      "unit": "nodes",
+      "definition": "Public Information Layer reference corpus: 40 markets * 75 market templates (3,000) + 55 GLB global files = 3,055 public nodes.",
+      "derived_in": "02-System-Architecture.md#32-folder-tree--file-limits",
+      "required_pattern": "3,055",
+      "conflict_patterns": ["\\b3,386\\b", "\\b3386\\b", "\\b74\\s+files\\b", "74-file", "\\b73\\s+sibling\\b"]
+    },
+    {
+      "id": "ssot_internal_launch_share",
+      "canonical_value": 28.2,
+      "unit": "percent",
+      "definition": "Initial Internal Operations Layer share of total launch nodes: 1,200 / (3,055 + 1,200) = 28.2% (growing to 2,000 / 5,055 = 39.6% by Year 3).",
+      "derived_in": "02-System-Architecture.md#4-the-internal-operations-layer",
+      "required_pattern": "28\\.2%",
+      "conflict_patterns": ["roughly\\s+a\\s+third\\s+of\\s+the\\s+total\\s+file\\s+count"]
+    },
+    {
+      "id": "ssot_schema_tables",
+      "canonical_value": 11,
+      "unit": "tables",
+      "definition": "Normalized relational governance schema: 9 Data Layer tables (T1..T5, T-FM-01, T-LG-01, T-KPI-01, T-KPI-03) + 2 Audit Layer tables (T10, T-KPI-02).",
+      "derived_in": "04-Relational-Database-Schema.md#1-architectural-application-split",
+      "required_pattern": "11-table|11`?\\s+tables",
+      "conflict_patterns": ["\\b10-table\\b", "\\b10\\s+tables\\b"]
+    },
+    {
+      "id": "ssot_data_layer_year3_rows",
+      "canonical_value": 6300,
+      "unit": "rows",
+      "definition": "Modeled Year-3 bounded Data Layer row total across 9 tables (T1=5,055 + T2=250 + T3=350 + T4=100 + T5=100 + T-FM-01=150 + T-LG-01=40 + T-KPI-03=25 + T-KPI-01=230).",
+      "derived_in": "04-Relational-Database-Schema.md#42-year-3-data-layer-row-count-reconciliation-6300-rows",
+      "required_pattern": "6,300",
+      "conflict_patterns": ["50,000\\s+rows\\s+per\\s+table"]
+    },
+    {
+      "id": "ssot_operating_roles",
+      "canonical_value": 6,
+      "unit": "roles",
+      "definition": "Six workspace operating roles: AGT, QAS, FLM, MGR, UPM, ADM.",
+      "derived_in": "07-Role-Based-Access-Matrix.md#2-layer-1-the-6-operating-roles-agt-to-adm",
+      "required_pattern": "6\\s+Operating\\s+Roles",
+      "conflict_patterns": ["6-tier\\s+Access\\s+Matrix"]
+    },
+    {
+      "id": "ssot_internal_access_tiers",
+      "canonical_value": 5,
+      "unit": "tiers",
+      "definition": "Five Internal Container Access Tiers: I-0 (Owner-Isolated) through I-4 (Restricted Executive & Admin).",
+      "derived_in": "07-Role-Based-Access-Matrix.md#5-the-5-internal-container-access-tiers-i-0-to-i-4",
+      "required_pattern": "I-0`?\\s+(?:to|through)\\s+`?I-4",
+      "conflict_patterns": ["\\bI-5\\b", "6\\s+(?:discrete\\s+read/write\\s+)?access\\s+tiers"]
+    },
+    {
+      "id": "ssot_automated_controls",
+      "canonical_value": 10,
+      "unit": "controls",
+      "definition": "Ten automated self-healing controls: 5 scheduled scanners (SC-001..SC-005) and 5 event detectors (DT-001..DT-005).",
+      "derived_in": "05-Self-Healing-Loop-and-Fault-Taxonomy.md#3-scanners--event-detectors-status-designed",
+      "required_pattern": "10\\s+automated\\s+controls",
+      "conflict_patterns": ["14-detector", "7\\s+scheduled\\s+scanners", ">14/14<", "\\bSC-006\\b", "\\bDT-007\\b"]
+    },
+    {
+      "id": "ssot_external_heartbeat_monitor",
+      "canonical_value": 1,
+      "unit": "monitor",
+      "definition": "External dead-man's switch heartbeat monitor (HB-001, Status: Designed) supervising SC-005 Expected Run Audit Scanner.",
+      "derived_in": "05-Self-Healing-Loop-and-Fault-Taxonomy.md#3-scanners--event-detectors-status-designed",
+      "required_pattern": "HB-001",
+      "conflict_patterns": []
+    },
+    {
+      "id": "ssot_fault_taxonomy_types",
+      "canonical_value": 29,
+      "unit": "fault_types",
+      "definition": "Twenty-nine classified governance and operational fault types (F-001 to F-029 across Categories A to E).",
+      "derived_in": "05-Self-Healing-Loop-and-Fault-Taxonomy.md#4-fault-taxonomy-summary-categories",
+      "required_pattern": "29",
+      "conflict_patterns": []
+    },
+    {
+      "id": "ssot_platform_automation_run_reduction",
+      "canonical_value": 98.2,
+      "unit": "percent",
+      "definition": "Reduction in metered UI platform automation runs: 30 monthly SC-002 daily runs vs 1,700 monthly per-record baseline (1 - 30/1700 = 98.2%).",
+      "derived_in": "05-Self-Healing-Loop-and-Fault-Taxonomy.md#2-optimized-execution-the-single-daily-scan",
+      "required_pattern": "98\\.2%",
+      "conflict_patterns": ["500,000\\s+automation\\s+runs"]
+    },
+    {
+      "id": "ssot_bot_commands",
+      "canonical_value": 14,
+      "unit": "commands",
+      "definition": "Fourteen SSoT conversational Bot commands: 7 core workspace utilities + 7 domain-specific SSoT extensions.",
+      "derived_in": "06-Bot-Command-Reference.md#3-the-14-conversational-commands-7-core--7-domain-extensions",
+      "required_pattern": "14\\s+Conversational\\s+Commands",
+      "conflict_patterns": ["23\\s+[Cc]onversational\\s+[Cc]ommands", "23\\s+Bot\\s+[Cc]ommands", "14\\s+Inherited\\s+Utilities", "9\\s+Custom\\s+SSoT\\s+Commands"]
+    },
+    {
+      "id": "ssot_rollout_stages",
+      "canonical_value": 9,
+      "unit": "stages",
+      "definition": "Nine-stage gated target deployment rollout sequence (Stage 0 through Stage 8).",
+      "derived_in": "02-System-Architecture.md#13-target-deployment-rollout-sequence-status-designed",
+      "required_pattern": "9-stage",
+      "conflict_patterns": ["8-stage\\s+sequence"]
+    },
+    {
+      "id": "ssot_health_score_threshold",
+      "canonical_value": 80,
+      "unit": "score_points",
+      "definition": "Canonical Health Score threshold: Healthy >= 80, Needs Review < 80 (stepped Day-15..30 overdue score = 72).",
+      "derived_in": "04-Relational-Database-Schema.md#41-field-15-health-score-calculation-v2-stepped-vs-rejected-v1-linear",
+      "required_pattern": "Healthy >= 80",
+      "conflict_patterns": ["straddles\\s+the\\s+critical\\s+90-point\\s+threshold"]
+    },
+    {
+      "id": "ssot_annual_gross_waste_baseline",
+      "canonical_value": 495000,
+      "unit": "EUR_per_year",
+      "definition": "Baseline annual search/rework friction across 100 seats * 220 days * 0.50 h/day * EUR 45/h = EUR 495,000/yr.",
+      "derived_in": "01-Business-Case-and-ROI.md#3-reproducible-lean-formula",
+      "required_pattern": "EUR\\s+495,000",
+      "conflict_patterns": ["published\\s+labor\\s+benchmarks"]
+    },
+    {
+      "id": "ssot_recoverable_gross_low",
+      "canonical_value": 198000,
+      "unit": "EUR_per_year",
+      "definition": "Conservative 40% gross annual friction recovery: EUR 495,000 * 0.40 = EUR 198,000/yr.",
+      "derived_in": "01-Business-Case-and-ROI.md#3-reproducible-lean-formula",
+      "required_pattern": "EUR\\s+198,000",
+      "conflict_patterns": []
+    },
+    {
+      "id": "ssot_recoverable_gross_high",
+      "canonical_value": 297000,
+      "unit": "EUR_per_year",
+      "definition": "Target 60% gross annual friction recovery: EUR 495,000 * 0.60 = EUR 297,000/yr.",
+      "derived_in": "01-Business-Case-and-ROI.md#3-reproducible-lean-formula",
+      "required_pattern": "EUR\\s+297,000",
+      "conflict_patterns": []
+    },
+    {
+      "id": "ssot_illustrative_build_cost",
+      "canonical_value": 25200,
+      "unit": "EUR_one_off",
+      "definition": "Illustrative one-off implementation labor input (560 hours * EUR 45/h = EUR 25,200).",
+      "derived_in": "01-Business-Case-and-ROI.md#41-illustrative-cost-inputs--net-payback-formula",
+      "required_pattern": "EUR\\s+25,200",
+      "conflict_patterns": []
+    },
+    {
+      "id": "ssot_illustrative_maint_cost",
+      "canonical_value": 9900,
+      "unit": "EUR_per_year",
+      "definition": "Illustrative annual operational maintenance input (220 hours/yr * EUR 45/h = EUR 9,900/yr).",
+      "derived_in": "01-Business-Case-and-ROI.md#41-illustrative-cost-inputs--net-payback-formula",
+      "required_pattern": "EUR\\s+9,900",
+      "conflict_patterns": []
+    },
+    {
+      "id": "balaerion_registered_personas",
+      "canonical_value": 23,
+      "unit": "personas",
+      "definition": "Twenty-three Balaerion AI personas: 7 Mode A everyday assistant utilities + 16 Mode B ProspectHub specialists.",
+      "derived_in": "balaerion/04-MCP-Agents-and-Product-Layer.md#4-two-lane-persona-registry-23-registered-balaerion-ai-personas",
+      "required_pattern": "23\\s+AI\\s+personas|23`\\s+Registered\\s+Balaerion\\s+AI\\s+Personas",
+      "conflict_patterns": ["23\\s+Active\\s+MCP\\s+Agents"]
+    }
+  ]
+}

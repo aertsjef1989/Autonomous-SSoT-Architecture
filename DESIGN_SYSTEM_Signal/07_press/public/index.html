@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Signal Press: standalone client-side A4 document designer for DOCX, Google Docs, PDF, Email HTML, and Markdown.">
+  <meta name="theme-color" content="#0B0C10">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; connect-src 'self' blob:; frame-src 'self' blob:; object-src 'none'; base-uri 'self';">
+  <title>Signal Press · Offline Document Designer</title>
+  <style>
+    @font-face {
+      font-family: 'Carlito';
+      src: url('./press-assets/fonts/Carlito-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Carlito';
+      src: url('./press-assets/fonts/Carlito-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Carlito';
+      src: url('./press-assets/fonts/Carlito-Italic.ttf') format('truetype');
+      font-weight: 400;
+      font-style: italic;
+      font-display: swap;
+    }
+    html, body { margin: 0; padding: 0; background: #08090D; color: #F2F5F9;  }
+    *, *::before, *::after { box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <div id="signal-press-root"></div>
+  <script type="module" src="./dist/entry.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+name: Verify Signal Press (DOCX, LibreOffice, PDF & Lint)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'balaerion-app/src/lib/press/**'
+      - 'balaerion-app/src/components/SignalPressWorkspace.tsx'
+      - 'DESIGN_SYSTEM_Signal/07_press/**'
+      - 'scripts/verify_p3_press.mjs'
+      - '.github/workflows/verify-press.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-signal-press:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install LibreOffice Writer, Poppler PDF tools & Playwright Chromium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice-writer poppler-utils
+          python3 -m pip install --break-system-packages playwright || python3 -m pip install playwright
+          python3 -m playwright install --with-deps chromium
+          CHROME_BIN=$(python3 -c 'from playwright.sync_api import sync_playwright; p=sync_playwright().start(); print(p.chromium.executable_path); p.stop()')
+          if [ ! -e /usr/bin/google-chrome ]; then
+            sudo ln -s "$CHROME_BIN" /usr/bin/google-chrome
+          fi
+
+      - name: Install app dependencies
+        run: npm --prefix balaerion-app install
+
+      - name: Run Signal Press I17 Verification Suite
+        run: node scripts/verify_p3_press.mjs
+
+      - name: Run Leak Gate
+        run: python3 scripts/leak_gate.py

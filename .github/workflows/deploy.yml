@@ -1,0 +1,47 @@
+name: Deploy GitBook to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Leak Gate & Facts Registry Check (Pre-Build)
+        run: |
+          python3 scripts/leak_gate.py
+          python3 scripts/facts_check.py
+
+      - name: Install dependencies and build HTML
+        run: |
+          npm install -g honkit
+          honkit build
+          python3 scripts/postprocess_book.py
+
+      - name: Verify Internal Links, Head Meta & Leak Gate on Built _book
+        run: |
+          python3 scripts/link_check.py --book-dir _book
+          python3 scripts/head_meta_check.py --book-dir _book
+          python3 scripts/leak_gate.py
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_book
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Automated deployment: ${{ github.sha }}"

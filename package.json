@@ -1,0 +1,9 @@
+{
+  "name": "systems-design-portfolio-book",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "honkit build && python3 scripts/postprocess_book.py",
+    "verify": "python3 scripts/leak_gate.py && python3 scripts/verify_p1_pages.py"
+  }
+}

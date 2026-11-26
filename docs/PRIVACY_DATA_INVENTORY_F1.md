@@ -1,0 +1,29 @@
+# Section F1 Data Inventory & P4 Primary-Source Verification (V7 to V11)
+
+> **Notice:** Operational engineering inventory and draft privacy documentation for owner review, not legal advice.
+
+## 1. Primary-Source Platform Verification (Accessed 2026-11-25)
+
+| Check | Claim Verified | Primary Source URL | Access Date | Design Control Acted On |
+| :--- | :--- | :--- | :--- | :--- |
+| **V7 (Supabase Free Pause)** | Free projects pause automatically after 1 week of inactivity and never auto-bill. | https://supabase.com/pricing | 2026-11-25 | Grant & chat routes fail closed (`503` / `401`) and serve deterministic Replay fallback whenever Supabase is paused or unreachable. |
+| **V7 (Supabase Log Retention)** | Supabase Free plan retains platform Studio logs for **1 day** (Pro: 7d, Team: 28d, Enterprise: 90d). | https://supabase.com/docs/guides/observability/logs | 2026-11-25 | Application never logs emails, grant codes, prompts, or raw IPs; platform-level Free logs expire in 1 day. |
+| **V7 (Supabase EU Residency)** | Specific AWS EU regions (`eu-central-1` Frankfurt, `eu-west-1` Ireland, `eu-west-3` Paris, `eu-north-1` Stockholm) must be chosen explicitly rather than the general "Europe" group (which includes London/Zurich). | https://supabase.com/docs/guides/platform/regions | 2026-11-25 | Owner setup selects an explicit EU member-state AWS region (`eu-central-1` or `eu-west-1`). |
+| **V7 (`pg_cron` & Log Cleanup)** | Supabase Cron (`pg_cron`) runs scheduled SQL jobs, and `cron.job_run_details` is not cleaned automatically unless a cleanup job is scheduled. | https://supabase.com/docs/guides/cron and https://supabase.com/docs/guides/cron/quickstart | 2026-11-25 | `supabase/schema.sql` schedules both `purge-privacy-state-hourly` and `purge-pg-cron-run-details-daily` (`end_time < now() - interval '3 days'`). |
+| **V8 (Resend Free Quotas & Billing)** | Resend Free tier enforces **100 emails/day** (UTC), **3,000/month**, 10 req/s, **30-day data retention**, and overage is **"Not available"** (hard stop, no billing). | https://resend.com/docs/knowledge-base/account-quotas-and-limits and https://resend.com/docs/knowledge-base/what-is-resend-pricing | 2026-11-25 | `reserve_daily_email_slot` caps self-serve grant emails at `40/UTC day` (configurable up to `90`, strictly inside `100/day`). |
+| **V9 (Self-Hosted ALTCHA, X4)** | ALTCHA open-source proof-of-work core is MIT-licensed, self-hosted, sets zero cookies, and makes zero external third-party requests. | https://altcha.org/docs/open-source-vs-paid/ | 2026-11-25 | Implemented first-party in `grants-crypto.ts` + `/api/grants/altcha` + replay-nonce table `altcha_replay_nonces`. |
+| **V10 (Rate-Limit Store Choice)** | Comparing Upstash Redis vs Supabase Postgres TTL table: using `rate_limit_counters` in existing Supabase Postgres adds **zero extra sub-processors** and zero extra accounts. | https://supabase.com/docs/guides/cron | 2026-11-25 | Selected `rate_limit_counters` keyed by daily-rotating `HMAC-SHA256(IP_RATE_PEPPER || UTC_DATE, ip)` + hourly `pg_cron` purge. |
+| **V11 (ePrivacy Art. 5(3) Exemption)** | First-party session authentication cookies set strictly after explicit user action to access a requested feature are exempt under Criterion B; passive browse must set zero non-essential cookies. | https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02002L0058-20091219 and https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf | 2026-11-25 | Zero cookies set on Replay browse, `/privacy`, `/redeem` GET, or Offline Signal Press; `balaerion_grant` set only on `POST /api/grants/redeem`. |
+
+---
+
+## 2. F1 Data Flow & Storage Inventory
+
+| Flow | Input Data | Persistent DB Columns | Hashing / Encryption | TTL & Deletion Mechanism |
+| :--- | :--- | :--- | :--- | :--- |
+| **Offline Signal Press** | User-authored blocks, imported MD/JSON | None (zero network calls) | N/A (in-tab memory; opt-in `localStorage` off by default) | Tab close, or immediate wipe via `Clear Local Data`. |
+| **Replay Browse** | HTTP GET to workspace routes | None | TLS in transit; `Referrer-Policy: no-referrer` | Zero app DB state; zero cookies set. |
+| **Owner Grant Mint (`/api/admin/grants`)** | Budget parameters (`tokenBudgetWeighted`, `callsBudget`, `ttlHours`) | `grants(id, kid, salt, code_hmac, status, budgets, expires_at)` | 16-byte CSPRNG `salt` + `HMAC-SHA256(GRANT_CODE_PEPPER, salt \|\| code)` | 48h issue TTL; deleted 7 days after expiry by `purge_expired_privacy_state()`. |
+| **Self-Serve Grant Request (`/api/grants/request`)** | Recipient email, ALTCHA proof-of-work, transient IP | `grants(...)`, `altcha_replay_nonces(challenge_hash, expires_at)`, `rate_limit_counters(...)`, optional `cooldown_hashes(email_hmac, expires_at)` when `COOLDOWN_MODE=hmac` | Plaintext email discarded after `fetch('https://api.resend.com/emails')`; IP hashed with daily rotating key; optional email cooldown uses `HMAC-SHA256(EMAIL_COOLDOWN_PEPPER, email)` | App DB email: `0s` (`COOLDOWN_MODE=off`) or `24h` HMAC (`COOLDOWN_MODE=hmac`). Resend retention: `30 days` (manual check `d`). |
+| **Grant Redemption (`/api/grants/redeem`)** | `BLR-...` code from `#code=` fragment (POST JSON body) | `grants.status='redeemed'`, `grants.session_jti` | URL fragment never leaves browser in GET/Referer; cookie signed with `HMAC-SHA256(GRANT_SESSION_SECRET, claims)` | Session max `24h`; revocable anytime via `POST /api/grants/logout`. |
+| **Live AI Call (`/api/chat`)** | Synthetic prompt, signed `balaerion_grant` cookie | Atomic counter increment on `grants(tokens_used_weighted, calls_used)` and `daily_usage_circuit(used_weighted)` | Pre-dispatch regex PII gate blocks VAT/IBAN/email/phone before any DB spend or upstream call | Prompt text: `0s` in app DB; counters purged after 7-14 days. |
