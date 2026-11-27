@@ -173,3 +173,17 @@ The prototypes show **what the system does**. The testable specifications (Accep
 | Change a threshold | Search the constant. They are not abstracted, deliberately |
 
 Thresholds are hard-coded on purpose. **Abstracting them would hide the numbers the prototype exists to argue about.**
+
+---
+
+## 9. Private Full-Stack Workspace & Reviewer Grants
+
+Alongside these zero-network browser rehearsals, the portfolio runs an unlisted **Next.js 14 + Supabase EU (`pgvector` + `tsvector`) + 12-Provider AI** live deployment (`balaerion-app/`).
+
+| Control | How Live Access Is Governed |
+|---|---|
+| **Public Pages Default** | **Zero login, zero cookies.** All static demos and Offline Signal Press exports work offline immediately. |
+| **Invite-Only Approval Queue** | Live LLM, hybrid SSoT RAG, and OSINT endpoints never auto-mint public tokens. Reviewer requests notify the architect via Telegram for manual approval (`GRANT_APPROVAL_MODE=owner_approval`). |
+| **Single-Use Grant (`BLR-...`)** | Approved reviewers receive a `#code=BLR-...` URL fragment link (`25` live calls, `12,000` weighted tokens, `48h` issue TTL). Client JS scrubs the hash from browser history immediately and requires an explicit click so link scanners cannot pre-burn the grant. |
+| **Request Channel** | **[Open the 2-Click Reviewer Grant Request Template on GitHub](https://github.com/aertsjef1989/Autonomous-SSoT-Architecture/issues/new?template=request-sandbox-grant.yml)** |
+

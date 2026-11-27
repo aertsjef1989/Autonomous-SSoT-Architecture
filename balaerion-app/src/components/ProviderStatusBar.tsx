@@ -13,6 +13,15 @@ export interface ProviderStatusItem {
   status: 'LIVE' | 'FALLBACK';
 }
 
+export interface OsintStatusItem {
+  id: string;
+  shortName: string;
+  displayName: string;
+  requiresKey: boolean;
+  envVar: string;
+  status: 'LIVE' | 'FALLBACK';
+}
+
 const INITIAL_PROVIDERS: ProviderStatusItem[] = [
   { id: 'nvidia-nim', shortName: 'NVIDIA NIM', displayName: 'NVIDIA NIM', lane: 'general', pinnedModelId: 'qwen/qwen3-235b-a22b', supportedModels: ['qwen/qwen3-235b-a22b'], envVarLabel: 'NVIDIA_API_KEY', status: 'FALLBACK' },
   { id: 'groq', shortName: 'Groq', displayName: 'GroqCloud', lane: 'general', pinnedModelId: 'llama-3.3-70b-versatile', supportedModels: ['llama-3.3-70b-versatile'], envVarLabel: 'GROQ_API_KEY', status: 'FALLBACK' },
@@ -28,18 +37,37 @@ const INITIAL_PROVIDERS: ProviderStatusItem[] = [
   { id: 'together', shortName: 'Together Free', displayName: 'Together AI Free', lane: 'general', pinnedModelId: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free', supportedModels: ['meta-llama/Llama-3.3-70B-Instruct-Turbo-Free'], envVarLabel: 'TOGETHER_API_KEY', status: 'FALLBACK' },
 ];
 
+const INITIAL_OSINT: OsintStatusItem[] = [
+  { id: 'dns-doh', shortName: 'DNS / SPF / DMARC', displayName: 'Cloudflare DoH', requiresKey: false, envVar: '(Zero Key)', status: 'LIVE' },
+  { id: 'web-tech-scanner', shortName: 'HTML CMS & Pixel', displayName: 'Head Stack Scanner', requiresKey: false, envVar: '(Zero Key)', status: 'LIVE' },
+  { id: 'fr-siren-open', shortName: 'FR SIREN Open API', displayName: 'DINUM Open API', requiresKey: false, envVar: '(Zero Key)', status: 'LIVE' },
+  { id: 'tavily', shortName: 'Tavily OSINT', displayName: 'Tavily Search', requiresKey: true, envVar: 'TAVILY_API_KEY', status: 'FALLBACK' },
+  { id: 'serper', shortName: 'Serper SERP', displayName: 'Serper.dev', requiresKey: true, envVar: 'SERPER_API_KEY', status: 'FALLBACK' },
+  { id: 'urlscan', shortName: 'urlscan.io', displayName: 'urlscan.io', requiresKey: true, envVar: 'URLSCAN_API_KEY', status: 'FALLBACK' },
+  { id: 'exa', shortName: 'Exa Neural', displayName: 'Exa Search', requiresKey: true, envVar: 'EXA_API_KEY', status: 'FALLBACK' },
+  { id: 'cbeapi-be', shortName: 'BE KBO (CBEAPI)', displayName: 'CBEAPI', requiresKey: true, envVar: 'CBEAPI_KEY', status: 'FALLBACK' },
+];
+
 export function ProviderStatusBar() {
   const [providers, setProviders] = useState<ProviderStatusItem[]>(INITIAL_PROVIDERS);
   const [liveCount, setLiveCount] = useState<number>(0);
+  const [osintCollectors, setOsintCollectors] = useState<OsintStatusItem[]>(INITIAL_OSINT);
+  const [osintLiveCount, setOsintLiveCount] = useState<number>(3);
 
   useEffect(() => {
     let active = true;
     fetch('/api/providers/status', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!active || !data || !Array.isArray(data.providers)) return;
-        setProviders(data.providers);
-        setLiveCount(typeof data.liveCount === 'number' ? data.liveCount : 0);
+        if (!active || !data) return;
+        if (Array.isArray(data.providers)) {
+          setProviders(data.providers);
+          setLiveCount(typeof data.liveCount === 'number' ? data.liveCount : 0);
+        }
+        if (Array.isArray(data.osintCollectors)) {
+          setOsintCollectors(data.osintCollectors);
+          setOsintLiveCount(typeof data.osintLiveCount === 'number' ? data.osintLiveCount : 3);
+        }
       })
       .catch(() => {
         /* keep deterministic fallback state */
@@ -95,6 +123,7 @@ export function ProviderStatusBar() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))',
           gap: '8px',
+          marginBottom: '14px',
         }}
       >
         {providers.map((p) => {
@@ -140,6 +169,90 @@ export function ProviderStatusBar() {
             </div>
           );
         })}
+      </div>
+
+      {/* Hybrid Card-Free OSINT Collectors Strip */}
+      <div
+        style={{
+          borderTop: '1px solid #232836',
+          paddingTop: '12px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '10px',
+          }}
+        >
+          <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: '#B9C0CE', textTransform: 'uppercase' }}>
+            HYBRID OSINT ENRICHMENT LAYER (PROSPECTHUB)
+          </div>
+          <div
+            style={{
+              fontSize: '11.5px',
+              fontWeight: 700,
+              padding: '3px 9px',
+              borderRadius: '999px',
+              backgroundColor: 'rgba(33, 224, 220, 0.12)',
+              border: '1px solid #21E0DC',
+              color: '#21E0DC',
+            }}
+          >
+            {osintLiveCount} / {osintCollectors.length} LIVE (3 Zero-Key Built-In)
+          </div>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 195px), 1fr))',
+            gap: '8px',
+          }}
+        >
+          {osintCollectors.map((c) => {
+            const isLive = c.status === 'LIVE';
+            return (
+              <div
+                key={c.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '8px',
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  backgroundColor: '#151923',
+                  border: `1px solid ${isLive ? '#21E0DC' : '#232836'}`,
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF', overflowWrap: 'anywhere' }}>
+                    {c.shortName}
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#8B95A5', overflowWrap: 'anywhere' }}>{c.envVar}</div>
+                </div>
+                <span
+                  style={{
+                    flexShrink: 0,
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    padding: '2px 7px',
+                    borderRadius: '999px',
+                    backgroundColor: isLive ? '#21E0DC' : '#232836',
+                    color: isLive ? '#08090D' : '#B9C0CE',
+                  }}
+                >
+                  {c.status}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

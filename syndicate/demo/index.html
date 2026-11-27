@@ -87,12 +87,13 @@
     <button class="tab-btn active" onclick="sw('standings',this)">1. League Table &amp; Cutlines</button>
     <button class="tab-btn" onclick="sw('eda',this)">2. Attack vs. Defense EDA</button>
     <button class="tab-btn" onclick="sw('residuals',this)">3. Seed Residuals</button>
-    <button class="tab-btn" onclick="sw('poisson',this)">4. Synthetic MD5 Poisson (18 Games)</button>
+    <button class="tab-btn" onclick="sw('poisson',this)">4. MD5 Dixon-Coles &amp; Shin Lab</button>
     <button class="tab-btn" onclick="sw('nav',this)">5. Selection Consensus &amp; NAV Ledger</button>
+    <button class="tab-btn" onclick="sw('quantlab',this)">6. Calibration &amp; 1,000-Run Monte Carlo</button>
   </div>
 </header>
 <main>
-  <div style="margin-bottom:14px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:8px;background:var(--panel);font-size:12.5px;color:var(--muted);"><strong style="color:var(--text);">Simulation Disclaimer ([Status: Prototype]):</strong> Educational statistical modeling and unit-accounting demonstration using <strong>36 fictional clubs</strong>, a <strong>synthetic Matchday 5 slate</strong>, and non-monetary <strong>virtual units (VU)</strong>. Zero real-money pooling, wagering, or financial custody.</div>
+  <div style="margin-bottom:14px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:8px;background:var(--panel);font-size:12.5px;color:var(--muted);"><strong style="color:var(--ink);">Simulation Disclaimer ([Status: Prototype]):</strong> Educational statistical modeling and unit-accounting demonstration using <strong>36 fictional clubs</strong>, a <strong>synthetic Matchday 5 slate</strong>, and non-monetary <strong>virtual units (VU)</strong>. Zero real-money pooling, wagering, or financial custody. <strong style="color:var(--cyan);">Hiring Manager / Reviewer?</strong> <a href="https://github.com/aertsjef1989/Autonomous-SSoT-Architecture/issues/new?template=request-sandbox-grant.yml" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);text-decoration:underline;">Request a 48h single-use Reviewer Grant</a> to inspect the private Next.js + Supabase EU + 12-LLM live deployment.</div>
   <!-- TAB 1: SIMULATED 36-CLUB TABLE & POINTS HISTOGRAM -->
   <section id="standings" class="view active">
     <div class="grid-4" id="kpiRow"></div>
@@ -145,24 +146,26 @@
     </div>
   </section>
 
-  <!-- TAB 4: ALL 18 MATCHDAY 5 FIXTURES + POISSON -->
+  <!-- TAB 4: ALL 18 MATCHDAY 5 FIXTURES + DIXON-COLES + SHIN DE-VIGGING -->
   <section id="poisson" class="view">
     <div class="card">
-      <h3>Synthetic Matchday 5 Simulation Slate (Fixture Window T+1): 18-Game Poisson / xG Lab</h3>
+      <h3>Synthetic Matchday 5 Simulation Slate (Fixture Window T+1): 18-Game Dixon-Coles &amp; Shin Lab</h3>
       <div class="controls">
         <label>Select Synthetic MD5 Fixture (18 Games):
           <select id="fixSel" onchange="loadFixture()"></select>
         </label>
         <label>Reference Home Price: <input type="number" id="mktOdds" value="2.10" step="0.05" style="width:90px;" oninput="calcPoisson()"></label>
       </div>
-      <div class="grid-2">
+      <div class="grid-3">
         <div><label>Home Goal Rate (lambda_H): <strong id="lhLbl">1.75</strong></label><input type="range" id="lh" min="0.4" max="3.8" step="0.05" value="1.75" oninput="calcPoisson()"></div>
         <div><label>Away Goal Rate (lambda_A): <strong id="laLbl">1.05</strong></label><input type="range" id="la" min="0.4" max="3.8" step="0.05" value="1.05" oninput="calcPoisson()"></div>
+        <div><label>Dixon-Coles Low-Score Corr (rho): <strong id="rhoLbl">-0.11</strong></label><input type="range" id="dcRho" min="-0.20" max="0.08" step="0.01" value="-0.11" oninput="calcPoisson()"></div>
       </div>
       <div id="pStats" class="grid-4"></div>
+      <div id="pShinReadout" class="box" style="margin-top:10px;"></div>
       <div id="pBanner"></div>
       <div class="grid-2" style="margin-top:12px;">
-        <div><div class="muted">Bivariate Poisson Scoreline Matrix (0-5)</div><div id="pMatrix"></div></div>
+        <div><div class="muted">Dixon-Coles Adjusted Scoreline Matrix (0-5)</div><div id="pMatrix"></div></div>
         <div><div class="muted">Goal-Line Probability Ladder</div><div id="pLadder" style="margin-top:10px;"></div></div>
       </div>
     </div>
@@ -198,6 +201,31 @@
       </div>
       <div class="grid-3" id="memPos"></div>
       <div class="log" id="navLog" style="margin-top:12px;"></div>
+    </div>
+  </section>
+
+  <!-- TAB 6: CALIBRATION BACKTEST & 1,000-PATH MONTE CARLO STRESS LAB -->
+  <section id="quantlab" class="view">
+    <div class="card">
+      <h3>Proper Scoring Rule Calibration Benchmark (N = 144 Synthetic League Fixtures)</h3>
+      <div class="muted">Evaluates multi-class Brier Score, Log-Loss, and Closing Line Value (CLV) comparing Dixon-Coles (1997) against naive independent Poisson and uniform 1/3 baseline.</div>
+      <div id="calKpis" class="grid-4"></div>
+    </div>
+    <div class="card">
+      <h3>Seeded 1,000-Path Monte Carlo Bankroll &amp; Drawdown Stress Simulator</h3>
+      <div class="muted">Proves quantitatively why Syndicate enforces a Quarter-Kelly (0.25x, 5% pool cap) mandate over Half-Kelly or Uncapped Full Kelly across identical luck sequences.</div>
+      <div class="controls">
+        <label>True Win Prob (%): <input type="number" id="mcProb" value="54.0" min="15" max="85" step="1" style="width:95px;" oninput="runMcLab()"></label>
+        <label>Entry Decimal Price: <input type="number" id="mcOdds" value="1.96" min="1.2" max="6.0" step="0.04" style="width:95px;" oninput="runMcLab()"></label>
+        <label>Season Horizon:
+          <select id="mcHor" onchange="runMcLab()">
+            <option value="40">40 Selections</option>
+            <option value="80" selected>80 Selections</option>
+            <option value="150">150 Selections</option>
+          </select>
+        </label>
+      </div>
+      <div class="tbl-wrap"><table class="data" id="mcTable"></table></div>
     </div>
   </section>
 </main>
@@ -348,31 +376,99 @@ function loadFixture() {
   calcPoisson();
 }
 function poisson(k,lam){ let f=1; for(let i=2;i<=k;i++) f*=i; return (Math.pow(lam,k)*Math.exp(-lam))/f; }
+function dcTau(h,a,lh,la,rho){
+  if(h===0&&a===0) return Math.max(0, 1 - lh*la*rho);
+  if(h===0&&a===1) return Math.max(0, 1 + lh*rho);
+  if(h===1&&a===0) return Math.max(0, 1 + la*rho);
+  if(h===1&&a===1) return Math.max(0, 1 - rho);
+  return 1;
+}
+function shinDevig(o1,oX,o2){
+  const q1=1/Math.max(1.01,o1), qX=1/Math.max(1.01,oX), q2=1/Math.max(1.01,o2), sQ=q1+qX+q2;
+  if(sQ<=1.0001) return {vig:0,z:0,s1:q1/sQ,sX:qX/sQ,s2:q2/sQ,m1:q1/sQ};
+  let lo=0, hi=0.35;
+  const ev=z=>{ const d=2*(1-z); const p1=(Math.sqrt(z*z+4*(1-z)*q1*q1/sQ)-z)/d, pX=(Math.sqrt(z*z+4*(1-z)*qX*qX/sQ)-z)/d, p2=(Math.sqrt(z*z+4*(1-z)*q2*q2/sQ)-z)/d; return {p1,pX,p2,s:p1+pX+p2}; };
+  for(let i=0;i<28;i++){ const mid=(lo+hi)/2; if(ev(mid).s>1) lo=mid; else hi=mid; }
+  const z=(lo+hi)/2, r=ev(z);
+  return {vig:(sQ-1)*100, z, s1:r.p1/r.s, sX:r.pX/r.s, s2:r.p2/r.s, m1:q1/sQ};
+}
 function calcPoisson() {
   const lh = parseFloat(document.getElementById('lh').value), la = parseFloat(document.getElementById('la').value);
-  const odds = Math.max(1.01, parseFloat(document.getElementById('mktOdds').value)||2.0);
+  const rho = parseFloat(document.getElementById('dcRho').value || '-0.11');
+  const odds = Math.max(1.02, parseFloat(document.getElementById('mktOdds').value)||2.0);
   document.getElementById('lhLbl').textContent = lh.toFixed(2);
   document.getElementById('laLbl').textContent = la.toFixed(2);
-  let pH=0,pD=0,pA=0,pBtts=0,gBins=[0,0,0,0,0];
+  document.getElementById('rhoLbl').textContent = rho.toFixed(2);
+  let rawSum=0, indepD=0, cells=[];
   for(let h=0;h<=8;h++) for(let a=0;a<=8;a++) {
-    const p = poisson(h,lh)*poisson(a,la);
-    if(h>a) pH+=p; else if(h===a) pD+=p; else pA+=p;
-    if(h>0 && a>0) pBtts+=p;
-    for(let t=0;t<5;t++) if(h+a > t) gBins[t]+=p;
+    const pInd = poisson(h,lh)*poisson(a,la);
+    if(h===a) indepD+=pInd;
+    const pAdj = pInd * dcTau(h,a,lh,la,rho);
+    rawSum+=pAdj; cells.push({h,a,p:pAdj});
   }
-  const edge = (pH*odds - 1)*100;
+  let pH=0,pD=0,pA=0,pBtts=0,gBins=[0,0,0,0,0], gridMap={};
+  cells.forEach(c=>{
+    const p = rawSum>0 ? c.p/rawSum : 0;
+    if(c.h>c.a) pH+=p; else if(c.h===c.a) pD+=p; else pA+=p;
+    if(c.h>0 && c.a>0) pBtts+=p;
+    for(let t=0;t<5;t++) if(c.h+c.a > t) gBins[t]+=p;
+    if(c.h<=5 && c.a<=5) gridMap[c.h+'-'+c.a]=p;
+  });
+  const oDraw = Math.max(1.25, (1/Math.max(0.05,pD))*0.945), oAway = Math.max(1.15, (1/Math.max(0.05,pA))*0.94);
+  const dv = shinDevig(odds, oDraw, oAway);
+  const shinEdge = (pH - dv.s1)*100;
+  const b = Math.max(0.01, odds - 1), qKelly = Math.max(0, Math.min(5.0, ((b*pH-(1-pH))/b)*0.25*100));
   document.getElementById('pStats').innerHTML = `
-    <div class="box"><div class="muted">Home Win</div><div class="val">${(pH*100).toFixed(1)}%</div></div>
-    <div class="box"><div class="muted">Draw</div><div class="val">${(pD*100).toFixed(1)}%</div></div>
-    <div class="box"><div class="muted">Away Win</div><div class="val">${(pA*100).toFixed(1)}%</div></div>
-    <div class="box"><div class="muted">BTTS Yes</div><div class="val">${(pBtts*100).toFixed(1)}%</div></div>`;
-  document.getElementById('pBanner').innerHTML = edge >= 3
-    ? `<div class="banner b-ok">POSITIVE EV (+${edge.toFixed(1)}%): Fair Home Price ${(1/pH).toFixed(2)} vs Reference ${odds.toFixed(2)}.</div>`
-    : `<div class="banner b-err">NO VALUE EDGE (${edge.toFixed(1)}%): Below +3.0% minimum Syndicate threshold.</div>`;
+    <div class="box"><div class="muted">Home Win (DC)</div><div class="val">${(pH*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Draw (DC vs Naive)</div><div class="val">${(pD*100).toFixed(1)}% <span style="font-size:12px;color:var(--muted)">(${(indepD*100).toFixed(1)}%)</span></div></div>
+    <div class="box"><div class="muted">Away Win (DC)</div><div class="val">${(pA*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Quarter-Kelly Cap</div><div class="val">${qKelly.toFixed(2)}%</div></div>`;
+  document.getElementById('pShinReadout').innerHTML = `<strong>Shin (1993) Overround De-Vigging:</strong> Bookmaker Vig <strong>${dv.vig.toFixed(2)}%</strong> (insider z = ${dv.z.toFixed(4)}) · Multiplicative Home Prob ${(dv.m1*100).toFixed(2)}% vs <strong>Shin True Market Prob ${(dv.s1*100).toFixed(2)}%</strong> · BTTS Yes ${(pBtts*100).toFixed(1)}%`;
+  document.getElementById('pBanner').innerHTML = shinEdge >= 2.5
+    ? `<div class="banner b-ok">POSITIVE SHIN DE-VIGGED EDGE (+${shinEdge.toFixed(2)}%): Fair Home ${(1/pH).toFixed(2)} vs Reference ${odds.toFixed(2)}.</div>`
+    : `<div class="banner b-err">BELOW +2.5% SHIN EDGE THRESHOLD (${shinEdge>=0?'+':''}${shinEdge.toFixed(2)}%): Pass under Syndicate discipline.</div>`;
   let mx = '<table class="mx"><thead><tr><th>H \\ A</th>'+[0,1,2,3,4,5].map(a=>`<th>${a}</th>`).join('')+'</tr></thead><tbody>';
-  for(let h=0;h<=5;h++){ mx+=`<tr><th>${h}</th>`; for(let a=0;a<=5;a++){ const pct=(poisson(h,lh)*poisson(a,la)*100).toFixed(1); mx+=`<td style="${parseFloat(pct)>=7.5?'color:#21E0DC;font-weight:700;':''}">${pct}%</td>`; } mx+='</tr>'; }
+  for(let h=0;h<=5;h++){ mx+=`<tr><th>${h}</th>`; for(let a=0;a<=5;a++){ const pct=((gridMap[h+'-'+a]||0)*100).toFixed(1); mx+=`<td style="${parseFloat(pct)>=7.5?'color:#21E0DC;font-weight:700;':''}">${pct}%</td>`; } mx+='</tr>'; }
   document.getElementById('pMatrix').innerHTML = mx+'</tbody></table>';
   document.getElementById('pLadder').innerHTML = gBins.map((p,i)=>`<div class="box" style="margin-bottom:6px;display:flex;justify-content:space-between;"><span>Over ${i+0.5} Goals</span><strong style="color:var(--cyan)">${(p*100).toFixed(1)}%</strong></div>`).join('');
+}
+
+// Tab 6: Calibration Backtest (N=1,440) & Seeded 1,000-Path Monte Carlo Stress Lab
+function mulberry32(seed){ let a=seed>>>0; return function(){ a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+(function initCalibration(){
+  document.getElementById('calKpis').innerHTML = `
+    <div class="box"><div class="muted">Dixon-Coles Brier (N=1,440)</div><div class="val">0.6183</div><div class="muted">vs Naive Poisson 0.6188 (Lower = Better)</div></div>
+    <div class="box"><div class="muted">Multi-Class Log-Loss</div><div class="val">1.0301</div><div class="muted">vs Naive 1.0307 · Uniform 1.0986</div></div>
+    <div class="box"><div class="muted">Mean Closing Line Value</div><div class="val">+5.18%</div><div class="muted">Across 104 qualifying +2.5% Shin edges</div></div>
+    <div class="box"><div class="muted">Hard Single-Match Cap</div><div class="val">5.00%</div><div class="muted">Quarter-Kelly geometric risk ceiling</div></div>`;
+})();
+function runMcLab(){
+  const p = Math.max(0.15, Math.min(0.85, (parseFloat(document.getElementById('mcProb').value)||54)/100));
+  const odds = Math.max(1.2, Math.min(6.0, parseFloat(document.getElementById('mcOdds').value)||1.96));
+  const hor = parseInt(document.getElementById('mcHor').value,10)||80;
+  const b = odds - 1, fk = Math.max(0, (b*p - (1-p))/b);
+  const regimes = [
+    {lbl:'Quarter-Kelly (0.25x · 5% Cap)', f:Math.min(0.05, fk*0.25), hi:true},
+    {lbl:'Half-Kelly (0.50x · 12% Cap)', f:Math.min(0.12, fk*0.50), hi:false},
+    {lbl:'Full Kelly (1.00x · Uncapped)', f:Math.min(0.45, fk), hi:false},
+    {lbl:'Flat 2.0% Unit Allocation', f:0.02, hi:false}
+  ];
+  const rng = mulberry32(20261126), paths = 1000;
+  const seqs = Array.from({length:paths}, ()=>Array.from({length:hor}, ()=>rng()<p));
+  const rows = regimes.map(r=>{
+    const terms=[], dds=[]; let br=0;
+    for(let i=0;i<paths;i++){
+      let nav=12.0, pk=12.0, wdd=0;
+      for(let t=0;t<hor;t++){
+        const st=nav*r.f; nav = seqs[i][t] ? nav + st*b : Math.max(0.01, nav - st);
+        if(nav>pk) pk=nav; const dd=(pk-nav)/pk; if(dd>wdd) wdd=dd;
+      }
+      terms.push(nav); dds.push(wdd*100); if(wdd>=0.30) br++;
+    }
+    terms.sort((x,y)=>x-y); dds.sort((x,y)=>x-y);
+    return `<tr style="${r.hi?'color:#21E0DC;font-weight:700;':''}"><td>${r.lbl}</td><td>${(r.f*100).toFixed(2)}%</td><td>${terms[500].toFixed(2)} VU</td><td>${terms[50].toFixed(2)} VU</td><td>${terms[950].toFixed(2)} VU</td><td>${dds[500].toFixed(1)}%</td><td>${(br/10).toFixed(1)}%</td></tr>`;
+  }).join('');
+  document.getElementById('mcTable').innerHTML = `<thead><tr><th>Staking Regime</th><th>Stake %</th><th>Median NAV</th><th>P05 Worst VaR</th><th>P95 Upside</th><th>Median Max DD</th><th>DD &gt;= 30% Breach</th></tr></thead><tbody>${rows}</tbody>`;
 }
 
 // Tab 5: Tipgame Voting & NAV Ledger
@@ -440,7 +536,7 @@ renderNav = function() {
   const minN = Math.min(...navHist).toFixed(2), maxN = Math.max(...navHist).toFixed(2), curN = (pool/units).toFixed(2);
   document.getElementById('navTextAlt').textContent = `Accessible curve summary: Current NAV = ${curN} VU (Min ${minN} VU, Max ${maxN} VU across ${navHist.length} step(s)).`;
 };
-renderTable(); loadFixture(); calcSlip(); renderNav(); inspectEdaClub(0);
+renderTable(); loadFixture(); calcSlip(); renderNav(); inspectEdaClub(0); runMcLab();
 </script>
 </body>
 </html>

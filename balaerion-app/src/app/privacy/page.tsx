@@ -108,15 +108,16 @@ export default function PrivacyNoticePage() {
                 <td style={cellBody}>48h issue TTL (24h post-redeem); deleted 7 days after expiry by hourly pg_cron.</td>
               </tr>
               <tr>
-                <td style={cellBody}>Reviewer email (optional self-serve grant)</td>
-                <td style={cellBody}>Server RAM + Resend API</td>
+                <td style={cellBody}>Reviewer grant request (owner-approved queue)</td>
+                <td style={cellBody}>Server RAM + Owner Telegram Bot API (and Resend API if approved)</td>
                 <td style={cellBody}>
-                  Never written to application DB or logs. If <code>COOLDOWN_MODE=hmac</code>, only{' '}
-                  <code>HMAC-SHA256(pepper, email)</code> is kept to block mail-bombing (default{' '}
-                  <code>COOLDOWN_MODE=off</code> stores nothing).
+                  Never written to application Postgres tables or logs. Default <code>GRANT_APPROVAL_MODE=owner_approval</code>{' '}
+                  forwards request metadata transiently to the owner&apos;s private Telegram chat so grants are never
+                  auto-minted publicly. If <code>COOLDOWN_MODE=hmac</code>, only <code>HMAC-SHA256(pepper, email)</code>{' '}
+                  is kept for 24h dedupe.
                 </td>
                 <td style={cellBody}>
-                  App DB: 0s (or 24h HMAC cooldown). Resend free tier retains delivery metadata for 30 days.
+                  App DB: 0s (or 24h HMAC cooldown). Resend free tier retains delivery metadata for 30 days when used.
                 </td>
               </tr>
               <tr>

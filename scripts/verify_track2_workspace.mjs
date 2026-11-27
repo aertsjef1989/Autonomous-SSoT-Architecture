@@ -217,6 +217,7 @@ const appProc = spawn(
       OWNER_ACCESS_SECRET: OWNER_SECRET,
       NVIDIA_API_KEY: 'nvapi-synthetic-key-present-check',
       GROQ_API_KEY: 'gsk-synthetic-key-present-check',
+      TAVILY_API_KEY: 'tvly-synthetic-osint-key-present-check',
       MISTRAL_API_KEY: '',
       FOOTBALL_DATA_API_KEY: '',
     },
@@ -236,14 +237,17 @@ try {
     await new Promise((r) => setTimeout(r, 250));
   }
 
-  console.log('=== [2/5] 12-Provider Status Bar API (LIVE vs FALLBACK, Zero Key Leakage) ===');
+  console.log('=== [2/6] 12-Provider LLM & 8-Collector OSINT Status API (Zero Key Leakage) ===');
   const provStatus = await (await fetch(`${base}/api/providers/status`)).json();
   assert.equal(provStatus.totalCount, 12);
   assert.equal(provStatus.liveCount, 2, 'Expected NVIDIA + Groq LIVE, remaining 10 FALLBACK');
-  assert.ok(!JSON.stringify(provStatus).includes('nvapi-synthetic'), 'Provider status must never leak secret values!');
-  console.log('  PASS: /api/providers/status reported 2/12 LIVE, 10/12 FALLBACK, 0 secret leaks.');
+  assert.equal(provStatus.osintTotalCount, 8);
+  assert.equal(provStatus.osintLiveCount, 4, 'Expected 3 built-in zero-key collectors + Tavily LIVE');
+  assert.ok(!JSON.stringify(provStatus).includes('nvapi-synthetic'), 'Provider status must never leak LLM secret values!');
+  assert.ok(!JSON.stringify(provStatus).includes('tvly-synthetic'), 'Provider status must never leak OSINT secret values!');
+  console.log('  PASS: /api/providers/status reported 2/12 LLM LIVE, 4/8 OSINT LIVE, 0 secret leaks.');
 
-  console.log('=== [3/5] Owner Unlimited Live Mode & Grounded SSoT Conversational RAG ===');
+  console.log('=== [3/6] Owner Unlimited Live Mode & Grounded SSoT Conversational RAG ===');
   const unauthChat = await fetch(`${base}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -263,7 +267,6 @@ try {
   assert.equal(ownerStatus.role, 'owner');
   assert.equal(ownerStatus.unlimited, true);
 
-  // Owner chat on FR market -> triggers staleWarning from REVIEW_DUE TPL_FR_003 and returns 200 with 0 grant spend!
   const ownerFrChat = await fetch(`${base}/api/chat`, {
     method: 'POST',
     headers: {
@@ -278,7 +281,6 @@ try {
   assert.equal(ownerFrJson.chargedTokensWeighted, 0);
   assert.equal(ownerFrJson.staleWarning, true, 'FR REVIEW_DUE template must trigger staleWarning');
 
-  // Owner Press AI Assist call -> returns 200 without needing a single-use grant!
   const ownerAssist = await fetch(`${base}/api/press/assist`, {
     method: 'POST',
     headers: {
@@ -296,17 +298,41 @@ try {
   assert.equal(ownerAssist.status, 200);
   console.log('  PASS: Owner unlimited mode verified on /api/grants/status, /api/chat, and /api/press/assist + market-scoped citations & staleWarning.');
 
-  console.log('=== [4/5] Syndicate Matchday Live/Fallback Endpoint ===');
-  const synRes = await (await fetch(`${base}/api/syndicate/live`)).json();
-  assert.equal(synRes.feedStatus, 'FALLBACK');
-  assert.ok(Array.isArray(synRes.fixtures) && synRes.fixtures.length >= 3);
-  for (const fx of synRes.fixtures) {
-    assert.ok(fx.quarterKellyPct >= 0 && fx.quarterKellyPct <= 5.0, 'Quarter-Kelly must respect 5.0% pool cap');
-    assert.ok(Array.isArray(fx.topScorelines) && fx.topScorelines.length > 0);
+  console.log('=== [4/6] Hybrid OSINT Inspector Two-Way SSRF & PII Scrubbing Proof ===');
+  for (const badHost of ['127.0.0.1', 'localhost', 'internal-service.local', 'http://169.254.169.254/latest']) {
+    const ssrfRes = await fetch(`${base}/api/osint/inspect`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${OWNER_SECRET}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain: badHost, entity: 'SSRF Probe', country: 'NL' }),
+    });
+    assert.equal(ssrfRes.status, 400, `Planted SSRF target ${badHost} must fail loudly with HTTP 400`);
   }
-  console.log('  PASS: /api/syndicate/live Poisson probabilities, scoreline grid, and 5% Quarter-Kelly cap verified.');
+  const cleanOsintRes = await fetch(`${base}/api/osint/inspect`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domain: 'vuurtoren-atelier.example', entity: 'Kapsalon Vuurtoren BV', country: 'BE' }),
+  });
+  assert.equal(cleanOsintRes.status, 200, 'Clean synthetic domain must pass');
+  const cleanOsintJson = await cleanOsintRes.json();
+  assert.equal(cleanOsintJson.inspection.mode, 'synthetic_calibration');
+  assert.ok(cleanOsintJson.inspection.readinessScore >= 2.5 && cleanOsintJson.inspection.readinessScore <= 9.9);
+  console.log('  PASS: OSINT SSRF firewall blocked 4/4 loopback/metadata targets and served clean synthetic calibration.');
 
-  console.log('=== [5/5] Telegram Admin Endpoint Security Gate ===');
+  console.log('=== [5/6] Syndicate Dixon-Coles, Shin De-Vigging, Calibration & Monte Carlo Proof ===');
+  const synRes = await (await fetch(`${base}/api/syndicate/live?rho=-0.11`)).json();
+  assert.equal(synRes.feedStatus, 'FALLBACK');
+  assert.equal(synRes.rho, -0.11);
+  assert.ok(synRes.calibration.dixonColesBrier < synRes.calibration.independentPoissonBrier, 'Dixon-Coles must outperform naive Poisson on Brier score');
+  assert.ok(synRes.calibration.dixonColesLogLoss < synRes.calibration.uniformBaselineLogLoss);
+  assert.ok(Array.isArray(synRes.fixtures) && synRes.fixtures.length >= 4);
+  for (const fx of synRes.fixtures) {
+    assert.ok(fx.pDraw > fx.indepDrawPct, `Negative Dixon-Coles rho must lift draw density (${fx.pDraw} vs ${fx.indepDrawPct})`);
+    assert.ok(fx.quarterKellyPct >= 0 && fx.quarterKellyPct <= 5.0, 'Quarter-Kelly must respect 5.0% pool cap');
+    assert.ok(fx.overroundPct >= 0 && fx.shinHomeProbPct > 0);
+  }
+  console.log('  PASS: /api/syndicate/live Dixon-Coles draw shift, Shin de-vigging, Brier/Log-Loss calibration, and 5% Quarter-Kelly cap verified.');
+
+  console.log('=== [6/6] Telegram Admin Endpoint Security Gate ===');
   const tgUnauth = await fetch(`${base}/api/admin/telegram`);
   assert.equal(tgUnauth.status, 401);
   const tgOwner = await fetch(`${base}/api/admin/telegram`, {

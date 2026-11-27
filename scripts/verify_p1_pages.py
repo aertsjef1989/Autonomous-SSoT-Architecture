@@ -119,7 +119,11 @@ def main() -> int:
 
             page.on("request", on_req)
 
-            for r in honkit_and_demos + studio_rel:
+            for idx_r, r in enumerate(honkit_and_demos + studio_rel):
+                if idx_r > 0 and idx_r % 8 == 0:
+                    page.close()
+                    page = ctx.new_page()
+                    page.on("request", on_req)
                 current_route[0] = r
                 page.goto(f"http://127.0.0.1:{port}/{r}", wait_until="domcontentloaded")
                 res = page.evaluate(

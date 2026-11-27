@@ -73,6 +73,9 @@ export default function RedeemGrantPage() {
 
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [email, setEmail] = useState('');
+  const [reviewerName, setReviewerName] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [contextNote, setContextNote] = useState('');
   const [altchaState, setAltchaState] = useState<'idle' | 'working' | 'verified' | 'error'>('idle');
   const [altchaPayload, setAltchaPayload] = useState<string>('');
   const [requestFeedback, setRequestFeedback] = useState<string>('');
@@ -200,10 +203,19 @@ export default function RedeemGrantPage() {
       const res = await fetch('/api/grants/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, altcha: altchaPayload }),
+        body: JSON.stringify({
+          email,
+          reviewerName,
+          organization,
+          contextNote,
+          altcha: altchaPayload,
+        }),
       });
       const json = await res.json().catch(() => ({}));
       setEmail('');
+      setReviewerName('');
+      setOrganization('');
+      setContextNote('');
       setAltchaPayload('');
       setAltchaState('idle');
       setRequestFeedback(json.message || json.error || 'Request processed.');
@@ -375,7 +387,7 @@ export default function RedeemGrantPage() {
         </form>
       </section>
 
-      {/* Optional Self-Serve Email Grant Request with Self-Hosted ALTCHA */}
+      {/* Invite-Only + Owner-Approved Grant Request Queue with Self-Hosted ALTCHA */}
       <section
         style={{
           background: '#11141B',
@@ -385,31 +397,57 @@ export default function RedeemGrantPage() {
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: 17, color: '#FFFFFF' }}>Need a Self-Serve Reviewer Grant?</h2>
-            <p style={{ margin: '4px 0 0', fontSize: 13, color: '#B9C0CE' }}>
-              Protected by self-hosted ALTCHA (zero cookies, zero third-party scripts) and capped strictly inside free
-              daily email quota.
+          <div style={{ flex: '1 1 260px' }}>
+            <h2 style={{ margin: 0, fontSize: 17, color: '#FFFFFF' }}>Request Reviewer Grant (Owner-Approved Queue)</h2>
+            <p style={{ margin: '4px 0 0', fontSize: 13, color: '#B9C0CE', lineHeight: 1.5 }}>
+              To protect free-tier LLM and data quotas, live grants are never auto-minted publicly. Submitting below
+              verifies a browser proof-of-work check and notifies the architect via Telegram to approve and issue a
+              single-use <code>BLR-...</code> grant (25 live calls / 48h TTL).
             </p>
           </div>
           <button type="button" onClick={() => setShowRequestForm(!showRequestForm)} style={btnStyle}>
-            {showRequestForm ? 'Hide Request Form' : 'Request by Email'}
+            {showRequestForm ? 'Hide Request Form' : 'Request Owner Approval'}
           </button>
         </div>
 
         {showRequestForm ? (
           <form onSubmit={handleRequestGrant} style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <p style={{ margin: 0, fontSize: 12.5, color: '#B9C0CE', lineHeight: 1.55 }}>
-              <strong>Data minimization notice:</strong> Your email address is held only in transient server memory to
-              send one link via Resend (30-day processor log retention) and is never written to our database. Review{' '}
+              <strong>Data minimization notice:</strong> Your contact fields are held only in transient server memory to
+              notify the owner for manual grant approval and are never stored in our Postgres database. Review{' '}
               <Link href="/privacy" style={{ color: '#21E0DC' }}>
                 /privacy
               </Link>{' '}
               for full details.
             </p>
 
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 12 }}>
+              <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                Your Name (Optional)
+                <input
+                  type="text"
+                  value={reviewerName}
+                  onChange={(e) => setReviewerName(e.target.value)}
+                  placeholder="Hiring Manager / Technical Reviewer"
+                  maxLength={80}
+                  style={inputStyle}
+                />
+              </label>
+              <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                Organization / Role (Optional)
+                <input
+                  type="text"
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
+                  placeholder="Company or Role Context"
+                  maxLength={100}
+                  style={inputStyle}
+                />
+              </label>
+            </div>
+
             <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              Recipient Email (for single-use link)
+              Work Email (for approved single-use #code= link)
               <input
                 type="email"
                 required
@@ -417,6 +455,18 @@ export default function RedeemGrantPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="reviewer@example.com"
                 autoComplete="email"
+                style={inputStyle}
+              />
+            </label>
+
+            <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              Review Context Note (Optional)
+              <input
+                type="text"
+                value={contextNote}
+                onChange={(e) => setContextNote(e.target.value)}
+                placeholder="e.g., Inspecting SSoT RAG + Syndicate Quant Engine"
+                maxLength={200}
                 style={inputStyle}
               />
             </label>
@@ -467,7 +517,7 @@ export default function RedeemGrantPage() {
                   opacity: altchaState === 'verified' ? 1 : 0.6,
                 }}
               >
-                {busyRequest ? 'Dispatching...' : 'Send Single-Use Grant Link'}
+                {busyRequest ? 'Submitting Request...' : 'Submit for Owner Approval'}
               </button>
             </div>
 

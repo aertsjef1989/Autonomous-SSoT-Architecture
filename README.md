@@ -49,7 +49,7 @@ Modeled using Lean Six Sigma DMADV methodology on a standardized `100-seat` ente
 Teams adopting free-tier or multi-vendor LLM endpoints routinely expose unmasked client identifiers across non-EU providers, hardcode rotating model IDs, or allow generative prose to invent company registration facts.
 
 ### The Architecture
-Architected as a dual-mode serverless AI gateway (`Mode A` everyday assistant + `Mode B` ProspectHub 7-state GTM workspace; [Balaerion I](balaerion/01-Mandate-and-Core-Stack.md)) routing `23 AI personas` (`7` Mode A utilities + `16` Mode B specialists; [Balaerion IV](balaerion/04-MCP-Agents-and-Product-Layer.md)) across strict `lane: eu` and `lane: general` boundaries ([Balaerion III](balaerion/03-Security-and-GDPR-Routing-Lane.md)). Entity identifiers, VAT/KBO numbers, and tech-stack signals come exclusively from structured OSINT fixtures rather than LLM generation.
+Architected as a dual-mode serverless AI gateway (`Mode A` 12-provider standalone workbench + `Mode B` ProspectHub 7-state GTM workspace; [Balaerion I](balaerion/01-Mandate-and-Core-Stack.md)) routing `23 AI personas` (`7` Mode A utilities + `16` Mode B specialists; [Balaerion IV](balaerion/04-MCP-Agents-and-Product-Layer.md)) across strict `lane: eu` and `lane: general` boundaries ([Balaerion III](balaerion/03-Security-and-GDPR-Routing-Lane.md)). ProspectHub enriches accounts via a **Hybrid 8-Collector Card-Free OSINT Layer** (`3` zero-key built-in collectors for DNS/SPF/DMARC, HTML CMS/Pixel/CMP head scan, and FR SIREN Open API + `5` optional free-tier collectors; [Balaerion V](balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.md)) and compiles grounded briefs directly into Signal Studio (`16:9`) and Signal Press (`A4`) ([Balaerion VI](balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.md)).
 
 ### Verification & Safeguards
 Pre-dispatch regex and lane guards block VAT, IBAN, email, and `eu -> general` cross-lane leaks (`HTTP 403`) before any socket opens; throttled `eu` endpoints fail closed to deterministic Replay rather than crossing lanes; and public calibration fixtures use synthetic Belgian KBO `0123.456.789` (which intentionally fails mod-97 check `49 != 89` so it can never match a real company). Explore the recorded sandbox in the [Balaerion Interactive Demo](balaerion/demo/index.html).
@@ -59,13 +59,24 @@ Pre-dispatch regex and lane guards block VAT, IBAN, email, and `eu -> general` c
 ## Pillar III: Syndicate Highlights (`[Status: Prototype (Simulation) + Designed]`)
 
 ### The Constraint
-Group sports prediction pools and recreational tipgames suffer from two structural defects: intuition-driven picks ignore expected-goals (`xG`) variance, and shared spreadsheets silently dilute existing participants whenever members enter or exit mid-season.
+Group sports prediction pools and recreational tipgames suffer from two structural defects: intuition-driven picks ignore expected-goals (`xG`) variance, low-score draw clustering, and bookmaker overround skew, while shared spreadsheets silently dilute existing participants whenever members enter or exit mid-season.
 
 ### The Architecture
-Designed as a strictly non-financial statistical simulation and unit-accounting system ([Syndicate I](syndicate/01-Mandate-and-System-Architecture.md)): a bivariate Poisson / `xG` scoreline matrix engine (`0-0` to `7-7`, [Syndicate II](syndicate/02-Poisson-and-xG-Probability-Engine.md)), a quorum-gated selection card state machine with a hard `T - 15m` pre-kickoff lock ([Syndicate III](syndicate/03-Group-Tipgame-and-Slip-Integrity.md)), and a fixed-scale `NUMERIC(18,6)` unit-share Net Asset Value (`NAV`) ledger denominated in non-monetary **virtual units (`VU`)** ([Syndicate IV](syndicate/04-Unit-Share-NAV-Ledger-and-Operations.md)).
+Designed as a strictly non-financial statistical simulation and unit-accounting system ([Syndicate I](syndicate/01-Mandate-and-System-Architecture.md)): a **Dixon-Coles (1997)** correlated Poisson scoreline engine paired with **Shin (1993)** insider overround de-vigging ([Syndicate II](syndicate/02-Poisson-and-xG-Probability-Engine.md)), a quorum-gated selection card state machine with a hard `T - 15m` pre-kickoff lock ([Syndicate III](syndicate/03-Group-Tipgame-and-Slip-Integrity.md)), a fixed-scale `NUMERIC(18,6)` unit-share Net Asset Value (`NAV`) ledger denominated in non-monetary **virtual units (`VU`)** ([Syndicate IV](syndicate/04-Unit-Share-NAV-Ledger-and-Operations.md)), and proper scoring calibration (`Brier`, `Log-Loss`, `CLV`) plus `1,000-path` Monte Carlo Quarter-Kelly drawdown stress testing ([Syndicate V](syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.md)).
 
 ### Verification & Safeguards
-Enforces inter-matchday dealing cutoffs (blocking stale-NAV entry while selection cards are in play), `ROUND_HALF_EVEN` rounding with residual sweep, `UNIQUE (idempotency_key)` settlement protection, and PostgreSQL `REVOKE UPDATE, DELETE` triggers. Exercise the 36-club synthetic league table, Poisson lab, and `VU` ledger in the [Syndicate Simulation Demo](syndicate/demo/index.html).
+Enforces inter-matchday dealing cutoffs (blocking stale-NAV entry while selection cards are in play), `ROUND_HALF_EVEN` rounding with residual sweep, `UNIQUE (idempotency_key)` settlement protection, and PostgreSQL `REVOKE UPDATE, DELETE` triggers. Exercise the 36-club synthetic league table, Dixon-Coles + Shin lab, `1,000-run` Monte Carlo simulator, and `VU` ledger in the [Syndicate Simulation Demo](syndicate/demo/index.html).
+
+---
+
+## Live Full-Stack Workspace (Hiring Manager & Reviewer Access)
+
+This portfolio operates across **two deliberately separated surfaces** so every reviewer can inspect both clean-room specifications and live full-stack execution without risking free-tier quota abuse:
+
+1. **Public Static Surface (GitHub Pages · Zero Login, Zero Cookies):** Every architecture chapter, failure-mode rehearsal ([SSoT Demo](demo/index.html), [Balaerion Demo](balaerion/demo/index.html), [Syndicate 6-Tab Lab](syndicate/demo/index.html)), [Signal Studio](signal/02_studio/signal-studio.html) (`63` geometric SVG devices), and [Offline Signal Press](signal/press/index.html) (`12` A4 block types -> DOCX / PDF / Email HTML) runs immediately in your browser with **zero authentication**.
+2. **Private Full-Stack Deployment (Next.js 14 + Supabase EU `pgvector` + 12-Provider AI Gateway):** Hosts live conversational SSoT hybrid retrieval (`/ask`, `/check`, `/policy`, `/gap`), live 8-collector ProspectHub OSINT scanning, live Syndicate `football-data.org` feeds, and cross-pillar Studio/Press handoff.
+   * **How to Request Live Access:** To protect free-tier LLM and data quotas, live sessions require an **owner-approved, single-use Reviewer Grant (`BLR-...`, capped at `25` live calls and `48` hours)**.
+   * **[Request a 48h Single-Use Reviewer Grant (2-Click GitHub Issue Template)](https://github.com/aertsjef1989/Autonomous-SSoT-Architecture/issues/new?template=request-sandbox-grant.yml)** or connect via **[GitHub (@aertsjef1989)](https://github.com/aertsjef1989)** to receive a private `#code=BLR-...` fragment link.
 
 ---
 

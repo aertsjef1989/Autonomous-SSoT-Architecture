@@ -350,6 +350,9 @@ with sync_playwright() as p:
     body: JSON.stringify({ email: 'synthetic.one@example.com', altcha: vec1 }),
   });
   assert.equal(req1.status, 202, 'First valid grant request should return uniform 202');
+  const req1Json = await req1.json();
+  assert.equal(req1Json.mode, 'owner_approval');
+  assert.equal(req1Json.autoMinted, false, 'Default owner_approval mode must never auto-mint grants');
 
   // Replaying exact same ALTCHA payload must fail with 400
   const reqReplay = await fetch(`${base}/api/grants/request`, {

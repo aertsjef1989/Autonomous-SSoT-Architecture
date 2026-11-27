@@ -1,0 +1,37 @@
+name: Request Live Sandbox Reviewer Grant (48h / 25 Live Calls)
+description: Prospective employers, hiring managers, and technical reviewers can request a time-boxed single-use access code for the private full-stack workspace.
+title: "[Reviewer Grant Request] Live Full-Stack Sandbox Access"
+labels: ["reviewer-grant"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Private Full-Stack Workspace Access (Owner-Approved)
+        Every chapter, deterministic failure-mode demo, and offline Signal Press export on GitHub Pages runs immediately with **zero login**.
+        To protect free-tier LLM and data quotas, the live Next.js + Supabase EU + 12-Provider AI workspace uses **single-use, time-boxed Reviewer Grants** (`BLR-...`, capped at `25` live calls and `48` hours).
+        * **Confidentiality note:** Do not post personal phone numbers or confidential company data in a public issue; share only your LinkedIn profile or preferred professional contact channel so the unlisted workspace link and single-use `#code=` fragment can be sent privately.
+  - type: input
+    id: organization_role
+    attributes:
+      label: Role / Organization (or Recruiting Context)
+      description: Brief context for the technical review or interview loop.
+      placeholder: e.g., Engineering Manager / Staff Systems Role Review
+    validations:
+      required: true
+  - type: input
+    id: contact_channel
+    attributes:
+      label: Preferred Private Channel for Grant Link Delivery
+      description: Paste your LinkedIn profile URL or GitHub handle (avoid posting raw personal email addresses publicly).
+      placeholder: https://www.linkedin.com/in/...
+    validations:
+      required: true
+  - type: checkboxes
+    id: pillars_of_interest
+    attributes:
+      label: Pillars to Inspect Live
+      options:
+        - label: "Pillar I: Autonomous SSoT Knowledge Base & Hybrid pgvector/tsvector Chat"
+        - label: "Pillar II: Balaerion 12-Provider AI Gateway & ProspectHub Live OSINT Engine"
+        - label: "Pillar III: Syndicate Dixon-Coles / Shin De-Vigging / Quarter-Kelly Quant Desk"
+        - label: "Signal Studio (16:9) & Signal Press (A4 DOCX/PDF/Email) Handoff"

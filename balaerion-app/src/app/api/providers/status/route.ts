@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { DEFAULT_PROVIDER_REGISTRY, isProviderConfiguredAndEnabled } from '@/lib/llm/registry';
+import { getOsintCollectorStatuses } from '@/lib/osint/engine';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,12 +24,17 @@ export async function GET() {
   });
 
   const liveCount = providers.filter((p) => p.status === 'LIVE').length;
+  const osintCollectors = getOsintCollectorStatuses(process.env);
+  const osintLiveCount = osintCollectors.filter((c) => c.status === 'LIVE').length;
 
   return NextResponse.json(
     {
       providers,
       liveCount,
       totalCount: providers.length,
+      osintCollectors,
+      osintLiveCount,
+      osintTotalCount: osintCollectors.length,
     },
     {
       status: 200,

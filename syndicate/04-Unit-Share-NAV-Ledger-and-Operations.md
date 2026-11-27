@@ -1,27 +1,31 @@
 # Syndicate IV. Unit-Share NAV Ledger & Operations
 
-**Focus:** Unit-Share NAV Pricing, Mint/Burn Accounting & Append-Only Ledger Invariants · **Status:** `Prototype` + `Designed` (Simulation Only)
+**Focus:** Unit-Share NAV Pricing, Mint/Burn Accounting, Atomic Reconciliation SQL & Append-Only Ledger Invariants · **Status:** `Prototype` + `Designed` (Simulation Only)
 
 > **Simulation Disclaimer:** Educational unit-accounting specification using non-monetary **virtual units (`VU`)** and synthetic fixtures. Zero real-money pooling, investment fund administration, or financial custody.
 
 ---
 
 ## 1. Why Equal Splits Fail
-If a simulation pool starts with `4` participants contributing `100 VU` each (`400 VU` pool), grows through settled selection returns to `600 VU`, and a `5th` participant enters with `100 VU`, a naive equal split (`700 / 5 = 140 VU` each) dilutes the original four participants from `150 VU` to `140 VU`. **Unit-Share NAV Accounting** eliminates entry/exit dilution using deterministic unit pricing.
+
+If a simulation pool starts with `4` participants contributing `100 VU` each (`400 VU` pool), grows through settled selection returns to `600 VU`, and a `5th` participant enters with `100 VU`, a naive equal split (`700 / 5 = 140 VU` each) dilutes the original four participants from `150 VU` to `140 VU`. Conversely, if an early participant exits after a drawdown without unit-share pricing, remaining holders absorb disproportionate losses. **Unit-Share Net Asset Value (`NAV`) Accounting** eliminates entry and exit dilution across arbitrary matchday epochs.
 
 ---
 
 ## 2. Core NAV Equations & Worked Dilution-Proof Example (`Virtual Units`)
+
 * **Current Unit Price:** `NAV_per_unit = Total_Pool_VU / Total_Active_Units`
 * **Participant Entry (Mint Units):** `Units_Minted = Contribution_VU / NAV_per_unit`
 * **Participant Exit (Burn Units):** `Redemption_VU = Units_Burned * NAV_per_unit`
 
 ### 2.1 Step-by-Step Worked Example
+
 | Step | Event | Pool (`VU`) | Active Units (`NUMERIC(18,6)`) | Display Units (`2 dp`) | `NAV / Unit` (`VU`) | Original Member Value (`100` units) |
 | :--- | :--- | ---: | ---: | ---: | ---: | ---: |
 | **1. Seed** | `4` members contribute `100.00 VU` each | `400.0000` | `400.000000` | `400.00` | **`1.0000`** | `100.00 VU` |
 | **2. Settlement** | Settled selection cards return `+200.00 VU` net | `600.0000` | `400.000000` | `400.00` | **`1.5000`** | `150.00 VU` |
 | **3. New Entry** | `5th` member contributes `100.00 VU` (`100 / 1.50`) | `700.0000` | `466.666667` (`+66.666667`) | `466.67` (`+66.67`) | **`1.5000`** | **`150.00 VU` (zero dilution)** |
+| **4. Partial Exit** | Original Member A burns `40.000000` units (`40 * 1.50`) | `640.0000` | `426.666667` (`-40.000000`) | `426.67` (`-40.00`) | **`1.5000`** | `90.00 VU` remaining + `60.00 VU` redeemed |
 
 Existing participants hold `100 * 1.50 = 150.00 VU` both before and after the `5th` participant enters, while the entrant holds `66.666667 * 1.50 = 100.00 VU`.
 
@@ -30,11 +34,11 @@ Existing participants hold `100 * 1.50 = 150.00 VU` both before and after the `5
 ## 3. Valuation, Dealing Cutoffs & Precision Rules (`[Status: Designed]`)
 
 ### 3.1 Open Selection Valuation Rule (At-Cost Until Settlement)
-Any selection card in `LOCKED_PRE_KICKOFF` (in-play or awaiting official full-time confirmation) is valued **strictly at committed virtual-unit cost (`allocated_vu`)** until official settlement (`SETTLED_GAIN` or `SETTLED_LOSS`). Marking open picks to live in-play prices would inject feed-latency arbitrage and phantom NAV swings.
+Any selection card in `LOCKED_PRE_KICKOFF` (in-play or awaiting official full-time confirmation) is valued **strictly at committed virtual-unit cost (`allocated_vu`)** until official settlement (`SETTLED_GAIN`, `SETTLED_LOSS`, or `VOID_PUSH`). Marking open picks to live in-play prices would inject feed-latency arbitrage and phantom NAV swings.
 
 ### 3.2 Contribution & Redemption Cutoff Windows (Stale-NAV Gaming Defense)
 If a participant could mint units at `1.50 VU` while a locked selection card is `85` minutes into a `3-0` lead, they would capture virtually risk-free settlement upside at stale pre-match NAV (diluting existing holders). To block stale-NAV gaming:
-* **Dealing Freeze Window:** Mint (`DEPOSIT`) and burn (`REDEEM`) requests are **queued, not priced**, whenever `COUNT(selection_cards WHERE state = 'LOCKED_PRE_KICKOFF') > 0` or within `15 minutes` prior to any scheduled kickoff (`T - 15m`).
+* **Dealing Freeze Window:** Mint (`DEPOSIT`) and burn (`REDEEM`) requests are **queued, not priced**, whenever `COUNT(syndicate_slips WHERE state = 'LOCKED_PRE_KICKOFF') > 0` or within `15 minutes` prior to any scheduled kickoff (`T - 15m`).
 * **Dealing Execution:** Queued entries and exits strike exclusively at the **post-settlement inter-matchday NAV** once every locked card in the active window reaches a terminal settled state.
 
 ### 3.3 Fixed-Scale Numeric Type & Rounding Policy
@@ -46,12 +50,24 @@ Floating-point (`FLOAT` / `DOUBLE PRECISION` / JS binary math) is prohibited in 
 ---
 
 ## 4. Database-Enforced Append-Only Ledger (`[Status: Designed]`)
-Application discipline alone does not make a ledger immutable; PostgreSQL enforces append-only semantics at the engine layer:
 
-1. **Privilege Revocation:** `REVOKE UPDATE, DELETE, TRUNCATE ON TABLE syndicate_ledger FROM app_writer, authenticated, anon;` (only `SELECT` and `INSERT` via a `SECURITY DEFINER` stored procedure are granted).
-2. **Defensive Trigger:** A `BEFORE UPDATE OR DELETE ON syndicate_ledger` trigger unconditionally raises `RAISE EXCEPTION 'IMMUTABLE_LEDGER_VIOLATION: rows in syndicate_ledger cannot be mutated or deleted'`.
-3. **Idempotency Keys:** `idempotency_key TEXT UNIQUE NOT NULL` on `syndicate_ledger` prevents network retries or double-clicks from minting duplicate units or settling a card twice.
-4. **Optional Tamper-Evident Hash Chain:** Each row stores `prev_row_hash CHAR(64)` and `row_hash = encode(sha256(concat_ws('|', prev_row_hash, seq, idempotency_key, kind, delta_vu, delta_units)::bytea), 'hex')` so offline CSV/JSON exports (`T0..Tn`) remain independently verifiable.
+Application discipline alone does not make a ledger immutable; PostgreSQL enforces append-only semantics at the storage engine layer:
+
+1. **Privilege Revocation:** `REVOKE UPDATE, DELETE, TRUNCATE ON TABLE syndicate_pool_ledger FROM app_writer, authenticated, anon;` (only `SELECT` and `INSERT` via a `SECURITY DEFINER` stored procedure are granted).
+2. **Defensive Trigger:** A `BEFORE UPDATE OR DELETE ON syndicate_pool_ledger` trigger unconditionally raises `RAISE EXCEPTION 'IMMUTABLE_LEDGER_VIOLATION: rows in syndicate_pool_ledger cannot be mutated or deleted'`.
+3. **Idempotency Keys:** `idempotency_key TEXT UNIQUE NOT NULL` prevents network retries or double-clicks from minting duplicate units or settling a card twice.
+4. **Tamper-Evident SHA-256 Hash Chain:** Each row stores `prev_row_hash CHAR(64)` and `row_hash = encode(sha256(concat_ws('|', prev_row_hash, seq, idempotency_key, kind, delta_vu, delta_units)::bytea), 'hex')` so offline CSV/JSON exports (`T0..Tn`) remain independently verifiable.
+
+### 4.1 Nightly Reconciliation Invariant Query
+```sql
+SELECT
+  COUNT(*) AS ledger_rows,
+  SUM(delta_vu) AS net_pool_vu,
+  SUM(delta_units) AS net_active_units,
+  ROUND(SUM(delta_vu) / NULLIF(SUM(delta_units), 0), 6) AS recomputed_nav_per_unit
+FROM syndicate_pool_ledger;
+```
+Any mismatch exceeding `0.0000` `VU` between the materialized pool header and `SUM(delta_vu)` halts dealing and alerts the owner via Telegram (`TELEGRAM_OWNER_ID`).
 
 ---
 
@@ -62,9 +78,12 @@ Application discipline alone does not make a ledger immutable; PostgreSQL enforc
 | **Late Entry on Winning In-Play Card** | Entrant buys units at stale pre-match NAV and dilutes existing holders | Dealing freeze while any card is `LOCKED_PRE_KICKOFF` | Mint request during active match window returns `202 QUEUED_NEXT_NAV` rather than immediate mint |
 | **IEEE-754 Float Drift** | `466.6666666666667 * 1.5` drifts from `700.00` over hundreds of epochs | `NUMERIC(18,6)` + `ROUND_HALF_EVEN` + `pool_rounding_reserve` | 1,000 randomized mint/burn/settle fuzz cycles assert `ABS(SUM(delta_vu) - pool_vu) == 0.0000` |
 | **Duplicate Webhook / Retry Settlement** | Winning selection credited twice | `UNIQUE (idempotency_key)` constraint inside atomic transaction | Replaying identical `settle:card_042` payload returns cached receipt with zero new rows |
-| **Direct Row Tampering** | Silent retrospective balance edit | `REVOKE UPDATE, DELETE` + `BEFORE UPDATE OR DELETE` exception trigger | Direct `UPDATE syndicate_ledger` test fails with `IMMUTABLE_LEDGER_VIOLATION` |
+| **Direct Row Tampering** | Silent retrospective balance edit | `REVOKE UPDATE, DELETE` + `BEFORE UPDATE OR DELETE` exception trigger | Direct `UPDATE syndicate_pool_ledger` test fails with `IMMUTABLE_LEDGER_VIOLATION` |
 
-## 6. Interactive Simulation Prototype
-*(Simulation only: non-monetary virtual units (`VU`) and synthetic European League fixtures; zero live pooled funds. Note: browser demo uses 2-decimal UI display for readability; production spec enforces `NUMERIC(18,6)` server-side.)*
+---
 
-* [Launch Syndicate 5-Tab Simulation & NAV Ledger Prototype](demo/index.html)
+## 6. Executive Reporting & Interactive Simulation Prototype
+
+Matchday briefs and NAV ledger snapshots hand off directly into **Signal Studio (`16:9`)** (`H59` Poisson Matrix and `H61` NAV Ledger geometric devices) and **Signal Press (`A4`)** (`stat_delta_strip` and `data_table` blocks) for read-only matchday distribution.
+
+* [Launch Syndicate 6-Tab Simulation, Quant Lab & NAV Ledger Prototype](demo/index.html)

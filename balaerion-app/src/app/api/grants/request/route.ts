@@ -9,10 +9,14 @@ import {
   reserveDailyEmailSlot,
 } from '@/lib/grants-store';
 import { extractTransientClientIp } from '@/lib/request-ip';
+import { isTelegramConfigured, sendOwnerTelegramAlert } from '@/lib/telegram-notify';
 
 export const dynamic = 'force-dynamic';
 
-const UNIFORM_ACCEPTED_MESSAGE =
+const UNIFORM_OWNER_APPROVAL_MESSAGE =
+  'If eligible and within daily request capacity, your request has been queued for owner approval. Replay Mode and Offline Signal Press remain open immediately without a grant.';
+
+const UNIFORM_SELF_SERVE_MESSAGE =
   'If eligible and within daily free-tier capacity, a single-use grant link has been dispatched. Replay Mode remains open immediately without a grant.';
 
 function isSyntacticallyValidEmail(val: string): boolean {
@@ -21,9 +25,14 @@ function isSyntacticallyValidEmail(val: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
 }
 
+function sanitizeShortField(val: unknown, maxLen: number): string {
+  if (typeof val !== 'string') return '';
+  return val.replace(/[\r\n\t<>]/g, ' ').trim().slice(0, maxLen);
+}
+
 export async function POST(request: NextRequest) {
   const ip = extractTransientClientIp(request);
-  // Strict mail-bombing guard: max 3 grant requests per hour per daily-rotating salted IP hash
+  // Strict anti-abuse guard: max 3 grant requests per hour per daily-rotating salted IP hash
   const rl = await checkEndpointRateLimit('grant_request', ip, 3, 3600);
   if (!rl.allowed) {
     return NextResponse.json(
@@ -32,7 +41,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { email?: unknown; altcha?: unknown };
+  let body: {
+    email?: unknown;
+    reviewerName?: unknown;
+    organization?: unknown;
+    contextNote?: unknown;
+    altcha?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
@@ -43,6 +58,10 @@ export async function POST(request: NextRequest) {
   if (!isSyntacticallyValidEmail(email)) {
     return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 });
   }
+
+  const reviewerName = sanitizeShortField(body.reviewerName, 80);
+  const organization = sanitizeShortField(body.organization, 100);
+  const contextNote = sanitizeShortField(body.contextNote, 200);
 
   const altchaSecret = process.env.ALTCHA_HMAC_SECRET || process.env.ALTCHA_HMAC_KEY || '';
   const verified = verifyAltchaSolution(altchaSecret, body.altcha);
@@ -61,16 +80,65 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Anti-enumeration & anti-mail-bombing: from here onward, return uniform 202 response whether
-  // blocked by recipient HMAC cooldown or daily quota exhaustion. Never log or store the email.
+  const approvalMode =
+    (process.env.GRANT_APPROVAL_MODE ?? 'owner_approval').trim().toLowerCase() === 'self_serve'
+      ? 'self_serve'
+      : 'owner_approval';
+  const uniformMessage =
+    approvalMode === 'self_serve' ? UNIFORM_SELF_SERVE_MESSAGE : UNIFORM_OWNER_APPROVAL_MESSAGE;
+
+  // Anti-enumeration & anti-flooding: from here onward, return uniform 202 response whether
+  // blocked by recipient HMAC cooldown or daily quota exhaustion. Never store plaintext email in DB.
   const cooldownAllowed = await checkAndRecordEmailCooldown(email, 24);
   if (!cooldownAllowed) {
-    return NextResponse.json({ ok: true, message: UNIFORM_ACCEPTED_MESSAGE }, { status: 202 });
+    return NextResponse.json({ ok: true, mode: approvalMode, message: uniformMessage }, { status: 202 });
   }
 
+  const dryRunMode =
+    process.env.GRANT_EMAIL_DRY_RUN === '1' && process.env.ALLOW_LOCAL_EPHEMERAL_STORE === '1';
+
+  // Default safest path: Invite-Only + Owner Approval Queue via Telegram (zero automatic grant minting)
+  if (approvalMode === 'owner_approval') {
+    if (!dryRunMode && !isTelegramConfigured()) {
+      return NextResponse.json(
+        {
+          error:
+            'Owner approval alerts are not yet wired on this instance. Request a single-use BLR-... grant via GitHub or use Replay Mode immediately.',
+        },
+        { status: 503, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const slotReserved = await reserveDailyEmailSlot();
+    if (!slotReserved) {
+      return NextResponse.json({ ok: true, mode: approvalMode, message: uniformMessage }, { status: 202 });
+    }
+
+    if (!dryRunMode) {
+      const alertRes = await sendOwnerTelegramAlert('Reviewer Grant Request (Manual Approval Queue)', [
+        `Email: ${email}`,
+        reviewerName ? `Reviewer: ${reviewerName}` : 'Reviewer: (not provided)',
+        organization ? `Org / Role: ${organization}` : 'Org / Role: (not provided)',
+        contextNote ? `Note: ${contextNote}` : 'Note: (none)',
+        'Action: Open /admin -> Section 3 to mint & optionally dispatch a 25-call / 48h BLR-... grant.',
+      ]);
+      if (!alertRes.ok) {
+        return NextResponse.json(
+          { error: 'Owner notification channel temporarily unavailable. Replay Mode remains open without a grant.' },
+          { status: 503, headers: { 'Cache-Control': 'no-store' } }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { ok: true, mode: 'owner_approval', autoMinted: false, message: uniformMessage },
+      { status: 202, headers: { 'Cache-Control': 'no-store' } }
+    );
+  }
+
+  // Optional legacy self-serve path (only active if GRANT_APPROVAL_MODE=self_serve is explicitly set)
   const resendKey = process.env.RESEND_API_KEY ?? '';
   const fromEmail = process.env.GRANT_FROM_EMAIL ?? '';
-  const dryRunMode = process.env.GRANT_EMAIL_DRY_RUN === '1' && process.env.ALLOW_LOCAL_EPHEMERAL_STORE === '1';
 
   if (!dryRunMode && (!resendKey || !fromEmail)) {
     return NextResponse.json(
@@ -81,7 +149,7 @@ export async function POST(request: NextRequest) {
 
   const emailSlotReserved = await reserveDailyEmailSlot();
   if (!emailSlotReserved) {
-    return NextResponse.json({ ok: true, message: UNIFORM_ACCEPTED_MESSAGE }, { status: 202 });
+    return NextResponse.json({ ok: true, mode: approvalMode, message: uniformMessage }, { status: 202 });
   }
 
   const issued = await issueSingleUseGrant({ tokenBudgetWeighted: 12000, callsBudget: 25, ttlHours: 48 });
@@ -92,7 +160,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Build redemption fragment link (#code=...) from request origin so the unlisted origin is never hardcoded in source
   const origin = request.nextUrl.origin;
   const redeemFragmentUrl = `${origin}/redeem#code=${encodeURIComponent(issued.code)}`;
 
@@ -135,7 +202,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json(
-    { ok: true, message: UNIFORM_ACCEPTED_MESSAGE },
+    { ok: true, mode: 'self_serve', autoMinted: true, message: uniformMessage },
     { status: 202, headers: { 'Cache-Control': 'no-store' } }
   );
 }

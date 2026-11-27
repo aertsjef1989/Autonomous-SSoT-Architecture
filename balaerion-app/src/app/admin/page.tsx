@@ -150,6 +150,8 @@ export default function AdminGrantsAndSyncPage() {
     }
   };
 
+  const [sendToEmail, setSendToEmail] = useState('');
+
   const handleMint = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatusMsg('');
@@ -161,6 +163,7 @@ export default function AdminGrantsAndSyncPage() {
         tokenBudgetWeighted: Number(tokenBudget),
         callsBudget: Number(callsBudget),
         ttlHours: Number(ttlHours),
+        sendToEmail: sendToEmail.trim() || undefined,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -173,7 +176,10 @@ export default function AdminGrantsAndSyncPage() {
       redeemFragmentUrl: data.redeemFragmentUrl,
       expiresAt: data.expiresAt,
     });
-    setStatusMsg('Minted single-use grant. Copy now; only the salted HMAC is stored in the database.');
+    setSendToEmail('');
+    setStatusMsg(
+      data.emailNotice || 'Minted single-use grant. Copy now; only the salted HMAC is stored in the database.'
+    );
   };
 
   return (
@@ -181,8 +187,8 @@ export default function AdminGrantsAndSyncPage() {
       <h1 style={{ marginTop: 0, fontSize: 24, color: '#FFFFFF' }}>Owner Console: SSoT Sync &amp; Grant Issuer</h1>
       <p style={{ color: '#B9C0CE', fontSize: 14, lineHeight: 1.6 }}>
         Manage the zero-commit SSoT pipeline (<code>Google Drive / RAM -&gt; Supabase -&gt; /ssot</code>, scoped to{' '}
-        <code>NL</code>, <code>BE</code>, <code>FR</code>, and <code>GLOBAL</code>) and mint hand-shared single-use{' '}
-        <code>BLR-...</code> reviewer grants.
+        <code>NL</code>, <code>BE</code>, <code>FR</code>, and <code>GLOBAL</code>), approve incoming Telegram reviewer
+        requests, and mint hand-shared single-use <code>BLR-...</code> grants.
       </p>
 
       {statusMsg ? (
@@ -263,6 +269,9 @@ export default function AdminGrantsAndSyncPage() {
               <option value="Verticals">Verticals</option>
               <option value="Policies">Policies</option>
               <option value="Templates">Templates</option>
+              <option value="Campaigns">Campaigns</option>
+              <option value="Lifecycle">Lifecycle</option>
+              <option value="Markets">Markets</option>
             </select>
           </label>
 
@@ -333,46 +342,64 @@ export default function AdminGrantsAndSyncPage() {
           border: '1px solid #232836',
           borderRadius: 10,
           padding: 18,
+          marginBottom: 18,
         }}
       >
-        <h2 style={{ marginTop: 0, fontSize: 17, color: '#FFFFFF' }}>3. Mint Single-Use Reviewer Grant</h2>
+        <h2 style={{ marginTop: 0, fontSize: 17, color: '#FFFFFF' }}>3. Approve &amp; Mint Single-Use Reviewer Grant</h2>
+        <p style={{ color: '#B9C0CE', fontSize: 13, lineHeight: 1.55, marginTop: 0 }}>
+          When a recruiter requests access on GitHub or <code>/redeem</code>, review the Telegram alert and mint a
+          bounded <code>BLR-...</code> grant below. Leave the email field blank to copy the fragment URL manually, or
+          fill it to dispatch via Resend immediately.
+        </p>
         <form onSubmit={handleMint} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 190px), 1fr))', gap: 12 }}>
+            <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              Weighted Token Budget
+              <input
+                type="number"
+                min={500}
+                max={100000}
+                value={tokenBudget}
+                onChange={(e) => setTokenBudget(Number(e.target.value))}
+                style={inputStyle}
+              />
+            </label>
+            <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              Max Live LLM Calls
+              <input
+                type="number"
+                min={1}
+                max={200}
+                value={callsBudget}
+                onChange={(e) => setCallsBudget(Number(e.target.value))}
+                style={inputStyle}
+              />
+            </label>
+            <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              Expiry Window (Hours)
+              <input
+                type="number"
+                min={1}
+                max={168}
+                value={ttlHours}
+                onChange={(e) => setTtlHours(Number(e.target.value))}
+                style={inputStyle}
+              />
+            </label>
+          </div>
           <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
-            Weighted Token Budget
+            Approved Reviewer Email (Optional 1-Click Resend Dispatch)
             <input
-              type="number"
-              min={500}
-              max={100000}
-              value={tokenBudget}
-              onChange={(e) => setTokenBudget(Number(e.target.value))}
-              style={inputStyle}
-            />
-          </label>
-          <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
-            Max Live LLM Calls
-            <input
-              type="number"
-              min={1}
-              max={200}
-              value={callsBudget}
-              onChange={(e) => setCallsBudget(Number(e.target.value))}
-              style={inputStyle}
-            />
-          </label>
-          <label style={{ fontSize: 13, color: '#B9C0CE', display: 'flex', flexDirection: 'column', gap: 6 }}>
-            Expiry Window (Hours)
-            <input
-              type="number"
-              min={1}
-              max={168}
-              value={ttlHours}
-              onChange={(e) => setTtlHours(Number(e.target.value))}
+              type="email"
+              value={sendToEmail}
+              onChange={(e) => setSendToEmail(e.target.value)}
+              placeholder="Leave blank to copy #code= link manually, or enter reviewer@company.com"
               style={inputStyle}
             />
           </label>
           <div>
             <button type="submit" style={{ ...btnStyle, borderColor: '#F0245C', color: '#FFFFFF', background: '#F0245C' }}>
-              Mint Single-Use Grant Code
+              {sendToEmail.trim() ? 'Mint & Dispatch Approved Grant' : 'Mint Single-Use Grant Code'}
             </button>
           </div>
         </form>
@@ -399,6 +426,31 @@ export default function AdminGrantsAndSyncPage() {
             </p>
             <p style={{ margin: '4px 0', fontSize: 12.5, color: '#B9C0CE' }}>Expires: {minted.expiresAt}</p>
           </div>
+        ) : null}
+      </section>
+
+      <section
+        style={{
+          background: '#11141B',
+          border: '1px solid #232836',
+          borderRadius: 10,
+          padding: 18,
+        }}
+      >
+        <h2 style={{ marginTop: 0, fontSize: 17, color: '#FFFFFF' }}>4. Telegram Owner Approval Channel &amp; Diagnostics</h2>
+        <p style={{ color: '#B9C0CE', fontSize: 13, lineHeight: 1.55, marginTop: 0 }}>
+          Verify that <code>TELEGRAM_BOT_TOKEN</code> and <code>TELEGRAM_OWNER_ID</code> receive Reviewer Grant approval
+          requests and live provider health summaries.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+          <button type="button" disabled={tgBusy} onClick={handleTelegramPing} style={{ ...btnStyle, borderColor: '#21E0DC', color: '#21E0DC' }}>
+            {tgBusy ? 'Sending Ping...' : 'Send Test Alert to Telegram'}
+          </button>
+        </div>
+        {tgResult ? (
+          <p role="status" style={{ margin: '10px 0 0', fontSize: 13, color: '#21E0DC', overflowWrap: 'anywhere' }}>
+            {tgResult}
+          </p>
         ) : null}
       </section>
     </div>

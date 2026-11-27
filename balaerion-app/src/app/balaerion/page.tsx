@@ -262,6 +262,26 @@ export default function BalaerionPage() {
     }
   };
 
+  // Hybrid OSINT Inspector state (Mode B)
+  const [osintBusy, setOsintBusy] = useState(false);
+  const [osintError, setOsintError] = useState('');
+  const [osintReport, setOsintReport] = useState<{
+    domain: string;
+    mode: string;
+    registryId: string;
+    registrySource: string;
+    cmsPlatform: string[];
+    analyticsAndPixels: string[];
+    consentManagement: string[];
+    emailAndEspStack: string[];
+    dmarcPolicy: string;
+    combinedStackSummary: string;
+    readinessScore: number;
+    detectedGaps: string[];
+    enrichmentSnippets: Array<{ source: string; summary: string }>;
+    collectorsUsed: string[];
+  } | null>(null);
+
   const addProspectWorkspace = () => {
     const cleanEnt = newEntity.trim();
     const cleanDom = (newDomain.trim() || 'prospect-calibration.example').replace(/^https?:\/\//i, '');
@@ -280,6 +300,49 @@ export default function BalaerionPage() {
     setSelectedIdx(accounts.length);
     setNewEntity('');
     setNewDomain('');
+  };
+
+  const runOsintInspection = async () => {
+    if (osintBusy || !activeAccount) return;
+    setOsintBusy(true);
+    setOsintError('');
+    try {
+      const res = await fetch('/api/osint/inspect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          domain: activeAccount.domain,
+          entity: activeAccount.entity,
+          country: activeAccount.country,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.inspection) {
+        setOsintError(data.error || 'OSINT inspection failed.');
+        return;
+      }
+      const insp = data.inspection;
+      setOsintReport(insp);
+      setAccounts((prev) =>
+        prev.map((acc, idx) =>
+          idx === selectedIdx
+            ? {
+                ...acc,
+                registryId: insp.registryId || acc.registryId,
+                stack: insp.combinedStackSummary || acc.stack,
+                readiness: typeof insp.readinessScore === 'number' ? insp.readinessScore : acc.readiness,
+              }
+            : acc
+        )
+      );
+      if (Array.isArray(insp.detectedGaps) && insp.detectedGaps.length > 0 && !phNotes.trim()) {
+        setPhNotes(`OSINT Gaps: ${insp.detectedGaps.slice(0, 2).join(' | ')}`);
+      }
+    } catch {
+      setOsintError('Network unavailable; select Replay calibration domain or retry.');
+    } finally {
+      setOsintBusy(false);
+    }
   };
 
   const runProspectPersona = async () => {
@@ -822,6 +885,93 @@ export default function BalaerionPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Hybrid Card-Free OSINT Stack & Registry Inspector */}
+          <div style={{ background: '#11141B', border: '1px solid #232836', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: '1 1 260px' }}>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: '#21E0DC', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>
+                  HYBRID OSINT LAYER · ZERO-KEY + CARD-FREE ENRICHMENT
+                </div>
+                <div style={{ fontSize: 13, color: '#B9C0CE', lineHeight: 1.5 }}>
+                  Inspects <code>{activeAccount.domain}</code> ({activeAccount.country}) via DNS/MX/SPF/DMARC, HTML
+                  CMS/Pixel/CMP head scan, FR SIREN Open API, and optional Tavily / Serper / urlscan / Exa / CBEAPI keys
+                  (auto-scrubs personal PII before LLM grounding).
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={osintBusy}
+                onClick={runOsintInspection}
+                style={{
+                  minHeight: 44,
+                  padding: '10px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #21E0DC',
+                  background: '#171B24',
+                  color: '#21E0DC',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {osintBusy ? 'Scanning OSINT...' : `Inspect OSINT Stack (${activeAccount.domain})`}
+              </button>
+            </div>
+
+            {osintError ? (
+              <p role="status" style={{ margin: '10px 0 0', fontSize: 13, color: '#FF5C86' }}>
+                {osintError}
+              </p>
+            ) : null}
+
+            {osintReport ? (
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: 12,
+                  borderRadius: 8,
+                  background: '#08090D',
+                  border: '1px solid #232836',
+                  fontSize: 13,
+                  color: '#F2F5F9',
+                }}
+              >
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                  <strong>
+                    {osintReport.domain} · Readiness {osintReport.readinessScore}/10 ({osintReport.mode === 'live_osint' ? 'LIVE OSINT' : 'REPLAY CALIBRATION'})
+                  </strong>
+                  <span style={{ color: '#21E0DC', fontSize: 12 }}>
+                    Collectors: {osintReport.collectorsUsed.join(', ')}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))', gap: 8, marginBottom: 10 }}>
+                  <div style={{ background: '#131722', padding: 8, borderRadius: 6 }}>
+                    <div style={{ fontSize: 11, color: '#8B95A5' }}>Registry / Entity Signal</div>
+                    <div>{osintReport.registryId}</div>
+                    <div style={{ fontSize: 11, color: '#8B95A5' }}>{osintReport.registrySource}</div>
+                  </div>
+                  <div style={{ background: '#131722', padding: 8, borderRadius: 6 }}>
+                    <div style={{ fontSize: 11, color: '#8B95A5' }}>CMS &amp; Analytics / Pixels</div>
+                    <div>
+                      {[...osintReport.cmsPlatform, ...osintReport.analyticsAndPixels].join(', ') || 'None detected in head'}
+                    </div>
+                  </div>
+                  <div style={{ background: '#131722', padding: 8, borderRadius: 6 }}>
+                    <div style={{ fontSize: 11, color: '#8B95A5' }}>CMP Consent &amp; Email/ESP</div>
+                    <div>
+                      {[...osintReport.consentManagement, ...osintReport.emailAndEspStack].join(', ') || 'Standard'} · {osintReport.dmarcPolicy}
+                    </div>
+                  </div>
+                </div>
+                {osintReport.detectedGaps.length > 0 ? (
+                  <div style={{ color: '#B9C0CE', fontSize: 12.5, lineHeight: 1.5 }}>
+                    <strong style={{ color: '#FFFFFF' }}>Detected Commercial &amp; Measurement Gaps:</strong>{' '}
+                    {osintReport.detectedGaps.join(' · ')}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           {/* 16-Persona Grounded Runner */}

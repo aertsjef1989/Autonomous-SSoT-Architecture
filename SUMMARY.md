@@ -22,14 +22,17 @@
 * [XV. Enablement & Continuity](15-Enablement-and-Continuity.md)
 * [XVI. Signal Press Document Designer](16-Signal-Press-Document-Designer.md)
 
-## Pillar II · Balaerion
-* [Mandate & Core Stack](balaerion/01-Mandate-and-Core-Stack.md)
-* [Hosting & Failover Topology](balaerion/02-Hosting-and-Failover-Topology.md)
-* [Security & GDPR Routing Lane](balaerion/03-Security-and-GDPR-Routing-Lane.md)
-* [MCP Agents & Product Layer](balaerion/04-MCP-Agents-and-Product-Layer.md)
+## Pillar II · Balaerion & ProspectHub
+* [I. Mandate & Core Stack](balaerion/01-Mandate-and-Core-Stack.md)
+* [II. Hosting & Failover Topology](balaerion/02-Hosting-and-Failover-Topology.md)
+* [III. Security & GDPR Routing Lane](balaerion/03-Security-and-GDPR-Routing-Lane.md)
+* [IV. Dual-Mode Personas & Registry](balaerion/04-MCP-Agents-and-Product-Layer.md)
+* [V. ProspectHub OSINT & Readiness Engine](balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.md)
+* [VI. ProspectHub Lifecycle & Signal Handoff](balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.md)
 
 ## Pillar III · Syndicate
-* [Mandate & System Architecture](syndicate/01-Mandate-and-System-Architecture.md)
-* [Poisson & xG Probability Engine](syndicate/02-Poisson-and-xG-Probability-Engine.md)
-* [Group Tipgame & Slip Integrity](syndicate/03-Group-Tipgame-and-Slip-Integrity.md)
-* [Unit-Share NAV Ledger & Operations](syndicate/04-Unit-Share-NAV-Ledger-and-Operations.md)
+* [I. Mandate & System Architecture](syndicate/01-Mandate-and-System-Architecture.md)
+* [II. Poisson, Dixon-Coles & Shin Engine](syndicate/02-Poisson-and-xG-Probability-Engine.md)
+* [III. Group Tipgame & Slip Integrity](syndicate/03-Group-Tipgame-and-Slip-Integrity.md)
+* [IV. Unit-Share NAV Ledger & Operations](syndicate/04-Unit-Share-NAV-Ledger-and-Operations.md)
+* [V. Quantitative Calibration & Monte Carlo Risk](syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.md)
