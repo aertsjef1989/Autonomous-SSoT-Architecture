@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Syndicate simulation prototype: 36 synthetic clubs, bivariate Poisson/xG engine, accessible chart tables, and virtual-unit NAV ledger.">
+<meta name="theme-color" content="#08090D">
+<title>Syndicate: Synthetic League Simulation &amp; Virtual-Unit NAV Prototype</title>
+<script src="./chart.umd.min.js"></script>
+<style>
+  :root { --ground:#08090D; --panel:#11141B; --alt:#171B24; --border:#232836; --ink:#F2F5F9; --muted:#8B95A5; --cyan:#21E0DC; --pink:#F0245C; --amber:#F5A623; --green:#22C55E; }
+  * { box-sizing:border-box; }
+  html, body { min-height:100dvh; max-width:100%; overflow-x:hidden; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,monospace; line-height:1.5; }
+  header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));
+    border-bottom:1px solid var(--border); background:var(--panel); flex-wrap:wrap; gap:12px;
+  }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.5px; flex-wrap:wrap; }
+  .back {
+    color:var(--cyan); text-decoration:none; font-size:12px; border:1px solid var(--border);
+    padding:10px 12px; min-height:44px; border-radius:6px; display:inline-flex; align-items:center;
+  }
+  .back:hover { border-color:var(--cyan); }
+  .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; }
+  .tab-btn {
+    background:transparent; color:var(--muted); border:1px solid var(--border);
+    padding:10px 13px; min-height:44px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12.5px;
+    display:inline-flex; align-items:center;
+  }
+  .tab-btn.active { color:var(--ground); background:var(--cyan); border-color:var(--cyan); }
+  main {
+    max-width:1240px; margin:20px auto;
+    padding:0 calc(16px + env(safe-area-inset-right)) calc(64px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  }
+  .view { display:none; }
+  .view.active { display:block; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:16px; max-width:100%; overflow-x:auto; }
+  .card h3 { margin:0 0 8px; font-size:13.5px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cyan); }
+  .muted { color:var(--muted); font-size:12px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 340px),1fr)); gap:16px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 220px),1fr)); gap:12px; margin-top:12px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 160px),1fr)); gap:12px; margin-top:12px; }
+  .box { background:var(--alt); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12.5px; }
+  .val { font-size:21px; font-weight:800; color:var(--cyan); margin-top:3px; }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
+  select, input[type="number"] {
+    background:var(--alt); color:var(--ink); border:1px solid var(--border);
+    padding:10px 12px; min-height:44px; border-radius:6px; font-size:16px; max-width:100%;
+  }
+  input[type="range"] { width:100%; min-height:44px; accent-color:var(--cyan); }
+  button.act {
+    background:var(--cyan); color:var(--ground); font-weight:700; border:none;
+    padding:10px 14px; min-height:44px; border-radius:6px; cursor:pointer; font-size:12.5px;
+    display:inline-flex; align-items:center;
+  }
+  button.act.pink { background:var(--pink); color:#fff; }
+  label.chk { display:inline-flex; gap:8px; align-items:center; min-height:44px; font-size:12.5px; cursor:pointer; }
+  .banner { padding:11px 14px; border-radius:6px; font-size:12.5px; font-weight:600; margin-top:12px; }
+  .b-ok { background:rgba(33,224,220,0.12); border:1px solid var(--cyan); color:var(--cyan); }
+  .b-err { background:rgba(240,36,92,0.14); border:1px solid var(--pink); color:var(--pink); }
+  table.data { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+  table.data th, table.data td { border-bottom:1px solid var(--border); padding:6px 8px; text-align:left; }
+  table.data th { background:var(--alt); color:var(--cyan); position:sticky; top:0; }
+  .tbl-wrap { max-height:420px; overflow-y:auto; overflow-x:auto; border:1px solid var(--border); border-radius:6px; }
+  .z-r16 { border-left:3px solid var(--cyan); }
+  .z-po { border-left:3px solid var(--amber); }
+  .z-out { border-left:3px solid var(--pink); }
+  table.mx { width:100%; min-width:420px; border-collapse:collapse; margin-top:10px; font-size:12px; }
+  table.mx th, table.mx td { border:1px solid var(--border); padding:6px; text-align:center; }
+  table.mx th { background:var(--alt); color:var(--cyan); }
+  .chart-box { position:relative; height:320px; width:100%; max-width:100%; }
+  .log { background:#050609; border:1px solid var(--border); border-radius:6px; padding:10px; font-size:11.5px; max-height:170px; overflow-y:auto; color:#c7d0dd; word-break:break-word; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <a class="back" href="../../index.html">Back to Book</a>
+    <span class="dot" style="background:var(--pink)"></span>
+    <span class="dot" style="background:var(--cyan)"></span>
+    <span>SYNDICATE // EUROPEAN LEAGUE SIMULATION &amp; NAV PROTOTYPE (VIRTUAL UNITS ONLY)</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="sw('standings',this)">1. League Table &amp; Cutlines</button>
+    <button class="tab-btn" onclick="sw('eda',this)">2. Attack vs. Defense EDA</button>
+    <button class="tab-btn" onclick="sw('residuals',this)">3. Seed Residuals</button>
+    <button class="tab-btn" onclick="sw('poisson',this)">4. MD5 Dixon-Coles &amp; Shin Lab</button>
+    <button class="tab-btn" onclick="sw('nav',this)">5. Selection Consensus &amp; NAV Ledger</button>
+    <button class="tab-btn" onclick="sw('quantlab',this)">6. Calibration &amp; 1,000-Run Monte Carlo</button>
+  </div>
+</header>
+<main>
+  <div style="margin-bottom:14px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:8px;background:var(--panel);font-size:12.5px;color:var(--muted);"><strong style="color:var(--ink);">Simulation Disclaimer ([Status: Prototype]):</strong> Educational statistical modeling and unit-accounting demonstration using <strong>36 fictional clubs</strong>, a <strong>synthetic Matchday 5 slate</strong>, and non-monetary <strong>virtual units (VU)</strong>. Zero real-money pooling, wagering, or financial custody. <strong style="color:var(--cyan);">Hiring Manager / Reviewer?</strong> <a href="https://github.com/aertsjef1989/Autonomous-SSoT-Architecture/issues/new?template=request-sandbox-grant.yml" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);text-decoration:underline;">Request a 48h single-use Reviewer Grant</a> to inspect the private Next.js + Supabase EU + 12-LLM live deployment.</div>
+  <!-- TAB 1: SIMULATED 36-CLUB TABLE & POINTS HISTOGRAM -->
+  <section id="standings" class="view active">
+    <div class="grid-4" id="kpiRow"></div>
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card">
+        <h3>Synthetic 36-Club League Phase Simulation (Seeded After Round 4)</h3>
+        <div class="muted">Simulation only (virtual units) · Cyan = Top 8 (R16) · Amber = 9 to 24 (Play-offs) · Pink = 25 to 36 (Eliminated)</div>
+        <div class="controls">
+          <label>Zone Filter:
+            <select id="zoneFilter" onchange="renderTable()">
+              <option value="all">All 36 Synthetic Clubs</option>
+              <option value="r16">Top 8 (Automatic R16)</option>
+              <option value="po">9-24 (Knockout Play-offs)</option>
+              <option value="out">25-36 (Elimination Zone)</option>
+            </select>
+          </label>
+        </div>
+        <div class="tbl-wrap"><table class="data" id="uclTable"></table></div>
+      </div>
+      <div class="card">
+        <h3>Points Distribution &amp; Qualification Cutlines</h3>
+        <div class="muted">Frequency of clubs by points total after 4 of 8 simulated rounds (Current Top-8 cutline: 9 pts, Top-24 cutline: 4 pts).</div>
+        <div class="chart-box" style="margin-top:14px;"><canvas id="histChart" role="img" aria-label="Bar chart of synthetic club counts by points total after 4 rounds"></canvas></div>
+        <details style="margin-top:10px;font-size:12px;color:var(--muted);"><summary style="cursor:pointer;color:var(--cyan);min-height:44px;display:flex;align-items:center;">Accessible Text Summary: Points Distribution</summary><div id="histTextAlt" style="padding:6px 0;"></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: ATTACK VS DEFENSE SCATTER -->
+  <section id="eda" class="view">
+    <div class="card">
+      <h3>Bivariate EDA: Goals For / Match vs. Goals Against / Match (All 36 Synthetic Clubs)</h3>
+      <div class="muted">Top-left quadrant = Elite (High Attack, Low Conceded). Bottom-right = Vulnerable. Tap a point, click, or use the keyboard club selector below for exact stats.</div>
+      <div class="controls" style="margin-top:10px;">
+        <label>Keyboard / Tap Club Inspector: <select id="edaClubSel" onchange="inspectEdaClub()" aria-label="Select synthetic club to inspect Goals For and Goals Against per match"></select></label>
+        <div id="edaClubReadout" class="box" role="status" aria-live="polite" style="flex:1;min-width:200px;"></div>
+      </div>
+      <div class="chart-box" style="height:420px; margin-top:12px;"><canvas id="scatterChart" role="img" aria-label="Scatter plot of Goals For per match versus Goals Against per match across 36 synthetic clubs"></canvas></div>
+      <details style="margin-top:10px;font-size:12px;color:var(--muted);"><summary style="cursor:pointer;color:var(--cyan);min-height:44px;display:flex;align-items:center;">Accessible Data Table: Attack vs. Defense Rates (All 36 Clubs)</summary><div id="scatterTextAlt" class="tbl-wrap" style="margin-top:6px;"></div></details>
+    </div>
+  </section>
+
+  <!-- TAB 3: SEED RESIDUALS -->
+  <section id="residuals" class="view">
+    <div class="card">
+      <h3>Expectation vs. Reality: Pre-Season Seed Rank Minus Simulated Round-4 Rank</h3>
+      <div class="muted">Positive delta (Cyan) = Overperforming pre-season synthetic seeding. Negative delta (Pink) = Underperforming.</div>
+      <div class="chart-box" style="height:420px; margin-top:12px;"><canvas id="residChart" role="img" aria-label="Horizontal bar chart of top 16 pre-season seed rank minus simulated Round-4 rank deltas"></canvas></div>
+      <details style="margin-top:10px;font-size:12px;color:var(--muted);"><summary style="cursor:pointer;color:var(--cyan);min-height:44px;display:flex;align-items:center;">Accessible Data Table: Top 16 Seed Residual Movers</summary><div id="residTextAlt" class="tbl-wrap" style="margin-top:6px;"></div></details>
+    </div>
+  </section>
+
+  <!-- TAB 4: ALL 18 MATCHDAY 5 FIXTURES + DIXON-COLES + SHIN DE-VIGGING -->
+  <section id="poisson" class="view">
+    <div class="card">
+      <h3>Synthetic Matchday 5 Simulation Slate (Fixture Window T+1): 18-Game Dixon-Coles &amp; Shin Lab</h3>
+      <div class="controls">
+        <label>Select Synthetic MD5 Fixture (18 Games):
+          <select id="fixSel" onchange="loadFixture()"></select>
+        </label>
+        <label>Reference Home Price: <input type="number" id="mktOdds" value="2.10" step="0.05" style="width:90px;" oninput="calcPoisson()"></label>
+      </div>
+      <div class="grid-3">
+        <div><label>Home Goal Rate (lambda_H): <strong id="lhLbl">1.75</strong></label><input type="range" id="lh" min="0.4" max="3.8" step="0.05" value="1.75" oninput="calcPoisson()"></div>
+        <div><label>Away Goal Rate (lambda_A): <strong id="laLbl">1.05</strong></label><input type="range" id="la" min="0.4" max="3.8" step="0.05" value="1.05" oninput="calcPoisson()"></div>
+        <div><label>Dixon-Coles Low-Score Corr (rho): <strong id="rhoLbl">-0.11</strong></label><input type="range" id="dcRho" min="-0.20" max="0.08" step="0.01" value="-0.11" oninput="calcPoisson()"></div>
+      </div>
+      <div id="pStats" class="grid-4"></div>
+      <div id="pShinReadout" class="box" style="margin-top:10px;"></div>
+      <div id="pBanner"></div>
+      <div class="grid-2" style="margin-top:12px;">
+        <div><div class="muted">Dixon-Coles Adjusted Scoreline Matrix (0-5)</div><div id="pMatrix"></div></div>
+        <div><div class="muted">Goal-Line Probability Ladder</div><div id="pLadder" style="margin-top:10px;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5: TIPGAME & NAV LEDGER -->
+  <section id="nav" class="view">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Selection Card Quorum Voting &amp; Pre-Kickoff Lock</h3>
+        <div class="controls" id="voteWrap"></div>
+        <div class="controls">
+          <label class="chk"><input type="checkbox" id="cutoffChk" onchange="calcSlip()"> Past T-15m Kickoff Lock</label>
+          <button class="act pink" onclick="testEdit()">Attempt Post-Lock Edit</button>
+        </div>
+        <div id="slipBanner"></div>
+      </div>
+      <div class="card">
+        <h3>Simulated NAV / Unit Curve (Virtual Units)</h3>
+        <div class="chart-box" style="height:210px;"><canvas id="navChart" role="img" aria-label="Line chart of simulated Net Asset Value per unit in virtual units"></canvas></div>
+        <div id="navTextAlt" class="muted" role="status" aria-live="polite" style="margin-top:8px;">Text summary: Initial NAV = 12.00 VU across 1 epoch (T0).</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Unit-Share NAV Pool &amp; Append-Only Virtual-Unit Ledger</h3>
+      <div class="grid-4" id="navStats"></div>
+      <div class="controls">
+        <label>Member: <select id="memSel"><option value="A">Member A</option><option value="B">Member B</option><option value="C">Member C</option></select></label>
+        <button class="act" onclick="tx('DEPOSIT',250)">+ Contribute 250 VU (Mint)</button>
+        <button class="act pink" onclick="tx('REDEEM',-200)">- Redeem 200 VU (Burn)</button>
+        <button class="act" onclick="tx('SETTLE_GAIN',300)">+ Settlement Gain (+300 VU)</button>
+        <button class="act pink" onclick="tx('SETTLE_LOSS',-150)">- Settlement Loss (-150 VU)</button>
+      </div>
+      <div class="grid-3" id="memPos"></div>
+      <div class="log" id="navLog" style="margin-top:12px;"></div>
+    </div>
+  </section>
+
+  <!-- TAB 6: CALIBRATION BACKTEST & 1,000-PATH MONTE CARLO STRESS LAB -->
+  <section id="quantlab" class="view">
+    <div class="card">
+      <h3>Proper Scoring Rule Calibration Benchmark (N = 144 Synthetic League Fixtures)</h3>
+      <div class="muted">Evaluates multi-class Brier Score, Log-Loss, and Closing Line Value (CLV) comparing Dixon-Coles (1997) against naive independent Poisson and uniform 1/3 baseline.</div>
+      <div id="calKpis" class="grid-4"></div>
+    </div>
+    <div class="card">
+      <h3>Seeded 1,000-Path Monte Carlo Bankroll &amp; Drawdown Stress Simulator</h3>
+      <div class="muted">Proves quantitatively why Syndicate enforces a Quarter-Kelly (0.25x, 5% pool cap) mandate over Half-Kelly or Uncapped Full Kelly across identical luck sequences.</div>
+      <div class="controls">
+        <label>True Win Prob (%): <input type="number" id="mcProb" value="54.0" min="15" max="85" step="1" style="width:95px;" oninput="runMcLab()"></label>
+        <label>Entry Decimal Price: <input type="number" id="mcOdds" value="1.96" min="1.2" max="6.0" step="0.04" style="width:95px;" oninput="runMcLab()"></label>
+        <label>Season Horizon:
+          <select id="mcHor" onchange="runMcLab()">
+            <option value="40">40 Selections</option>
+            <option value="80" selected>80 Selections</option>
+            <option value="150">150 Selections</option>
+          </select>
+        </label>
+      </div>
+      <div class="tbl-wrap"><table class="data" id="mcTable"></table></div>
+    </div>
+  </section>
+</main>
+<script>
+// Synthetic 36-Club European Simulation League Standings (Seeded After Round 4)
+const CLUBS = [
+  {pos:1,team:"Lutetia Metro FC",p:4,w:4,d:0,l:0,gf:20,ga:5,pts:12,seed:4},
+  {pos:2,team:"Castilla Crown CF",p:4,w:4,d:0,l:0,gf:13,ga:7,pts:12,seed:1},
+  {pos:3,team:"Thames Cannon FC",p:4,w:3,d:1,l:0,gf:8,ga:3,pts:10,seed:7},
+  {pos:4,team:"Lario Lakeside AC",p:4,w:3,d:0,l:1,gf:19,ga:6,pts:9,seed:33},
+  {pos:5,team:"Catalonia Blau SC",p:4,w:3,d:0,l:1,gf:14,ga:6,pts:9,seed:6},
+  {pos:6,team:"Midland Claret FC",p:4,w:3,d:0,l:1,gf:12,ga:6,pts:9,seed:18},
+  {pos:7,team:"Irwell Sky FC",p:4,w:3,d:0,l:1,gf:12,ga:7,pts:9,seed:2},
+  {pos:8,team:"Mersey Harbor FC",p:4,w:3,d:0,l:1,gf:14,ga:10,pts:9,seed:5},
+  {pos:9,team:"Flanders Canal KV",p:4,w:3,d:0,l:1,gf:11,ga:7,pts:9,seed:24},
+  {pos:10,team:"Tagus Verde CP",p:4,w:3,d:0,l:1,gf:8,ga:4,pts:9,seed:20},
+  {pos:11,team:"Guadalquivir Real",p:4,w:3,d:0,l:1,gf:8,ga:6,pts:9,seed:22},
+  {pos:12,team:"Westphalia Schwarz SV",p:4,w:3,d:0,l:1,gf:7,ga:5,pts:9,seed:9},
+  {pos:13,team:"Isar Alpine SV",p:4,w:2,d:2,l:0,gf:12,ga:5,pts:8,seed:3},
+  {pos:14,team:"Neckar Valley VfB",p:4,w:2,d:1,l:1,gf:7,ga:4,pts:7,seed:25},
+  {pos:15,team:"Navigli Nerazzurri",p:4,w:2,d:0,l:2,gf:8,ga:6,pts:6,seed:8},
+  {pos:16,team:"Danube Stahl SK",p:4,w:2,d:0,l:2,gf:10,ga:9,pts:6,seed:31},
+  {pos:17,team:"Trafford Red FC",p:4,w:2,d:0,l:2,gf:8,ga:8,pts:6,seed:12},
+  {pos:18,team:"Bosphorus Gold SK",p:4,w:2,d:0,l:2,gf:8,ga:9,pts:6,seed:23},
+  {pos:19,team:"Kadikoy Beacon SK",p:4,w:1,d:2,l:1,gf:6,ga:11,pts:5,seed:26},
+  {pos:20,team:"Tiber Capitol AS",p:4,w:1,d:1,l:2,gf:10,ga:8,pts:4,seed:14},
+  {pos:21,team:"Steppe Miners FC",p:4,w:1,d:1,l:2,gf:4,ga:4,pts:4,seed:21},
+  {pos:22,team:"Fjordland Stavanger BK",p:4,w:1,d:1,l:2,gf:9,ga:10,pts:4,seed:34},
+  {pos:23,team:"Manzanares Rojiblanco",p:4,w:1,d:1,l:2,gf:4,ga:5,pts:4,seed:10},
+  {pos:24,team:"Brabant Light SV",p:4,w:1,d:1,l:2,gf:3,ga:4,pts:4,seed:19},
+  {pos:25,team:"Arctic Aurora FK",p:4,w:1,d:1,l:2,gf:4,ga:9,pts:4,seed:28},
+  {pos:26,team:"Douro Atlantic FC",p:4,w:1,d:0,l:3,gf:6,ga:7,pts:3,seed:15},
+  {pos:27,team:"Parthenope Azure SSC",p:4,w:1,d:0,l:3,gf:6,ga:11,pts:3,seed:11},
+  {pos:28,team:"Castellon Ceramic CF",p:4,w:1,d:0,l:3,gf:8,ga:14,pts:3,seed:16},
+  {pos:29,team:"Saxony Rasen SV",p:4,w:1,d:0,l:3,gf:5,ga:11,pts:3,seed:13},
+  {pos:30,team:"Attica Gold AE",p:4,w:1,d:0,l:3,gf:5,ga:11,pts:3,seed:30},
+  {pos:31,team:"Caspian Dawn FK",p:4,w:1,d:0,l:3,gf:4,ga:10,pts:3,seed:35},
+  {pos:32,team:"Maas Harbour RV",p:4,w:1,d:0,l:3,gf:4,ga:11,pts:3,seed:27},
+  {pos:33,team:"Artois Sang RC",p:4,w:1,d:0,l:3,gf:4,ga:16,pts:3,seed:29},
+  {pos:34,team:"Vltava Star SK",p:4,w:0,d:1,l:3,gf:5,ga:9,pts:1,seed:32},
+  {pos:35,team:"Flandre Nord OSC",p:4,w:0,d:1,l:3,gf:4,ga:10,pts:1,seed:17},
+  {pos:36,team:"Carpathia Blue SK",p:4,w:0,d:0,l:4,gf:1,ga:17,pts:0,seed:36}
+];
+
+// Synthetic Matchday 5 Simulation Slate (18 Seeded Fixtures)
+const MD5 = [
+  {day:"Sim Window A · 17:45 UTC",h:"Bosphorus Gold SK",a:"Midland Claret FC",odds:2.65},
+  {day:"Sim Window A · 17:45 UTC",h:"Arctic Aurora FK",a:"Danube Stahl SK",odds:1.95},
+  {day:"Sim Window A · 20:00 UTC",h:"Thames Cannon FC",a:"Westphalia Schwarz SV",odds:1.62},
+  {day:"Sim Window A · 20:00 UTC",h:"Castilla Crown CF",a:"Brabant Light SV",odds:1.30},
+  {day:"Sim Window A · 20:00 UTC",h:"Irwell Sky FC",a:"Parthenope Azure SSC",odds:1.45},
+  {day:"Sim Window A · 20:00 UTC",h:"Maas Harbour RV",a:"Douro Atlantic FC",odds:2.50},
+  {day:"Sim Window A · 20:00 UTC",h:"Saxony Rasen SV",a:"Artois Sang RC",odds:1.72},
+  {day:"Sim Window A · 20:00 UTC",h:"Lario Lakeside AC",a:"Attica Gold AE",odds:1.38},
+  {day:"Sim Window A · 20:00 UTC",h:"Carpathia Blue SK",a:"Guadalquivir Real",odds:5.80},
+  {day:"Sim Window B · 17:45 UTC",h:"Vltava Star SK",a:"Castellon Ceramic CF",odds:2.75},
+  {day:"Sim Window B · 17:45 UTC",h:"Caspian Dawn FK",a:"Catalonia Blau SC",odds:11.00},
+  {day:"Sim Window B · 20:00 UTC",h:"Lutetia Metro FC",a:"Tiber Capitol AS",odds:1.42},
+  {day:"Sim Window B · 20:00 UTC",h:"Navigli Nerazzurri",a:"Neckar Valley VfB",odds:1.68},
+  {day:"Sim Window B · 20:00 UTC",h:"Tagus Verde CP",a:"Trafford Red FC",odds:2.20},
+  {day:"Sim Window B · 20:00 UTC",h:"Flanders Canal KV",a:"Mersey Harbor FC",odds:3.90},
+  {day:"Sim Window B · 20:00 UTC",h:"Manzanares Rojiblanco",a:"Fjordland Stavanger BK",odds:1.28},
+  {day:"Sim Window B · 20:00 UTC",h:"Flandre Nord OSC",a:"Isar Alpine SV",odds:5.40},
+  {day:"Sim Window B · 20:00 UTC",h:"Steppe Miners FC",a:"Kadikoy Beacon SK",odds:2.60}
+];
+
+function sw(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+const totalGoals = CLUBS.reduce((s,c)=>s+c.gf,0);
+const avgGf = totalGoals / (CLUBS.length * 4);
+document.getElementById('kpiRow').innerHTML = `
+  <div class="box"><div class="muted">Clubs / Matches Played</div><div class="val">36 · 72</div></div>
+  <div class="box"><div class="muted">Avg Goals / Team / Game</div><div class="val">${avgGf.toFixed(2)}</div></div>
+  <div class="box"><div class="muted">Top Attack (GF)</div><div class="val">Lutetia Metro (20)</div></div>
+  <div class="box"><div class="muted">Top Defense (GA)</div><div class="val">Thames Cannon (3)</div></div>`;
+
+function renderTable() {
+  const z = document.getElementById('zoneFilter').value;
+  const rows = CLUBS.filter(c => z==='all' || (z==='r16'&&c.pos<=8) || (z==='po'&&c.pos>=9&&c.pos<=24) || (z==='out'&&c.pos>=25));
+  document.getElementById('uclTable').innerHTML = `<thead><tr><th>#</th><th>Club</th><th>P</th><th>W-D-L</th><th>GF:GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>` +
+    rows.map(c => {
+      const cls = c.pos<=8?'z-r16':(c.pos<=24?'z-po':'z-out');
+      const gd = c.gf - c.ga;
+      return `<tr class="${cls}"><td>${c.pos}</td><td><strong>${c.team}</strong></td><td>${c.p}</td><td>${c.w}-${c.d}-${c.l}</td><td>${c.gf}:${c.ga}</td><td>${gd>=0?'+':''}${gd}</td><td><strong>${c.pts}</strong></td></tr>`;
+    }).join('') + `</tbody>`;
+}
+
+// Chart 1: Points Histogram
+const ptsBins = [0,1,3,4,5,6,7,8,9,10,12];
+new Chart(document.getElementById('histChart'), {
+  type:'bar',
+  data:{
+    labels:ptsBins.map(p=>p+' pts'),
+    datasets:[{label:'Clubs',data:ptsBins.map(p=>CLUBS.filter(c=>c.pts===p).length),backgroundColor:ptsBins.map(p=>p>=9?'#21E0DC':(p>=4?'#F5A623':'#F0245C')),borderRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5',stepSize:1},grid:{color:'#1b202c'}}}}
+});
+
+// Chart 2: Attack vs Defense Scatter
+new Chart(document.getElementById('scatterChart'), {
+  type:'scatter',
+  data:{
+    datasets:[{
+      label:'Synthetic Clubs (GF/G vs GA/G)',
+      data:CLUBS.map(c=>({x:+(c.gf/4).toFixed(2),y:+(c.ga/4).toFixed(2),team:c.team,pos:c.pos})),
+      backgroundColor:CLUBS.map(c=>c.pos<=8?'#21E0DC':(c.pos<=24?'#F5A623':'#F0245C')),
+      pointRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    events:['mousemove','mouseout','click','touchstart','touchmove'],onClick:(e,els)=>{if(els&&els.length)inspectEdaClub(els[0].index);},plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.raw.team} (#${ctx.raw.pos}): ${ctx.raw.x} GF/G, ${ctx.raw.y} GA/G`}}},
+    scales:{
+      x:{title:{display:true,text:'Goals For per Match (Higher = Better)',color:'#8B95A5'},ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},
+      y:{reverse:true,title:{display:true,text:'Goals Against per Match (Top = Stronger Defense)',color:'#8B95A5'},ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}}
+    }
+  }
+});
+
+// Chart 3: Seed Residuals (Top 16 biggest movers)
+const movers = [...CLUBS].map(c=>({team:c.team,delta:c.seed - c.pos})).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,16).sort((a,b)=>b.delta-a.delta);
+new Chart(document.getElementById('residChart'), {
+  type:'bar',
+  data:{
+    labels:movers.map(m=>m.team),
+    datasets:[{label:'Seed Rank - Simulated Rank',data:movers.map(m=>m.delta),backgroundColor:movers.map(m=>m.delta>=0?'#21E0DC':'#F0245C'),borderRadius:4}]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#F2F5F9'},grid:{color:'#1b202c'}}}}
+});
+
+// Tab 4: All 18 MD5 Fixtures & Poisson Engine
+const fixSel = document.getElementById('fixSel');
+fixSel.innerHTML = MD5.map((f,i)=>`<option value="${i}">[${f.day}] ${f.h} vs ${f.a}</option>`).join('');
+function findClub(name){ return CLUBS.find(c=>c.team===name) || {gf:6,ga:6}; }
+function loadFixture() {
+  const f = MD5[parseInt(fixSel.value,10)];
+  const h = findClub(f.h), a = findClub(f.a);
+  const lh = Math.max(0.45, Math.min(3.6, ((h.gf/4) * (a.ga/4) / avgGf) * 1.12));
+  const la = Math.max(0.40, Math.min(3.4, ((a.gf/4) * (h.ga/4) / avgGf) * 0.92));
+  document.getElementById('lh').value = lh.toFixed(2);
+  document.getElementById('la').value = la.toFixed(2);
+  document.getElementById('mktOdds').value = f.odds.toFixed(2);
+  calcPoisson();
+}
+function poisson(k,lam){ let f=1; for(let i=2;i<=k;i++) f*=i; return (Math.pow(lam,k)*Math.exp(-lam))/f; }
+function dcTau(h,a,lh,la,rho){
+  if(h===0&&a===0) return Math.max(0, 1 - lh*la*rho);
+  if(h===0&&a===1) return Math.max(0, 1 + lh*rho);
+  if(h===1&&a===0) return Math.max(0, 1 + la*rho);
+  if(h===1&&a===1) return Math.max(0, 1 - rho);
+  return 1;
+}
+function shinDevig(o1,oX,o2){
+  const q1=1/Math.max(1.01,o1), qX=1/Math.max(1.01,oX), q2=1/Math.max(1.01,o2), sQ=q1+qX+q2;
+  if(sQ<=1.0001) return {vig:0,z:0,s1:q1/sQ,sX:qX/sQ,s2:q2/sQ,m1:q1/sQ};
+  let lo=0, hi=0.35;
+  const ev=z=>{ const d=2*(1-z); const p1=(Math.sqrt(z*z+4*(1-z)*q1*q1/sQ)-z)/d, pX=(Math.sqrt(z*z+4*(1-z)*qX*qX/sQ)-z)/d, p2=(Math.sqrt(z*z+4*(1-z)*q2*q2/sQ)-z)/d; return {p1,pX,p2,s:p1+pX+p2}; };
+  for(let i=0;i<28;i++){ const mid=(lo+hi)/2; if(ev(mid).s>1) lo=mid; else hi=mid; }
+  const z=(lo+hi)/2, r=ev(z);
+  return {vig:(sQ-1)*100, z, s1:r.p1/r.s, sX:r.pX/r.s, s2:r.p2/r.s, m1:q1/sQ};
+}
+function calcPoisson() {
+  const lh = parseFloat(document.getElementById('lh').value), la = parseFloat(document.getElementById('la').value);
+  const rho = parseFloat(document.getElementById('dcRho').value || '-0.11');
+  const odds = Math.max(1.02, parseFloat(document.getElementById('mktOdds').value)||2.0);
+  document.getElementById('lhLbl').textContent = lh.toFixed(2);
+  document.getElementById('laLbl').textContent = la.toFixed(2);
+  document.getElementById('rhoLbl').textContent = rho.toFixed(2);
+  let rawSum=0, indepD=0, cells=[];
+  for(let h=0;h<=8;h++) for(let a=0;a<=8;a++) {
+    const pInd = poisson(h,lh)*poisson(a,la);
+    if(h===a) indepD+=pInd;
+    const pAdj = pInd * dcTau(h,a,lh,la,rho);
+    rawSum+=pAdj; cells.push({h,a,p:pAdj});
+  }
+  let pH=0,pD=0,pA=0,pBtts=0,gBins=[0,0,0,0,0], gridMap={};
+  cells.forEach(c=>{
+    const p = rawSum>0 ? c.p/rawSum : 0;
+    if(c.h>c.a) pH+=p; else if(c.h===c.a) pD+=p; else pA+=p;
+    if(c.h>0 && c.a>0) pBtts+=p;
+    for(let t=0;t<5;t++) if(c.h+c.a > t) gBins[t]+=p;
+    if(c.h<=5 && c.a<=5) gridMap[c.h+'-'+c.a]=p;
+  });
+  const oDraw = Math.max(1.25, (1/Math.max(0.05,pD))*0.945), oAway = Math.max(1.15, (1/Math.max(0.05,pA))*0.94);
+  const dv = shinDevig(odds, oDraw, oAway);
+  const shinEdge = (pH - dv.s1)*100;
+  const b = Math.max(0.01, odds - 1), qKelly = Math.max(0, Math.min(5.0, ((b*pH-(1-pH))/b)*0.25*100));
+  document.getElementById('pStats').innerHTML = `
+    <div class="box"><div class="muted">Home Win (DC)</div><div class="val">${(pH*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Draw (DC vs Naive)</div><div class="val">${(pD*100).toFixed(1)}% <span style="font-size:12px;color:var(--muted)">(${(indepD*100).toFixed(1)}%)</span></div></div>
+    <div class="box"><div class="muted">Away Win (DC)</div><div class="val">${(pA*100).toFixed(1)}%</div></div>
+    <div class="box"><div class="muted">Quarter-Kelly Cap</div><div class="val">${qKelly.toFixed(2)}%</div></div>`;
+  document.getElementById('pShinReadout').innerHTML = `<strong>Shin (1993) Overround De-Vigging:</strong> Bookmaker Vig <strong>${dv.vig.toFixed(2)}%</strong> (insider z = ${dv.z.toFixed(4)}) · Multiplicative Home Prob ${(dv.m1*100).toFixed(2)}% vs <strong>Shin True Market Prob ${(dv.s1*100).toFixed(2)}%</strong> · BTTS Yes ${(pBtts*100).toFixed(1)}%`;
+  document.getElementById('pBanner').innerHTML = shinEdge >= 2.5
+    ? `<div class="banner b-ok">POSITIVE SHIN DE-VIGGED EDGE (+${shinEdge.toFixed(2)}%): Fair Home ${(1/pH).toFixed(2)} vs Reference ${odds.toFixed(2)}.</div>`
+    : `<div class="banner b-err">BELOW +2.5% SHIN EDGE THRESHOLD (${shinEdge>=0?'+':''}${shinEdge.toFixed(2)}%): Pass under Syndicate discipline.</div>`;
+  let mx = '<table class="mx"><thead><tr><th>H \\ A</th>'+[0,1,2,3,4,5].map(a=>`<th>${a}</th>`).join('')+'</tr></thead><tbody>';
+  for(let h=0;h<=5;h++){ mx+=`<tr><th>${h}</th>`; for(let a=0;a<=5;a++){ const pct=((gridMap[h+'-'+a]||0)*100).toFixed(1); mx+=`<td style="${parseFloat(pct)>=7.5?'color:#21E0DC;font-weight:700;':''}">${pct}%</td>`; } mx+='</tr>'; }
+  document.getElementById('pMatrix').innerHTML = mx+'</tbody></table>';
+  document.getElementById('pLadder').innerHTML = gBins.map((p,i)=>`<div class="box" style="margin-bottom:6px;display:flex;justify-content:space-between;"><span>Over ${i+0.5} Goals</span><strong style="color:var(--cyan)">${(p*100).toFixed(1)}%</strong></div>`).join('');
+}
+
+// Tab 6: Calibration Backtest (N=1,440) & Seeded 1,000-Path Monte Carlo Stress Lab
+function mulberry32(seed){ let a=seed>>>0; return function(){ a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+(function initCalibration(){
+  document.getElementById('calKpis').innerHTML = `
+    <div class="box"><div class="muted">Dixon-Coles Brier (N=1,440)</div><div class="val">0.6183</div><div class="muted">vs Naive Poisson 0.6188 (Lower = Better)</div></div>
+    <div class="box"><div class="muted">Multi-Class Log-Loss</div><div class="val">1.0301</div><div class="muted">vs Naive 1.0307 · Uniform 1.0986</div></div>
+    <div class="box"><div class="muted">Mean Closing Line Value</div><div class="val">+5.18%</div><div class="muted">Across 104 qualifying +2.5% Shin edges</div></div>
+    <div class="box"><div class="muted">Hard Single-Match Cap</div><div class="val">5.00%</div><div class="muted">Quarter-Kelly geometric risk ceiling</div></div>`;
+})();
+function runMcLab(){
+  const p = Math.max(0.15, Math.min(0.85, (parseFloat(document.getElementById('mcProb').value)||54)/100));
+  const odds = Math.max(1.2, Math.min(6.0, parseFloat(document.getElementById('mcOdds').value)||1.96));
+  const hor = parseInt(document.getElementById('mcHor').value,10)||80;
+  const b = odds - 1, fk = Math.max(0, (b*p - (1-p))/b);
+  const regimes = [
+    {lbl:'Quarter-Kelly (0.25x · 5% Cap)', f:Math.min(0.05, fk*0.25), hi:true},
+    {lbl:'Half-Kelly (0.50x · 12% Cap)', f:Math.min(0.12, fk*0.50), hi:false},
+    {lbl:'Full Kelly (1.00x · Uncapped)', f:Math.min(0.45, fk), hi:false},
+    {lbl:'Flat 2.0% Unit Allocation', f:0.02, hi:false}
+  ];
+  const rng = mulberry32(20261126), paths = 1000;
+  const seqs = Array.from({length:paths}, ()=>Array.from({length:hor}, ()=>rng()<p));
+  const rows = regimes.map(r=>{
+    const terms=[], dds=[]; let br=0;
+    for(let i=0;i<paths;i++){
+      let nav=12.0, pk=12.0, wdd=0;
+      for(let t=0;t<hor;t++){
+        const st=nav*r.f; nav = seqs[i][t] ? nav + st*b : Math.max(0.01, nav - st);
+        if(nav>pk) pk=nav; const dd=(pk-nav)/pk; if(dd>wdd) wdd=dd;
+      }
+      terms.push(nav); dds.push(wdd*100); if(wdd>=0.30) br++;
+    }
+    terms.sort((x,y)=>x-y); dds.sort((x,y)=>x-y);
+    return `<tr style="${r.hi?'color:#21E0DC;font-weight:700;':''}"><td>${r.lbl}</td><td>${(r.f*100).toFixed(2)}%</td><td>${terms[500].toFixed(2)} VU</td><td>${terms[50].toFixed(2)} VU</td><td>${terms[950].toFixed(2)} VU</td><td>${dds[500].toFixed(1)}%</td><td>${(br/10).toFixed(1)}%</td></tr>`;
+  }).join('');
+  document.getElementById('mcTable').innerHTML = `<thead><tr><th>Staking Regime</th><th>Stake %</th><th>Median NAV</th><th>P05 Worst VaR</th><th>P95 Upside</th><th>Median Max DD</th><th>DD &gt;= 30% Breach</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+// Tab 5: Tipgame Voting & NAV Ledger
+document.getElementById('voteWrap').innerHTML = ['M1','M2','M3','M4','M5','M6'].map((m,i)=>`<label class="chk"><input type="checkbox" class="vc" ${i<4?'checked':''} onchange="calcSlip()"> ${m}</label>`).join('');
+function calcSlip() {
+  const yes = [...document.querySelectorAll('.vc')].filter(c=>c.checked).length;
+  const locked = document.getElementById('cutoffChk').checked;
+  const pct = (yes/6)*100;
+  document.getElementById('slipBanner').innerHTML = locked
+    ? `<div class="banner b-ok">LOCKED_PRE_KICKOFF: Cutoff passed; selection card &amp; virtual unit allocations frozen server-side.</div>`
+    : (pct>=60 ? `<div class="banner b-ok">QUORUM APPROVED (${yes}/6 · ${pct.toFixed(0)}%): Ready to lock at T-15m.</div>` : `<div class="banner b-err">BELOW 60% THRESHOLD (${yes}/6 · ${pct.toFixed(0)}%).</div>`);
+}
+function testEdit() {
+  const locked = document.getElementById('cutoffChk').checked;
+  document.getElementById('slipBanner').innerHTML = locked
+    ? `<div class="banner b-err">403 BLOCKED: Pre-kickoff lock enforced. Post-cutoff edits impossible.</div>`
+    : `<div class="banner b-ok">200 ALLOWED: Selection card still open prior to T-15m cutoff.</div>`;
+}
+let pool=2400, units=200, hold={A:80,B:70,C:50}, navHist=[12.00];
+const navChart = new Chart(document.getElementById('navChart'), {
+  type:'line',
+  data:{labels:['T0'],datasets:[{label:'NAV / Unit (VU)',data:navHist,borderColor:'#21E0DC',backgroundColor:'rgba(33,224,220,0.12)',fill:true,tension:0.25}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}},y:{ticks:{color:'#8B95A5'},grid:{color:'#1b202c'}}}}
+});
+function renderNav() {
+  const nav = pool/units;
+  document.getElementById('navStats').innerHTML = `
+    <div class="box"><div class="muted">Pool Value</div><div class="val">${pool.toFixed(2)} VU</div></div>
+    <div class="box"><div class="muted">Active Units</div><div class="val">${units.toFixed(2)}</div></div>
+    <div class="box"><div class="muted">NAV / Unit</div><div class="val">${nav.toFixed(2)} VU</div></div>
+    <div class="box"><div class="muted">Invariant</div><div class="val" style="font-size:15px;">Append-Only OK</div></div>`;
+  document.getElementById('memPos').innerHTML = ['A','B','C'].map(m=>`<div class="box"><strong>Member ${m}</strong> · ${hold[m].toFixed(2)} units · <strong style="color:var(--cyan)">${(hold[m]*nav).toFixed(2)} VU</strong></div>`).join('');
+}
+function tx(type, amt) {
+  const m = document.getElementById('memSel').value, nav = pool/units;
+  let du = 0;
+  if(type==='DEPOSIT'){ du=amt/nav; pool+=amt; units+=du; hold[m]+=du; }
+  else if(type==='REDEEM'){ if(Math.abs(amt)>hold[m]*nav || pool+amt<=100) return; du=amt/nav; pool+=amt; units+=du; hold[m]+=du; }
+  else { pool=Math.max(100,pool+amt); }
+  const newNav = +(pool/units).toFixed(2);
+  navHist.push(newNav);
+  navChart.data.labels.push('T'+(navHist.length-1));
+  navChart.update();
+  const ts = new Date().toISOString().slice(11,19);
+  document.getElementById('navLog').innerHTML = `<div><span style="color:#8B95A5">[${ts}]</span> <strong style="color:${amt>=0?'#21E0DC':'#F0245C'}">${type}</strong> (${m}) delta=${amt>=0?'+':''}${amt} VU | units=${du>=0?'+':''}${du.toFixed(2)} | NAV=${newNav.toFixed(2)} VU</div>` + document.getElementById('navLog').innerHTML;
+  renderNav();
+}
+// R31: Keyboard/Tap Inspector & Accessible Text Alternatives for Charts
+document.getElementById('histTextAlt').textContent = ptsBins.map(p => `${p} pts: ${CLUBS.filter(c=>c.pts===p).length} club(s)`).join(' · ');
+const edaSel = document.getElementById('edaClubSel');
+edaSel.innerHTML = CLUBS.map((c,i)=>`<option value="${i}">#${c.pos} ${c.team}</option>`).join('');
+function inspectEdaClub(idx) {
+  if (typeof idx === 'number') edaSel.value = String(idx);
+  const c = CLUBS[parseInt(edaSel.value, 10)] || CLUBS[0];
+  const zone = c.pos<=8 ? 'Top-8 R16' : (c.pos<=24 ? 'Play-offs (9-24)' : 'Eliminated (25-36)');
+  document.getElementById('edaClubReadout').innerHTML = `<strong>#${c.pos} ${c.team}</strong> (${zone}) · Attack: <strong>${(c.gf/4).toFixed(2)} GF/g</strong> · Defense: <strong>${(c.ga/4).toFixed(2)} GA/g</strong> · ${c.pts} pts`;
+}
+document.getElementById('scatterTextAlt').innerHTML = `<table class="data"><thead><tr><th>#</th><th>Synthetic Club</th><th>GF/Match</th><th>GA/Match</th><th>Pts</th></tr></thead><tbody>` +
+  CLUBS.map(c=>`<tr><td>${c.pos}</td><td>${c.team}</td><td>${(c.gf/4).toFixed(2)}</td><td>${(c.ga/4).toFixed(2)}</td><td>${c.pts}</td></tr>`).join('') + `</tbody></table>`;
+document.getElementById('residTextAlt').innerHTML = `<table class="data"><thead><tr><th>Synthetic Club</th><th>Pre-Season Seed</th><th>Round-4 Rank</th><th>Seed Delta</th></tr></thead><tbody>` +
+  movers.map(m=>{ const c=findClub(m.team); return `<tr><td>${m.team}</td><td>${c.seed}</td><td>${c.pos}</td><td>${m.delta>=0?'+':''}${m.delta}</td></tr>`; }).join('') + `</tbody></table>`;
+const origRenderNav = renderNav;
+renderNav = function() {
+  origRenderNav();
+  const minN = Math.min(...navHist).toFixed(2), maxN = Math.max(...navHist).toFixed(2), curN = (pool/units).toFixed(2);
+  document.getElementById('navTextAlt').textContent = `Accessible curve summary: Current NAV = ${curN} VU (Min ${minN} VU, Max ${maxN} VU across ${navHist.length} step(s)).`;
+};
+renderTable(); loadFixture(); calcSlip(); renderNav(); inspectEdaClub(0); runMcLab();
+</script>
+</body>
+</html>

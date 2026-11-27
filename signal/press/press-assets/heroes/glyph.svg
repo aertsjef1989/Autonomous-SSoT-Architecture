@@ -1,0 +1,91 @@
+<svg width="680" height="470" viewBox="0 0 680 470" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Signal hero glyph: a layered eighth note on a dense circuit board</title>
+<desc>An original eighth-note mark with three offset copies stacked behind it for parallax depth, sitting on a dense printed-circuit network that flows top-left to middle-right, split cyan on the left and pink on the right with a glitch offset at the seam, on a near-black field.</desc>
+<defs>
+<clipPath id="hL"><rect x="0" y="0" width="341" height="470"/></clipPath>
+<clipPath id="hR"><rect x="339" y="0" width="341" height="470"/></clipPath>
+
+<g id="board" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="150,80 206,80 206,132 250,132 250,180 292,180" stroke-width="1.2"/>
+<polyline points="150,110 178,110 178,150 150,150" stroke-width="1"/>
+<polyline points="206,132 234,132 234,104 262,104" stroke-width="1"/>
+<polyline points="206,80 206,58 246,58" stroke-width="1"/>
+<polyline points="250,180 250,214 210,214" stroke-width="1"/>
+<polyline points="178,150 178,196 152,196" stroke-width="1"/>
+<polyline points="292,180 292,158 320,158" stroke-width="1"/>
+<polyline points="234,104 234,88" stroke-width="1"/>
+<polyline points="150,240 196,240 196,278 240,278" stroke-width="1"/>
+<polyline points="196,278 196,312 158,312" stroke-width="1"/>
+<polyline points="240,278 240,250 268,250" stroke-width="1"/>
+<polyline points="360,244 414,244 414,300 470,300 470,246 520,246" stroke-width="1.2"/>
+<polyline points="414,244 414,214 452,214" stroke-width="1"/>
+<polyline points="414,300 380,300 380,330 414,330" stroke-width="1"/>
+<polyline points="470,300 470,336 508,336" stroke-width="1"/>
+<polyline points="452,214 452,188 420,188" stroke-width="1"/>
+<polyline points="470,246 500,246 500,206 470,206" stroke-width="1"/>
+<polyline points="520,246 520,214 494,214" stroke-width="1"/>
+<polyline points="360,340 408,340 408,372 456,372" stroke-width="1"/>
+<polyline points="456,372 496,372 496,344 520,344" stroke-width="1"/>
+<polyline points="408,340 408,318 380,318" stroke-width="1"/>
+<circle cx="206" cy="80" r="3.4" stroke-width="1.2"/>
+<circle cx="520" cy="246" r="3.4" stroke-width="1.2"/>
+<circle cx="150" cy="240" r="3" stroke-width="1.1"/>
+<circle cx="360" cy="340" r="3" stroke-width="1.1"/>
+<circle cx="246" cy="58" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="262" cy="104" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="210" cy="214" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="152" cy="196" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="320" cy="158" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="234" cy="88" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="158" cy="312" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="268" cy="250" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="240" cy="278" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="452" cy="188" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="420" cy="188" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="414" cy="330" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="508" cy="336" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="500" cy="206" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="494" cy="214" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="456" cy="372" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="520" cy="344" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="380" cy="318" r="2.1" fill="currentColor" stroke="none"/>
+<rect x="224" y="126" width="12" height="4" fill="currentColor" stroke="none"/>
+<rect x="244" y="126" width="4" height="12" fill="currentColor" stroke="none"/>
+<rect x="466" y="240" width="12" height="4" fill="currentColor" stroke="none"/>
+<rect x="402" y="238" width="4" height="12" fill="currentColor" stroke="none"/>
+<rect x="188" y="272" width="12" height="4" fill="currentColor" stroke="none"/>
+</g>
+
+<g id="note" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+<ellipse cx="312" cy="288" rx="34" ry="23" transform="rotate(-18 312 288)" stroke-width="2.5"/>
+<rect x="342" y="160" width="6" height="128" rx="2" stroke-width="1.5"/>
+<path d="M348 160 C 380 172, 384 200, 362 218" stroke-width="2.5"/>
+<path d="M348 182 C 374 192, 377 214, 360 230" stroke-width="2.5"/>
+<circle cx="312" cy="288" r="4" stroke-width="1.5"/>
+<polyline points="290,288 314,288 314,302" stroke-width="1"/>
+<polyline points="300,296 300,306 324,306" stroke-width="1"/>
+<polyline points="322,292 338,292 338,278" stroke-width="1"/>
+<polyline points="296,278 308,278" stroke-width="1"/>
+<circle cx="314" cy="302" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="338" cy="278" r="2.1" fill="currentColor" stroke="none"/>
+<circle cx="324" cy="306" r="2.1" fill="currentColor" stroke="none"/>
+</g>
+</defs>
+
+<rect x="0" y="0" width="680" height="470" fill="#0B0C10"/>
+<rect x="120" y="26" width="440" height="418" rx="16" fill="none" stroke="#2A2E3A" stroke-width="1"/>
+
+<g clip-path="url(#hL)" style="color:#21E0DC"><use href="#board"/></g>
+<g clip-path="url(#hR)" style="color:#F0245C"><use href="#board" transform="translate(3,-2)"/></g>
+
+<g opacity="0.18"><use href="#note" transform="translate(15,15)" style="color:#7BF0EE"/></g>
+<g opacity="0.30"><use href="#note" transform="translate(10,10)" style="color:#21E0DC"/></g>
+<g opacity="0.55"><use href="#note" transform="translate(5,5)" style="color:#0E8A86"/></g>
+
+<g clip-path="url(#hL)" style="color:#21E0DC"><use href="#note"/></g>
+<g clip-path="url(#hR)" style="color:#F0245C"><use href="#note" transform="translate(3,-2)"/></g>
+
+<rect x="322" y="250" width="42" height="5" fill="#21E0DC" opacity="0.5" transform="translate(-7,0)"/>
+<rect x="318" y="274" width="46" height="4" fill="#F0245C" opacity="0.55" transform="translate(7,0)"/>
+<rect x="324" y="296" width="34" height="4" fill="#21E0DC" opacity="0.4" transform="translate(-4,0)"/>
+</svg>

@@ -1,0 +1,788 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>V. Self-Healing Loop & Fault Taxonomy · Systems Design Portfolio</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="Enterprise Knowledge Architecture (SSoT), Balaerion Multi-Provider AI Gateway, and Syndicate Quantitative Systems Portfolio by Jef Aerts.">
+        <meta name="generator" content="HonKit 7.0.1">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="06-Bot-Command-Reference.html" />
+    
+    
+    <link rel="prev" href="04-Relational-Database-Schema.html" />
+    
+
+        <meta name="theme-color" content="#08090D">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="V. Self-Healing Loop &amp; Fault Taxonomy · Systems Design Portfolio">
+    <meta property="og:description" content="Enterprise Knowledge Architecture (SSoT), Balaerion Multi-Provider AI Gateway, and Syndicate Quantitative Systems Portfolio by Jef Aerts.">
+    <link rel="manifest" href="manifest.webmanifest">
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Portfolio Overview</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="ARCHITECTURE_FLOW.html">
+            
+                <a href="ARCHITECTURE_FLOW.html">
+            
+                    
+                    Architecture Flow
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar I · Autonomous SSoT</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    I. Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    II. System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    III. Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    IV. Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.5" data-path="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                    
+                    V. Self-Healing Loop & Fault Taxonomy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="06-Bot-Command-Reference.html">
+            
+                <a href="06-Bot-Command-Reference.html">
+            
+                    
+                    VI. Bot Command Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    VII. Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    VIII. Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.9" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    IX. Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.10" data-path="10-Prototype-Manual.html">
+            
+                <a href="10-Prototype-Manual.html">
+            
+                    
+                    X. Prototype Manual
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.11" data-path="11-Signal-Design-System.html">
+            
+                <a href="11-Signal-Design-System.html">
+            
+                    
+                    XI. Signal Design System
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.12" data-path="12-Architecture-Decision-Records.html">
+            
+                <a href="12-Architecture-Decision-Records.html">
+            
+                    
+                    XII. Architecture Decision Records
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.13" data-path="13-Contracts-and-Readiness.html">
+            
+                <a href="13-Contracts-and-Readiness.html">
+            
+                    
+                    XIII. Contracts & Readiness
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.14" data-path="14-AI-Content-Engineering-and-Rules.html">
+            
+                <a href="14-AI-Content-Engineering-and-Rules.html">
+            
+                    
+                    XIV. AI Content Engineering & Rules
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.15" data-path="15-Enablement-and-Continuity.html">
+            
+                <a href="15-Enablement-and-Continuity.html">
+            
+                    
+                    XV. Enablement & Continuity
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.16" data-path="16-Signal-Press-Document-Designer.html">
+            
+                <a href="16-Signal-Press-Document-Designer.html">
+            
+                    
+                    XVI. Signal Press Document Designer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar II · Balaerion & ProspectHub</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="balaerion/01-Mandate-and-Core-Stack.html">
+            
+                <a href="balaerion/01-Mandate-and-Core-Stack.html">
+            
+                    
+                    I. Mandate & Core Stack
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="balaerion/02-Hosting-and-Failover-Topology.html">
+            
+                <a href="balaerion/02-Hosting-and-Failover-Topology.html">
+            
+                    
+                    II. Hosting & Failover Topology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="balaerion/03-Security-and-GDPR-Routing-Lane.html">
+            
+                <a href="balaerion/03-Security-and-GDPR-Routing-Lane.html">
+            
+                    
+                    III. Security & GDPR Routing Lane
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="balaerion/04-MCP-Agents-and-Product-Layer.html">
+            
+                <a href="balaerion/04-MCP-Agents-and-Product-Layer.html">
+            
+                    
+                    IV. Dual-Mode Personas & Registry
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.html">
+            
+                <a href="balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.html">
+            
+                    
+                    V. ProspectHub OSINT & Readiness Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.html">
+            
+                <a href="balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.html">
+            
+                    
+                    VI. ProspectHub Lifecycle & Signal Handoff
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar III · Syndicate</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="syndicate/01-Mandate-and-System-Architecture.html">
+            
+                <a href="syndicate/01-Mandate-and-System-Architecture.html">
+            
+                    
+                    I. Mandate & System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="syndicate/02-Poisson-and-xG-Probability-Engine.html">
+            
+                <a href="syndicate/02-Poisson-and-xG-Probability-Engine.html">
+            
+                    
+                    II. Poisson, Dixon-Coles & Shin Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="syndicate/03-Group-Tipgame-and-Slip-Integrity.html">
+            
+                <a href="syndicate/03-Group-Tipgame-and-Slip-Integrity.html">
+            
+                    
+                    III. Group Tipgame & Slip Integrity
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="syndicate/04-Unit-Share-NAV-Ledger-and-Operations.html">
+            
+                <a href="syndicate/04-Unit-Share-NAV-Ledger-and-Operations.html">
+            
+                    
+                    IV. Unit-Share NAV Ledger & Operations
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.html">
+            
+                <a href="syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.html">
+            
+                    
+                    V. Quantitative Calibration & Monte Carlo Risk
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >V. Self-Healing Loop & Fault Taxonomy</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="v-self-healing-loop-and-fault-taxonomy">V. Self-Healing Loop and Fault Taxonomy</h1>
+<p><strong>Focus:</strong> Single Daily Scan, 10 Automated Controls (<code>5</code> Scanners + <code>5</code> Detectors) &amp; 29-Fault Taxonomy · <strong>Status:</strong> <code>Designed</code> (Simulated in <code>Prototype</code>)</p>
+<hr></hr>
+<h2 id="1-architectural-philosophy-of-the-loop">1. Architectural Philosophy of the Loop</h2>
+<p>A system without an automated governance loop will inevitably decay. Manual auditing fails because it scales linearly with content volume while rot compounds exponentially. </p>
+<p>To maintain bounded state consistency across <code>3,055</code> public reference nodes and <code>~1,200</code> internal nodes without manual micromanagement, the architecture specifies a continuous 5-phase control loop (<code>[Status: Designed]</code>):</p>
+<pre><code>DETECT   --&gt; Scanners and detectors write a fault to the audit log
+CLASSIFY --&gt; Assign category, severity (P1 to P4), and correction tier
+CORRECT  --&gt; Tier 1 (Automatic) through Tier 4 (Executive Escalation)
+VERIFY   --&gt; Re-scan at T+24h. Only then is the fault marked "Resolved"
+LEARN    --&gt; Recurring faults trigger systemic configuration changes, not just record patches
+</code></pre><p><em>Critical Principle:</em> <strong>Verification is separate from correction.</strong> A correction applied and logged as done is untested. The automated re-scan at T+24 hours is what confirms whether the fix held.</p>
+<hr></hr>
+<h2 id="2-optimized-execution-the-single-daily-scan">2. Optimized Execution: The Single Daily Scan</h2>
+<p>Naive workspace implementations attach native per-record date automations inside the database UI, firing roughly <code>1,700</code> <strong>platform automation runs</strong> per month across active review schedules.</p>
+<h3 id="platform-automation-runs-vs-external-server-job-runs">Platform Automation Runs vs. External Server Job Runs</h3>
+<ul>
+<li><strong>Platform Automation Runs:</strong> Metered native UI workflow triggers inside the workspace database product (subject to monthly enterprise automation quotas).</li>
+<li><strong>External Server Job Runs:</strong> Unmetered cron executions on the Bot/worker service calling batched REST APIs.</li>
+</ul>
+<p>Rather than firing <code>1,700</code> per-record UI triggers, the architecture replaces review-date UI automations with <strong>one native daily review-trigger handoff at 07:30 UTC</strong> (<code>SC-002</code>):</p>
+<ul>
+<li><strong>Efficiency (<code>98.2%</code> Metered Run Reduction):</strong> <code>SC-002</code> consumes <strong><code>30</code> platform automation runs per 30-day month</strong> against the <code>1,700 / month</code> per-record baseline (<code>1 - 30 / 1,700 = 98.2%</code>, cited as <code>~98%</code>), while <code>SC-001</code>, <code>SC-003</code>, <code>SC-004</code>, and <code>SC-005</code> execute on the external worker cron (<code>120</code> server cron runs/month, <code>0</code> metered UI runs). <em>(For comparison, scheduling <code>3</code> daily UI triggers would consume <code>90</code> runs = <code>94.7%</code> reduction, and running all <code>5</code> scanners as UI triggers would consume <code>150</code> runs = <code>91.2%</code> reduction.)</em></li>
+<li><strong>Native Date Dependency:</strong> Because database automations cannot reliably trigger off formula-derived dates, the Bot copies calculated review dates into a native date field (<code>Review Due (native)</code>) on every write. This is the only date the daily scan reads.</li>
+</ul>
+<h3 id="the-escalation-ladder">The Escalation Ladder</h3>
+<p>When a file reaches its review threshold, the daily scan triggers an automated escalation sequence:</p>
+<ul>
+<li><strong>Days 1 to 13:</strong> Automated direct message card sent to the content owner ("Verify or Update").</li>
+<li><strong>Days 14 to 29:</strong> Escalation card sent to the Owner, the Space Owner, and the Market First Line Manager (FLM).</li>
+<li><strong>Day 30:</strong> <strong>Automatic Deprecation.</strong> If unaddressed, the node is automatically moved to the archive branch, and its state changes to <code>Archived</code>. Leaving unverified policy or operational files in active circulation is a compliance liability worse than an empty folder.</li>
+</ul>
+<p><em>Exemption:</em> High-velocity, record-class internal areas (Meeting Notes, Escalations, Internal Updates) carry a <code>Review Exempt</code> flag. Feeding 720 dated records a year into a review scan creates noise; they are governed via strict retention periods instead.</p>
+<hr></hr>
+<h2 id="3-scanners--event-detectors-status-designed">3. Scanners &amp; Event Detectors (<code>[Status: Designed]</code>)</h2>
+<p>The loop specifies <strong>10 automated controls</strong> (<code>5</code> scheduled scanners + <code>5</code> event detectors) plus <code>1</code> external dead-man heartbeat monitor:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">ID</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Name &amp; Schedule / Trigger</th>
+<th style="text-align:left">Runs On</th>
+<th style="text-align:left">Target &amp; Fault IDs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>SC-001</code></td>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Metadata Integrity Scanner</strong> (<code>Daily 07:00 UTC</code>)</td>
+<td style="text-align:left">External Server Cron</td>
+<td style="text-align:left">Audits <code>T1</code> for missing owners, cadences, descriptions, or <code>&lt;2</code> tags (<code>F-001</code> to <code>F-005</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SC-002</code></td>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Daily Freshness &amp; Escalation Scan</strong> (<code>Daily 07:30 UTC</code>)</td>
+<td style="text-align:left">Platform Automation -&gt; Worker</td>
+<td style="text-align:left">Reads <code>Review Due (native)</code> across <code>T1</code>; dispatches Day 1-13 reminders, Day 14-29 FLM escalations, and Day-30 auto-archive moves (<code>F-006</code> to <code>F-010</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SC-003</code></td>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>State Reconciliation Scanner</strong> (<code>Nightly 02:00 UTC</code>)</td>
+<td style="text-align:left">External Server Cron</td>
+<td style="text-align:left">Resolves async publish drift via forward (<code>T1 -&gt; Wiki</code>) and reverse (<code>Wiki -&gt; T1</code>) checks (<code>F-027</code>, <code>F-028</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SC-004</code></td>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Container Permission Reconciliation</strong> (<code>Nightly 02:30 UTC</code>)</td>
+<td style="text-align:left">External Server Cron</td>
+<td style="text-align:left">Diffs <code>T4</code> market/tier scopes against live wiki branch container ACLs and re-asserts drifted grants (<code>F-019</code>, <code>F-020</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SC-005</code></td>
+<td style="text-align:left"><strong>Scanner</strong></td>
+<td style="text-align:left"><strong>Expected Run Audit Scanner</strong> (<code>Daily 08:00 UTC</code>)</td>
+<td style="text-align:left">External Server Cron</td>
+<td style="text-align:left">Verifies <code>SC-001</code>..<code>SC-004</code> wrote expected completion rows to <code>T10</code> within the prior 25 hours (<code>F-011</code>, <code>F-012</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>DT-001</code></td>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Audit Log Failure &amp; Latency Detector</strong> (<code>On T10 Write</code>)</td>
+<td style="text-align:left">Bot API Middleware</td>
+<td style="text-align:left">Distinguishes <strong>Degraded</strong> (retry latency buffered, <code>F-013a</code>) from <strong>Halted</strong> (persistent write failure blocking mutations, <code>F-013b</code> P1).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>DT-002</code></td>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Mover Scope-Change Detector</strong> (<code>On T4 Scope Update</code>)</td>
+<td style="text-align:left">Webhook -&gt; Worker</td>
+<td style="text-align:left">Triggers revoke-first / grant-second branch re-provisioning and <code>T1</code> ownership handoff (<code>F-029</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>DT-003</code></td>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Leaver Deprovision Detector</strong> (<code>On T4 Status = Deprovisioned</code>)</td>
+<td style="text-align:left">Webhook -&gt; Worker</td>
+<td style="text-align:left">Verifies pre-departure ownership reassignment and 48-hour Area 15 manager transfer (<code>F-023</code> P1 on miss).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>DT-004</code></td>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Out-of-Scope Command Detector</strong> (<code>On Bot Invocation</code>)</td>
+<td style="text-align:left">Bot Auth Guard</td>
+<td style="text-align:left">Blocks cross-market or unauthorized role invocations and logs security event (<code>F-021</code>, <code>F-022</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>DT-005</code></td>
+<td style="text-align:left"><strong>Detector</strong></td>
+<td style="text-align:left"><strong>Stuck Approval Card Detector</strong> (<code>On Queue Poll / Callback</code>)</td>
+<td style="text-align:left">Worker Queue</td>
+<td style="text-align:left">Flags pending publish cards exceeding the 14-day validity window or <code>429</code> retry ceiling (<code>F-014</code>, <code>F-015</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>HB-001</code></td>
+<td style="text-align:left"><strong>External Monitor</strong></td>
+<td style="text-align:left"><strong>Dead-Man Heartbeat Switch</strong> (<code>Daily 08:15 UTC</code> grace window)</td>
+<td style="text-align:left">Independent Ping Monitor (<code>Designed</code>)</td>
+<td style="text-align:left">Receives signed outbound ping only when <code>SC-005</code> succeeds; pages Administrators if <code>SC-005</code> itself fails to run.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="31-watching-the-watchman-external-dead-mans-switch-hb-001-status-designed">3.1 Watching the Watchman: External Dead-Man's Switch (<code>HB-001</code>, <code>[Status: Designed]</code>)</h3>
+<p><code>SC-005</code> (Expected Run Audit Scanner) catches silent failures in <code>SC-001</code> through <code>SC-004</code> by checking <code>T10</code> for missing completion rows. However, if the worker host, cron daemon, or OAuth service token fails completely, <code>SC-005</code> itself never executes and no internal alarm fires.</p>
+<p>To close that single point of failure without adding paid SaaS dependencies, <code>HB-001</code> specifies an <strong>inverted (absence-triggered) heartbeat</strong>:</p>
+<ol>
+<li>Upon verifying <code>SC-001</code>..<code>SC-004</code> at <code>08:00 UTC</code>, <code>SC-005</code> issues a signed <code>HTTPS GET</code> ping (containing <code>run_date</code> and row count, zero PII) to an independent external heartbeat endpoint.</li>
+<li>If no valid ping arrives before <code>08:15 UTC</code> (<code>15-minute</code> grace window), the external monitor raises an out-of-band <strong>P1 Infrastructure Alert</strong> directly to both named System Administrators (<code>ADM</code>).</li>
+<li><code>HB-001</code> is registered separately in <code>facts/facts.json</code> (<code>1</code> external monitor supervising the <code>10</code> internal automated controls).</li>
+</ol>
+<hr></hr>
+<h2 id="4-fault-taxonomy-summary-categories">4. Fault Taxonomy (Summary Categories)</h2>
+<p>The taxonomy classifies <code>29</code> defined fault types (<code>F-001</code> to <code>F-029</code>) across five categories, mapping each to automated correction tiers (Tier 1 = Automatic; Tier 4 = Executive escalation).</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Category</th>
+<th style="text-align:left">Description</th>
+<th style="text-align:left">Representative Faults</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>A. Metadata</strong></td>
+<td style="text-align:left">Register hygiene failures</td>
+<td style="text-align:left">Missing owners, missing cadences, insufficient tags (<code>F-001</code>..<code>F-005</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>B. Structural</strong></td>
+<td style="text-align:left">Tree and navigation integrity</td>
+<td style="text-align:left">Broken links, dead URLs, duplicate titles, Archive thresholds (<code>F-006</code>..<code>F-010</code>, <code>F-016</code>..<code>F-018</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>C. Data Integrity</strong></td>
+<td style="text-align:left">Systemic state synchronization</td>
+<td style="text-align:left">Formula mismatches, Database-vs-Wiki divergence (<code>F-024</code>..<code>F-028</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>D. Operational</strong></td>
+<td style="text-align:left">Infrastructure health</td>
+<td style="text-align:left">Missing job runs, <code>429</code> exhaustion, audit write latency/failure (<code>F-011</code>..<code>F-015</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>E. Access &amp; Security</strong></td>
+<td style="text-align:left">Permission and scoping breaches</td>
+<td style="text-align:left">Unauthorized commands, container ACL drift, incomplete offboarding, Mover leakage (<code>F-019</code>..<code>F-023</code>, <code>F-029</code>).</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Severity SLA Enforcement:</em> <strong>P1 Faults</strong> (such as persistent <code>T10</code> write failure <code>F-013b</code>, restricted ACL exposure <code>F-019</code>, or incomplete leaver deprovisioning <code>F-023</code>) carry a strict <strong>2-hour resolution SLA</strong> and escalate to Tier 4.</p>
+<hr></hr>
+<h2 id="5-systemic-learning--target-operational-readiness-gate">5. Systemic Learning &amp; Target Operational Readiness Gate</h2>
+<p>Correction without learning is manual maintenance with extra steps. </p>
+<h3 id="the-3-strike-rule-status-designed">The 3-Strike Rule (<code>[Status: Designed]</code>)</h3>
+<p>If the exact same fault ID occurs <strong>3 or more times within 30 days</strong>, the loop halts minor patching and triggers a mandatory <strong>Configuration Review</strong>. For example, repeated metadata failures in a specific market indicate a provisioning failure in that market's onboarding workflow rather than isolated author mistakes.</p>
+<h3 id="target-operational-exit-criteria-status-designed">Target Operational Exit Criteria (<code>[Status: Designed]</code>)</h3>
+<p>Under the target deployment readiness contract, the self-healing loop is declared operational only after holding all five criteria across a <strong>14-consecutive-day burn-in window</strong>:</p>
+<ol>
+<li>Zero missed scheduled scanner runs (<code>SC-001</code> through <code>SC-005</code> + <code>HB-001</code> green).</li>
+<li>Every fault marked <code>Resolved</code> passing its <code>T+24h</code> verification re-scan.</li>
+<li>Zero P1 faults open past their 2-hour SLA.</li>
+<li>Zero unresolved state divergence on <code>SC-003</code> reconciliation runs.</li>
+<li>End-to-end pass of one injected synthetic fault across each of Categories A through E.</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="04-Relational-Database-Schema.html" class="navigation navigation-prev " aria-label="Previous page: IV. Relational Database Schema">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="06-Bot-Command-Reference.html" class="navigation navigation-next " aria-label="Next page: VI. Bot Command Reference">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    
+    <script type="application/json" id="honkit-page-context">{"page":{"title":"V. Self-Healing Loop & Fault Taxonomy","level":"2.5","depth":1,"next":{"title":"VI. Bot Command Reference","level":"2.6","depth":1,"path":"06-Bot-Command-Reference.md","ref":"06-Bot-Command-Reference.md","articles":[]},"previous":{"title":"IV. Relational Database Schema","level":"2.4","depth":1,"path":"04-Relational-Database-Schema.md","ref":"04-Relational-Database-Schema.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Systems Design Portfolio","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","mtime":"2026-11-27T05:41:26.729Z","type":"markdown"},"gitbook":{"version":"7.0.1","time":"2026-11-27T05:41:41.440Z"},"basePath":".","book":{"language":""}}</script>
+</div>
+
+        
+    <noscript>
+        <link rel="stylesheet" href="gitbook/noscript.css">
+    </noscript>
+    
+    <script src="gitbook/boot.js"></script>
+    
+    <script src="gitbook/gitbook.js" defer></script>
+    <script src="gitbook/theme.js" defer></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js" defer></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js" defer></script>
+        
+    
+        
+        <script src="gitbook/@honkit/honkit-plugin-lunr/lunr.min.js" defer></script>
+        
+    
+        
+        <script src="gitbook/@honkit/honkit-plugin-lunr/search-lunr.js" defer></script>
+        
+    
+
+    </body>
+</html>
+

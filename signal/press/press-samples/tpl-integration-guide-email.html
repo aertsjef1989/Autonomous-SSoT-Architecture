@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server-Side Events API Integration Guide</title>
+</head>
+<body style="margin:0;padding:20px 8px;background-color:#F5F6F8;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+      <td align="center">
+        <table role="main" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background-color:#FFFFFF;border:1px solid #E1E4EA;border-radius:8px;">
+          
+    <tr>
+      <td style="padding:24px 28px 16px 28px;border-bottom:2px solid #14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#0A7571;">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:#F0245C;margin-right:4px;"></span>
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background-color:#21E0DC;margin-right:8px;"></span>
+              NL/BE &middot; INTEGRATION GUIDE
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:10px;font-size:24px;line-height:1.25;font-weight:700;color:#14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+              Server-Side Events API Integration Guide
+            </td>
+          </tr>
+          <tr><td style="padding-top:6px;font-size:14px;line-height:1.45;color:#5B6270;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Deterministic Payload Schema &amp; Deduplication Verification</td></tr>
+        </table>
+      </td>
+    </tr>
+  
+
+          <tr>
+            <td style="padding:18px 28px 6px 28px;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#0A7571;padding-bottom:3px;">TECHNICAL SPECIFICATION</div>
+              <div style="font-size:20px;line-height:1.3;font-weight:700;color:#14161C;">Prerequisites</div>
+            </td>
+          </tr>
+        
+
+          <tr>
+            <td style="padding:6px 28px 10px 28px;font-size:15px;line-height:1.55;color:#14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+              Ensure your storefront backend emits deterministic order UUIDs and SHA-256 normalized customer match keys only after explicit consent is granted.
+            </td>
+          </tr>
+        
+
+          <tr>
+            <td style="padding:18px 28px 6px 28px;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+              
+              <div style="font-size:17px;line-height:1.3;font-weight:700;color:#14161C;">Implementation Steps</div>
+            </td>
+          </tr>
+        
+
+          <tr>
+            <td style="padding:6px 28px 12px 28px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td valign="top" width="32" style="padding:5px 8px 5px 0;">
+                  <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:11px;background-color:#F0245C;color:#FFFFFF;font-size:12px;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">1</span>
+                </td>
+                <td valign="top" style="padding:5px 0;font-size:15px;line-height:1.5;color:#14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Generate a shared <code style="font-family:Consolas,Menlo,monospace;font-size:13px;background-color:#F5F6F8;color:#14161C;padding:1px 5px;border-radius:4px;">event_id</code> on checkout render and pass it to both browser and server payloads.</td>
+              </tr>
+              <tr>
+                <td valign="top" width="32" style="padding:5px 8px 5px 0;">
+                  <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:11px;background-color:#21E0DC;color:#14161C;font-size:12px;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">2</span>
+                </td>
+                <td valign="top" style="padding:5px 0;font-size:15px;line-height:1.5;color:#14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Include ISO-4217 currency (<code style="font-family:Consolas,Menlo,monospace;font-size:13px;background-color:#F5F6F8;color:#14161C;padding:1px 5px;border-radius:4px;">EUR</code>) and numeric <code style="font-family:Consolas,Menlo,monospace;font-size:13px;background-color:#F5F6F8;color:#14161C;padding:1px 5px;border-radius:4px;">value</code> formatted to two decimals.</td>
+              </tr>
+              <tr>
+                <td valign="top" width="32" style="padding:5px 8px 5px 0;">
+                  <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:11px;background-color:#F0245C;color:#FFFFFF;font-size:12px;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">3</span>
+                </td>
+                <td valign="top" style="padding:5px 0;font-size:15px;line-height:1.5;color:#14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Honor HTTP <code style="font-family:Consolas,Menlo,monospace;font-size:13px;background-color:#F5F6F8;color:#14161C;padding:1px 5px;border-radius:4px;">429</code> responses using <code style="font-family:Consolas,Menlo,monospace;font-size:13px;background-color:#F5F6F8;color:#14161C;padding:1px 5px;border-radius:4px;">Retry-After</code> exponential backoff.</td>
+              </tr></table>
+            </td>
+          </tr>
+        
+
+          <tr>
+            <td style="padding:18px 28px 6px 28px;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+              
+              <div style="font-size:17px;line-height:1.3;font-weight:700;color:#14161C;">Verification</div>
+            </td>
+          </tr>
+        
+
+          <tr>
+            <td style="padding:8px 28px 14px 28px;">
+              <table role="table" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+                <thead><tr><th align="left" style="padding:9px 10px;background-color:#14161C;color:#FFFFFF;font-size:12px;font-weight:700;border:1px solid #14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Event Name</th><th align="left" style="padding:9px 10px;background-color:#14161C;color:#FFFFFF;font-size:12px;font-weight:700;border:1px solid #14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Required Keys</th><th align="left" style="padding:9px 10px;background-color:#14161C;color:#FFFFFF;font-size:12px;font-weight:700;border:1px solid #14161C;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">Target Threshold</th></tr></thead>
+                <tbody><tr><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">ViewContent</td><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">event_id, content_id, currency</td><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#C71048;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">99% schema valid</td></tr><tr><td style="padding:8px 10px;background-color:#F5F6F8;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">InitiateCheckout</td><td style="padding:8px 10px;background-color:#F5F6F8;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">event_id, value, currency</td><td style="padding:8px 10px;background-color:#F5F6F8;border:1px solid #E1E4EA;font-size:13.5px;color:#C71048;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">95% deduplicated</td></tr><tr><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">CompletePayment</td><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#14161C;font-weight:400;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">event_id, order_id, value, currency</td><td style="padding:8px 10px;background-color:#FFFFFF;border:1px solid #E1E4EA;font-size:13.5px;color:#C71048;font-weight:700;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">100% server parity</td></tr></tbody>
+              </table>
+            </td>
+          </tr>
+        
+
+    <tr>
+      <td style="padding:16px 28px 22px 28px;border-top:1px solid #E1E4EA;font-size:11.5px;color:#5B6270;font-family:Calibri, Carlito, 'Segoe UI', Arial, sans-serif;">
+        Generated offline by Signal Press &middot; Language: en-GB &middot; Updated: 2026-11-25
+      </td>
+    </tr>
+  
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

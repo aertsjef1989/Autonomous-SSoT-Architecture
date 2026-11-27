@@ -1,0 +1,993 @@
+
+<!DOCTYPE HTML>
+<html lang="en" >
+    <head>
+        <meta charset="UTF-8">
+        <title>IV. Relational Database Schema · Systems Design Portfolio</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="Enterprise Knowledge Architecture (SSoT), Balaerion Multi-Provider AI Gateway, and Syndicate Quantitative Systems Portfolio by Jef Aerts.">
+        <meta name="generator" content="HonKit 7.0.1">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="05-Self-Healing-Loop-and-Fault-Taxonomy.html" />
+    
+    
+    <link rel="prev" href="03-Design-Methodology-DMADV.html" />
+    
+
+        <meta name="theme-color" content="#08090D">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="IV. Relational Database Schema · Systems Design Portfolio">
+    <meta property="og:description" content="Enterprise Knowledge Architecture (SSoT), Balaerion Multi-Provider AI Gateway, and Syndicate Quantitative Systems Portfolio by Jef Aerts.">
+    <link rel="manifest" href="manifest.webmanifest">
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Portfolio Overview</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Executive Summary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="ARCHITECTURE_FLOW.html">
+            
+                <a href="ARCHITECTURE_FLOW.html">
+            
+                    
+                    Architecture Flow
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar I · Autonomous SSoT</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01-Business-Case-and-ROI.html">
+            
+                <a href="01-Business-Case-and-ROI.html">
+            
+                    
+                    I. Business Case & ROI
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="02-System-Architecture.html">
+            
+                <a href="02-System-Architecture.html">
+            
+                    
+                    II. System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="03-Design-Methodology-DMADV.html">
+            
+                <a href="03-Design-Methodology-DMADV.html">
+            
+                    
+                    III. Design Methodology (DMADV)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.4" data-path="04-Relational-Database-Schema.html">
+            
+                <a href="04-Relational-Database-Schema.html">
+            
+                    
+                    IV. Relational Database Schema
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html">
+            
+                    
+                    V. Self-Healing Loop & Fault Taxonomy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="06-Bot-Command-Reference.html">
+            
+                <a href="06-Bot-Command-Reference.html">
+            
+                    
+                    VI. Bot Command Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="07-Role-Based-Access-Matrix.html">
+            
+                <a href="07-Role-Based-Access-Matrix.html">
+            
+                    
+                    VII. Role-Based Access Matrix
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="08-Security-and-Compliance.html">
+            
+                <a href="08-Security-and-Compliance.html">
+            
+                    
+                    VIII. Security & Compliance
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.9" data-path="09-Operations-Runbook.html">
+            
+                <a href="09-Operations-Runbook.html">
+            
+                    
+                    IX. Operations Runbook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.10" data-path="10-Prototype-Manual.html">
+            
+                <a href="10-Prototype-Manual.html">
+            
+                    
+                    X. Prototype Manual
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.11" data-path="11-Signal-Design-System.html">
+            
+                <a href="11-Signal-Design-System.html">
+            
+                    
+                    XI. Signal Design System
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.12" data-path="12-Architecture-Decision-Records.html">
+            
+                <a href="12-Architecture-Decision-Records.html">
+            
+                    
+                    XII. Architecture Decision Records
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.13" data-path="13-Contracts-and-Readiness.html">
+            
+                <a href="13-Contracts-and-Readiness.html">
+            
+                    
+                    XIII. Contracts & Readiness
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.14" data-path="14-AI-Content-Engineering-and-Rules.html">
+            
+                <a href="14-AI-Content-Engineering-and-Rules.html">
+            
+                    
+                    XIV. AI Content Engineering & Rules
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.15" data-path="15-Enablement-and-Continuity.html">
+            
+                <a href="15-Enablement-and-Continuity.html">
+            
+                    
+                    XV. Enablement & Continuity
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.16" data-path="16-Signal-Press-Document-Designer.html">
+            
+                <a href="16-Signal-Press-Document-Designer.html">
+            
+                    
+                    XVI. Signal Press Document Designer
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar II · Balaerion & ProspectHub</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="balaerion/01-Mandate-and-Core-Stack.html">
+            
+                <a href="balaerion/01-Mandate-and-Core-Stack.html">
+            
+                    
+                    I. Mandate & Core Stack
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="balaerion/02-Hosting-and-Failover-Topology.html">
+            
+                <a href="balaerion/02-Hosting-and-Failover-Topology.html">
+            
+                    
+                    II. Hosting & Failover Topology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="balaerion/03-Security-and-GDPR-Routing-Lane.html">
+            
+                <a href="balaerion/03-Security-and-GDPR-Routing-Lane.html">
+            
+                    
+                    III. Security & GDPR Routing Lane
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="balaerion/04-MCP-Agents-and-Product-Layer.html">
+            
+                <a href="balaerion/04-MCP-Agents-and-Product-Layer.html">
+            
+                    
+                    IV. Dual-Mode Personas & Registry
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.html">
+            
+                <a href="balaerion/05-ProspectHub-OSINT-and-Readiness-Engine.html">
+            
+                    
+                    V. ProspectHub OSINT & Readiness Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.html">
+            
+                <a href="balaerion/06-ProspectHub-Lifecycle-and-Signal-Handoff.html">
+            
+                    
+                    VI. ProspectHub Lifecycle & Signal Handoff
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Pillar III · Syndicate</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="syndicate/01-Mandate-and-System-Architecture.html">
+            
+                <a href="syndicate/01-Mandate-and-System-Architecture.html">
+            
+                    
+                    I. Mandate & System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="syndicate/02-Poisson-and-xG-Probability-Engine.html">
+            
+                <a href="syndicate/02-Poisson-and-xG-Probability-Engine.html">
+            
+                    
+                    II. Poisson, Dixon-Coles & Shin Engine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="syndicate/03-Group-Tipgame-and-Slip-Integrity.html">
+            
+                <a href="syndicate/03-Group-Tipgame-and-Slip-Integrity.html">
+            
+                    
+                    III. Group Tipgame & Slip Integrity
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="syndicate/04-Unit-Share-NAV-Ledger-and-Operations.html">
+            
+                <a href="syndicate/04-Unit-Share-NAV-Ledger-and-Operations.html">
+            
+                    
+                    IV. Unit-Share NAV Ledger & Operations
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.html">
+            
+                <a href="syndicate/05-Quantitative-Calibration-Backtesting-and-Risk.html">
+            
+                    
+                    V. Quantitative Calibration & Monte Carlo Risk
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >IV. Relational Database Schema</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="iv-relational-database-schema">IV. Relational Database Schema</h1>
+<p><strong>Focus:</strong> 11-Table Relational Split, Foreign-Key Build Order &amp; Algorithmic Governance · <strong>Status:</strong> <code>Designed</code></p>
+<hr></hr>
+<h2 id="1-architectural-application-split">1. Architectural Application Split</h2>
+<p>The architecture specifies a normalized 11-table relational database built within the enterprise workspace (<code>9</code> Data Layer tables + <code>2</code> Audit Layer tables). To prevent high-frequency audit logs from polluting operational data, the schema is physically divided across two separate database applications.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Application</th>
+<th style="text-align:left">Tables</th>
+<th style="text-align:left">Growth Profile</th>
+<th style="text-align:left">Architectural Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Data Layer (<code>9</code> tables)</strong></td>
+<td style="text-align:left">T1, T2, T3, T4, T5, T-FM-01, T-LG-01, T-KPI-03, T-KPI-01</td>
+<td style="text-align:left">Bounded (<code>~6,300</code> rows by Year 3). Subject to field-level GDPR retention rules (Chapter VIII).</td>
+<td style="text-align:left">Holds operational state and entity governance.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Audit Layer (<code>2</code> tables)</strong></td>
+<td style="text-align:left">T10, T-KPI-02</td>
+<td style="text-align:left"><strong>Unbounded</strong> (Grows with logged Bot/batch actions). Append-only within the 12-month active retention window, then exported and purged.</td>
+<td style="text-align:left">Isolating audit logs allows granular permission decoupling: a Manager remains View-Only on the Data Layer while holding edit rights in the Audit Layer to save dashboard configurations.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-strict-relational-build-order">2. Strict Relational Build Order</h2>
+<p>Dependencies dictate the build order across all <code>11</code> tables (<code>9</code> Data Layer + <code>2</code> Audit Layer). Building out of sequence produces select fields referencing foreign keys that do not yet exist.</p>
+<pre><code>T4        User Access Register      (No dependencies)
+ └─ T1        Page Ownership            (Validates Owner against T4)
+     └─ T5        Onboarding Tracker        (References T4)
+         └─ T3        Gap Tracker               (References T4)
+             └─ T2        Build Tracker             (Mirrors T1 structure)
+                 └─ T-FM-01   File Inventory
+                     └─ T-LG-01   Language Owners
+                         └─ T-KPI-03  KPI Definitions
+                             └─ T-KPI-01  KPI Snapshots    (References T-KPI-03)
+                                 └─ T10 &amp; T-KPI-02  Audit Log &amp; Audit KPI Views (Audit Layer App, built last)
+</code></pre><hr></hr>
+<h2 id="3-core-operational-tables">3. Core Operational Tables</h2>
+<h3 id="31-t4-user-access-register-the-matrix-engine">3.1 T4: User Access Register (The Matrix Engine)</h3>
+<p>33 fields. Every table in the system validates ownership against T4. It dictates precise systemic permissions across the <code>40</code> reference markets.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Function / Logic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>Market Scope</code></td>
+<td style="text-align:left">Multi-Select</td>
+<td style="text-align:left">Drives every branch permission grant. Values: <code>40</code> reference ISO codes or <code>ALL</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Database App Access</code></td>
+<td style="text-align:left">Select</td>
+<td style="text-align:left">Enforces the Agent Lockdown (View Only).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Console Access</code></td>
+<td style="text-align:left">Select</td>
+<td style="text-align:left">None, Read, Full.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Dashboard Access</code></td>
+<td style="text-align:left">Select</td>
+<td style="text-align:left">None, View, Build and Export.</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Systems Logic:</em> Console Access and Dashboard Access are distinct fields. This allows a regional owner to be <strong>Read-Only</strong> on base records (preventing accidental edits) while holding <strong>Build and Export</strong> rights to audit their own market metrics. Collapsing them creates a permission bottleneck.</p>
+<h3 id="32-t1-page-ownership-register-core-governance">3.2 T1: Page Ownership Register (Core Governance)</h3>
+<p>42 fields. One row per node in the wiki. This is the central nervous system of the architecture.</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Field</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Function / Logic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>Wiki Node Path</code></td>
+<td style="text-align:left">Text</td>
+<td style="text-align:left">Full path from root.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Owner</code></td>
+<td style="text-align:left">Text</td>
+<td style="text-align:left">User Handle. Must exist and be Active in T4.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Next Review Due</code></td>
+<td style="text-align:left">Formula</td>
+<td style="text-align:left"><code>IF(Cadence='Monthly', Last+30, IF(Cadence='Quarterly', Last+90...))</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Status</code></td>
+<td style="text-align:left">Auto</td>
+<td style="text-align:left">Derived algorithmic status (Active, Needs Review, Overdue, Archived).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Publication State</code></td>
+<td style="text-align:left">Select</td>
+<td style="text-align:left">Draft, WIP, Awaiting Approval, Published, Archived.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Wiki Token</code> / <code>Obj Token</code></td>
+<td style="text-align:left">Text</td>
+<td style="text-align:left"><strong>Bot-Owned.</strong> Node/Document identifiers.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>Review Due (native)</code></td>
+<td style="text-align:left">Date</td>
+<td style="text-align:left"><strong>Bot-Owned.</strong> Mirrors <code>Next Review Due</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="resolving-the-four-date-field-ambiguity">Resolving the "Four Date Field" Ambiguity</h4>
+<p>Systemic decay happens when review dates are conflated. The schema explicitly separates them:</p>
+<ol>
+<li><code>Last Reviewed Date</code> (Human): When an owner last verified the file's general accuracy.</li>
+<li><code>Last Source Verification</code> (Human): When every perishable claim was fact-checked against a primary external source.</li>
+<li><code>Next Review Due</code> (Formula): Computed date based on the file's assigned cadence.</li>
+<li><code>Review Due (native)</code> (Bot): Because database automations cannot reliably trigger off formula-derived dates, the Bot copies the formula output into this native date field on every write. This is the only date the automation scanners read.</li>
+</ol>
+<h4 id="bot-owned-field-restrictions">Bot-Owned Field Restrictions</h4>
+<p>Fields like <code>Wiki Token</code>, <code>Obj Token</code>, and <code>Publish Confirmed At</code> are strictly restricted at the field level. A human write to these fields does not merely get overwritten; it makes the database disagree with the wiki physical state. They are strictly <strong>View-Only</strong> for all users except the System Administrator.</p>
+<h3 id="33-t3-gap-tracker-organic-growth-engine">3.3 T3: Gap Tracker (Organic Growth Engine)</h3>
+<p>Records failed or zero-result bot queries. </p>
+<ul>
+<li><strong>The Prioritization Engine:</strong> <code>Frequency Count</code> auto-increments when the same question recurs. A question asked once is a curiosity; the same question asked eleven times across four markets automatically becomes the highest priority in the backlog.</li>
+</ul>
+<hr></hr>
+<h2 id="4-algorithmic-governance--sizing-reconciliation">4. Algorithmic Governance &amp; Sizing Reconciliation</h2>
+<h3 id="41-field-15-health-score-calculation-v2-stepped-vs-rejected-v1-linear">4.1 Field 15: Health Score Calculation (<code>v2</code> Stepped vs. Rejected <code>v1</code> Linear)</h3>
+<p>The health score is a <code>0-100</code> metric with canonical status threshold <strong><code>Healthy &gt;= 80</code></strong> and <strong><code>Needs Review &lt; 80</code></strong>:</p>
+<pre><code>100
+- IF(ISBLANK([Owner]), 20, 0)
+- IF(COUNTA([Tags Applied]) &lt; 2, 20, 0)
+- IF(ISBLANK([Short Description]), 20, 0)
+- IF([Days Overdue] = 0, 0,
+  IF([Days Overdue] &lt;= 14, [Days Overdue],
+  IF([Days Overdue] &lt;= 30, 28,
+  IF([Days Overdue] &lt;= 40, 36, 40))))
+</code></pre><p><strong>Corrected Architectural Rationale (<code>Healthy &gt;= 80</code> Threshold):</strong>
+Assuming complete metadata (<code>100</code> base points before overdue deductions):</p>
+<ul>
+<li>At <strong>Day 15</strong>, a file has just ignored its <strong>Day-14 FLM Escalation Card</strong>. Under the rejected linear model (<code>v1</code>: <code>-1 pt/day</code>, capped at <code>40</code>), Day 15 scores <strong><code>85</code></strong> and Day 20 scores <strong><code>80</code></strong>, both remaining in the <code>Healthy &gt;= 80</code> band and masking the ignored escalation until Day 21.</li>
+<li>Under the <strong>stepped <code>v2</code> model</strong>, crossing Day 14 jumps the deduction immediately to <strong><code>-28</code> points</strong> (score <strong><code>72</code></strong>, <code>&lt; 80</code>), forcing <code>Status = Needs Review</code> on Day 15. Note the explicit trade-off: the stepped schedule scores Day 15 (<code>72</code>) and Day 29 (<code>72</code>) identically within the escalation band because operational urgency inside Days 15 to 29 is driven by the Day-30 archive countdown (<code>SC-002</code>) rather than single-point score ticks.</li>
+<li><strong>Why <code>31-40</code> (<code>-36</code>) and <code>&gt;40</code> (<code>-40</code>) Tiers Exist:</strong> Under standard <code>SC-002</code> automation, overdue files auto-archive at midnight on Day 30, making Days <code>31+</code> unreachable in normal flow. Those two upper brackets activate only when an Administrator applies an explicit <code>Legal / Incident Hold</code> flag that suspends auto-archiving while keeping the stale file visibly penalized (<code>64</code> and <code>60</code>).</li>
+</ul>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:right">Days Overdue</th>
+<th style="text-align:left">Escalation Stage</th>
+<th style="text-align:right">Linear <code>v1</code> Score (<code>100 - MIN(40, d)</code>)</th>
+<th style="text-align:right">Stepped <code>v2</code> Score</th>
+<th style="text-align:left"><code>v2</code> Derived Status (<code>Healthy &gt;= 80</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><code>0</code></td>
+<td style="text-align:left">Within cadence</td>
+<td style="text-align:right"><code>100</code></td>
+<td style="text-align:right"><code>100</code></td>
+<td style="text-align:left"><code>Healthy</code> (<code>&gt;= 80</code>)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code>5</code></td>
+<td style="text-align:left">Owner reminder (<code>Days 1-13</code>)</td>
+<td style="text-align:right"><code>95</code></td>
+<td style="text-align:right"><code>95</code></td>
+<td style="text-align:left"><code>Healthy</code> (<code>&gt;= 80</code>)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code>10</code></td>
+<td style="text-align:left">Owner reminder (<code>Days 1-13</code>)</td>
+<td style="text-align:right"><code>90</code></td>
+<td style="text-align:right"><code>90</code></td>
+<td style="text-align:left"><code>Healthy</code> (<code>&gt;= 80</code>)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code>14</code></td>
+<td style="text-align:left">FLM Escalation Card sent</td>
+<td style="text-align:right"><code>86</code></td>
+<td style="text-align:right"><code>86</code></td>
+<td style="text-align:left"><code>Healthy</code> (<code>&gt;= 80</code>)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code>15</code></td>
+<td style="text-align:left">Post-escalation window</td>
+<td style="text-align:right"><code>85</code> <em>(stays Healthy)</em></td>
+<td style="text-align:right"><strong><code>72</code></strong></td>
+<td style="text-align:left"><strong><code>Needs Review</code> (<code>&lt; 80</code>)</strong></td>
+</tr>
+<tr>
+<td style="text-align:right"><code>20</code></td>
+<td style="text-align:left">Post-escalation window</td>
+<td style="text-align:right"><code>80</code> <em>(stays Healthy)</em></td>
+<td style="text-align:right"><strong><code>72</code></strong></td>
+<td style="text-align:left"><strong><code>Needs Review</code> (<code>&lt; 80</code>)</strong></td>
+</tr>
+<tr>
+<td style="text-align:right"><code>25</code></td>
+<td style="text-align:left">Pre-archive warning</td>
+<td style="text-align:right"><code>75</code></td>
+<td style="text-align:right"><strong><code>72</code></strong></td>
+<td style="text-align:left"><strong><code>Needs Review</code> (<code>&lt; 80</code>)</strong></td>
+</tr>
+<tr>
+<td style="text-align:right"><code>29</code></td>
+<td style="text-align:left">Final full day</td>
+<td style="text-align:right"><code>71</code></td>
+<td style="text-align:right"><strong><code>72</code></strong></td>
+<td style="text-align:left"><strong><code>Needs Review</code> (<code>&lt; 80</code>)</strong></td>
+</tr>
+<tr>
+<td style="text-align:right"><code>30</code></td>
+<td style="text-align:left">Console S7 Archive Queue</td>
+<td style="text-align:right"><code>70</code></td>
+<td style="text-align:right"><strong><code>72</code></strong></td>
+<td style="text-align:left"><code>Archived</code> at midnight (unless Admin Hold)</td>
+</tr>
+<tr>
+<td style="text-align:right"><code>35</code></td>
+<td style="text-align:left">Reachable only under Admin Hold</td>
+<td style="text-align:right"><code>65</code></td>
+<td style="text-align:right"><code>64</code></td>
+<td style="text-align:left"><code>Needs Review (Hold)</code></td>
+</tr>
+<tr>
+<td style="text-align:right"><code>40+</code></td>
+<td style="text-align:left">Reachable only under Admin Hold</td>
+<td style="text-align:right"><code>60</code></td>
+<td style="text-align:right"><code>60</code></td>
+<td style="text-align:left"><code>Needs Review (Hold)</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42-year-3-data-layer-row-count-reconciliation-6300-rows">4.2 Year-3 Data Layer Row-Count Reconciliation (<code>~6,300</code> Rows)</h3>
+<p>Under the <code>40-market</code>, <code>100-seat</code> reference model (<code>3,055</code> public nodes + <code>1,200</code> launch internal nodes = <code>4,255</code> launch <code>T1</code> rows, where internal is <code>1,200 / 4,255 = 28.2%</code> at launch and grows to <code>2,000 / 5,055 = 39.6%</code> by Year 3):</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Table</th>
+<th style="text-align:left">Layer</th>
+<th style="text-align:right">Launch Rows</th>
+<th style="text-align:right">Modeled Year-3 Rows</th>
+<th style="text-align:left">Sizing Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong><code>T1</code> Page Ownership</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>4,255</code></td>
+<td style="text-align:right"><code>5,055</code></td>
+<td style="text-align:left"><code>3,055</code> public (<code>40 * 75 + 55 GLB</code>) + <code>2,000</code> Year-3 internal nodes</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T2</code> Build Tracker</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>400</code></td>
+<td style="text-align:right"><code>250</code></td>
+<td style="text-align:left">Active wave/sprint production rows (completed waves archived)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T3</code> Gap Tracker</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>40</code></td>
+<td style="text-align:right"><code>350</code></td>
+<td style="text-align:left">Deduplicated recurring content-gap records across <code>40</code> markets</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T4</code> User Access</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>100</code></td>
+<td style="text-align:right"><code>100</code></td>
+<td style="text-align:left">Standardized <code>100-seat</code> active roster (departed rows purged at +30d per Ch. VIII)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T5</code> Onboarding</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>25</code></td>
+<td style="text-align:right"><code>100</code></td>
+<td style="text-align:left">Active/recent cohort milestone records (subject to Ch. VIII retention)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T-FM-01</code> File Inventory</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>120</code></td>
+<td style="text-align:right"><code>150</code></td>
+<td style="text-align:left">Legacy discovery hub &amp; asset manifest records</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T-LG-01</code> Language Owners</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>40</code></td>
+<td style="text-align:right"><code>40</code></td>
+<td style="text-align:left">One primary regional/language owner row per reference market</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T-KPI-03</code> KPI Definitions</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>21</code></td>
+<td style="text-align:right"><code>25</code></td>
+<td style="text-align:left">Versioned declarative KPI numerator/denominator rules</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T-KPI-01</code> KPI Snapshots</strong></td>
+<td style="text-align:left">Data</td>
+<td style="text-align:right"><code>24</code></td>
+<td style="text-align:right"><code>230</code></td>
+<td style="text-align:left">Pre-aggregated weekly/monthly metric snapshots across 3 years</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Data Layer Total (<code>9</code> tables)</strong></td>
+<td style="text-align:left"><strong>Data</strong></td>
+<td style="text-align:right"><strong><code>5,025</code></strong></td>
+<td style="text-align:right"><strong><code>6,300</code></strong></td>
+<td style="text-align:left"><strong>Bounded operational footprint (<code>&lt;15%</code> of enterprise table limits)</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>T10</code> &amp; <code>T-KPI-02</code> (<code>2</code> tables)</strong></td>
+<td style="text-align:left"><strong>Audit</strong></td>
+<td style="text-align:right">Unbounded</td>
+<td style="text-align:right">~<code>90,000 / yr</code></td>
+<td style="text-align:left">Append-only within 12-month active window, then exported &amp; purged</td>
+</tr>
+</tbody>
+</table></div>
+<hr></hr>
+<h2 id="5-the-measurement-layer-declarative-kpis">5. The Measurement Layer (Declarative KPIs)</h2>
+<p>Databases hold current state, not history. To track metrics over time, the schema utilizes the 3-table Snapshot Engine (<code>T-KPI-03</code> definitions in Data Layer, <code>T-KPI-01</code> operational snapshots in Data Layer, and <code>T-KPI-02</code> audit/dashboard views in Audit Layer).</p>
+<h3 id="51-t-kpi-03-kpi-definitions">5.1 T-KPI-03 (KPI Definitions)</h3>
+<p>Adding a new KPI is a database row, not a code release. </p>
+<ul>
+<li><strong>The Version Trap:</strong> If a KPI's numerator filter logic is edited, historical trend lines silently corrupt because they compare two different measurements. To mitigate this, <code>T-KPI-03</code> auto-increments a <code>Definition Version</code> field whenever logic changes. Snapshots record this version, allowing frontend charts to render a physical break marker on the trend line when underlying logic shifts.</li>
+<li><strong>Guarding the Scan Cost:</strong> The system estimates the API scan cost before saving a KPI. If a KPI will scan more than 2,000 rows, it automatically locks the <code>Pre-aggregate</code> flag, forcing it to run on a scheduled snapshot rather than rendering live and crippling dashboard load times.</li>
+</ul>
+<hr></hr>
+<h2 id="6-audit-layer-consistency--retention-semantics">6. Audit Layer Consistency &amp; Retention Semantics</h2>
+<h3 id="61-t10-bot-interaction-log-append-only-within-retention-window">6.1 T10: Bot Interaction Log (<code>Append-Only Within Retention Window</code>)</h3>
+<p><code>T10</code> contains 16 fields and is <strong>append-only within its 12-month active retention window</strong>: application roles hold zero <code>UPDATE</code> or <code>DELETE</code> privileges on individual rows, and at the 12-month boundary a scheduled administrative job exports a signed archive to EU object storage before purging expired partitions. <em>(Similarly, Data Layer tables are not "kept forever" indiscriminately: personal data fields in <code>T4</code>, <code>T5</code>, and <code>Area 15</code> follow the field-level GDPR retention and anonymization schedules in Chapter VIII.)</em></p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th style="text-align:left">Event</th>
+<th style="text-align:left">Logged to <code>T10</code>?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Every bot command (including rejected / out-of-scope requests)</td>
+<td style="text-align:left"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">Every publish, archive, and scheduled reconciliation run (<code>SC-001</code>..<code>SC-005</code>)</td>
+<td style="text-align:left"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">Console batch import, rollback, bulk edit, bulk delete</td>
+<td style="text-align:left"><strong>Yes</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">Console single-record UI edit</td>
+<td style="text-align:left"><strong>No</strong> (captured by native platform record history to avoid duplicating cell-level diffs).</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="62-degraded-f-013a-vs-halted-f-013b-audit-states">6.2 Degraded (<code>F-013a</code>) vs. Halted (<code>F-013b</code>) Audit States</h3>
+<p>To reconcile high availability with strict auditability (<code>DT-001</code>):</p>
+<ul>
+<li><strong>Degraded Mode (<code>F-013a</code>, P2 Warning):</strong> When <code>T10</code> experiences transient API retry latency (<code>&gt;90s</code> acknowledgment delay), the Bot buffers signed audit rows in durable worker queue memory (up to <code>15 minutes</code> / <code>500</code> events) while read queries and read-only scanners continue uninterrupted.</li>
+<li><strong>Halted Mode (<code>F-013b</code>, P1 Outage):</strong> If <code>T10</code> persistently rejects writes (credential revocation, schema lock, or buffer exhaustion), all state-mutating Bot commands and Console batch writes <strong>halt fail-closed</strong> until <code>T10</code> write confirmation is restored.</li>
+</ul>
+<hr></hr>
+<h2 id="7-operational-constraints--batch-limits">7. Operational Constraints &amp; Batch Limits</h2>
+<ol>
+<li><strong>500 Records Per API Call:</strong> Reads and writes are strictly chunked. Wide scans are pre-aggregated via the snapshot engine.</li>
+<li><strong>All-or-Nothing Batch Writes:</strong> A single bad row fails the 500-record payload. Validation executes locally <em>before</em> chunking.</li>
+<li><strong>Agent Lockdown (<code>AGT</code> Role):</strong> Agents (<code>60</code> seats in the <code>100-seat</code> reference model) are strictly View-Only on all base tables and execute state updates exclusively via conversational Bot commands (<code>@Bot review</code>, <code>@Bot gap</code>).</li>
+</ol>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="03-Design-Methodology-DMADV.html" class="navigation navigation-prev " aria-label="Previous page: III. Design Methodology (DMADV)">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="05-Self-Healing-Loop-and-Fault-Taxonomy.html" class="navigation navigation-next " aria-label="Next page: V. Self-Healing Loop & Fault Taxonomy">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    
+    <script type="application/json" id="honkit-page-context">{"page":{"title":"IV. Relational Database Schema","level":"2.4","depth":1,"next":{"title":"V. Self-Healing Loop & Fault Taxonomy","level":"2.5","depth":1,"path":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","ref":"05-Self-Healing-Loop-and-Fault-Taxonomy.md","articles":[]},"previous":{"title":"III. Design Methodology (DMADV)","level":"2.3","depth":1,"path":"03-Design-Methodology-DMADV.md","ref":"03-Design-Methodology-DMADV.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-fontsettings"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Systems Design Portfolio","language":"en","gitbook":"*","description":"Principal-level technical documentation for the Single Source of Truth (SSoT) architecture."},"file":{"path":"04-Relational-Database-Schema.md","mtime":"2026-11-27T05:41:26.729Z","type":"markdown"},"gitbook":{"version":"7.0.1","time":"2026-11-27T05:41:41.440Z"},"basePath":".","book":{"language":""}}</script>
+</div>
+
+        
+    <noscript>
+        <link rel="stylesheet" href="gitbook/noscript.css">
+    </noscript>
+    
+    <script src="gitbook/boot.js"></script>
+    
+    <script src="gitbook/gitbook.js" defer></script>
+    <script src="gitbook/theme.js" defer></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js" defer></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js" defer></script>
+        
+    
+        
+        <script src="gitbook/@honkit/honkit-plugin-lunr/lunr.min.js" defer></script>
+        
+    
+        
+        <script src="gitbook/@honkit/honkit-plugin-lunr/search-lunr.js" defer></script>
+        
+    
+
+    </body>
+</html>
+

@@ -1,0 +1,2993 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="description" content="Signal Slide Studio: parametric 16:9 template composer with theme switching and PPTX export."><meta name="theme-color" content="#0B0C10"><title>Signal Slide Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+:root{--bg:#0B0C10;--card:#15171F;--line:#2A2E3A;--txt:#fff;--mist:#B9C0CE;--faint:#7A828F;--pink:#F0245C;--cyan:#21E0DC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Carlito,Calibri,system-ui,sans-serif;display:grid;grid-template-columns:340px 1fr;height:100vh}
+aside{border-right:1px solid var(--line);padding:18px;overflow:auto}
+h1{font-size:17px;margin:0 0 4px}
+.sub{color:var(--faint);font-size:12px;margin-bottom:16px;line-height:1.4}
+label{display:block;font-size:11px;color:var(--mist);margin:10px 0 4px;text-transform:uppercase;letter-spacing:1px}
+select,input,textarea,button{width:100%;background:var(--card);border:1px solid var(--line);color:var(--txt);padding:8px 10px;border-radius:6px;font:inherit;font-size:13px}
+textarea{min-height:64px;resize:vertical}
+button{cursor:pointer;margin-top:12px}
+button:hover{border-color:var(--cyan)}
+.row{display:flex;gap:8px}
+main{padding:22px;overflow:auto;display:flex;flex-direction:column;gap:16px;align-items:center}
+.stage{width:100%;max-width:1100px;box-shadow:0 0 0 1px var(--line)}
+.stage svg{width:100%;height:auto;display:block}
+.bar{width:100%;max-width:1100px;display:flex;gap:10px;align-items:center}
+.bar b{font-size:13px}
+.bar .sp{margin-left:auto;display:flex;gap:8px}
+.bar button{width:auto;margin:0;padding:7px 14px}
+code{color:var(--cyan);font-size:11px}
+.grp{margin:18px 0 2px;font-size:10px;letter-spacing:2px;color:var(--cyan);border-top:1px solid var(--line);padding-top:12px}
+.hint{color:var(--faint);font-size:10.5px;margin-top:3px;line-height:1.35}
+input[type=range]{padding:0;border:none;background:none}
+input[type=color]{padding:2px;height:32px}
+label span{float:right;color:var(--cyan);text-transform:none;letter-spacing:0}
+ol#decklist{list-style:none;margin:10px 0;padding:0;max-height:190px;overflow:auto}
+ol#decklist li{display:flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:5px;padding:6px 8px;margin-bottom:5px;font-size:12px;cursor:pointer}
+ol#decklist li.sel{border-color:var(--cyan)}
+ol#decklist li .n{color:var(--faint);font-size:10px;width:14px}
+ol#decklist li .x{margin-left:auto;color:var(--faint);padding:0 2px}
+ol#decklist li .x:hover{color:var(--pink)}
+.desktop-notice{display:none;background:#15171F;border-bottom:1px solid var(--cyan);border-left:3px solid var(--cyan);color:var(--txt);padding:10px 12px;font-size:12px;line-height:1.45}
+@media (max-width: 899px){
+  html,body{max-width:100vw;overflow-x:hidden;height:auto}
+  body{display:flex;flex-direction:column}
+  .desktop-notice{display:block}
+  aside{border-right:none;border-bottom:1px solid var(--line);width:100%}
+  main{padding:12px;width:100%}
+  .bar{flex-wrap:wrap}
+}
+</style></head><body><div class="desktop-notice" role="status"><strong>Best on desktop (&gt;= 900px):</strong> Signal Slide Studio is designed for desktop 16:9 slide composition.</div>
+<aside>
+  <h1>Signal Slide Studio</h1>
+  <div class="sub">Eight archetypes. Two editions. Type the talking point, get the slide. Text is real vector type, so it stays crisp and editable.</div>
+
+  <label>Archetype</label>
+  <select id="layout"></select>
+  <div class="row"><div style="flex:1"><label>Edition</label>
+  <select id="edition"><option value="light">Light (blueprint)</option><option value="dark">Dark (console)</option></select></div>
+  <div style="flex:1"><label>Hero device</label><select id="hero"></select></div></div>
+
+  <div class="grp">DETAIL</div>
+  <label>Detail level <span id="v_detail">2</span></label>
+  <input type="range" id="detail" min="0" max="3" step="1" value="2">
+  <div class="hint">0 structure · 1 machined · 2 shaded · 3 illustrated (10x)</div>
+  <label>Hero scale <span id="v_heroScale">1.00</span></label>
+  <input type="range" id="heroScale" min="0.6" max="1.5" step="0.05" value="1">
+  <label>Grid <span id="v_grid">24</span></label>
+  <input type="range" id="grid" min="0" max="48" step="4" value="24">
+  <label>Corner circuitry <span id="v_corners">7</span></label>
+  <input type="range" id="corners" min="0" max="16" step="1" value="7">
+  <label>Paper grain <span id="v_texture">0</span></label>
+  <input type="range" id="texture" min="0" max="3" step="1" value="0">
+
+  <div class="grp">DEVICE PARAMETERS</div>
+  <div id="hparams"></div>
+
+  <div class="grp">CONTENT</div>
+  <label>Eyebrow</label><input id="eyebrow" value="The problem">
+  <label>Title</label><input id="title" value="Where the money actually goes">
+  <label>Talking points (Head | Body)</label>
+  <textarea id="points">Repeat questions | The same answer, re-derived weekly, by four people who never meet.
+Version confusion | Two live sources, both plausible, neither owned.
+Onboarding drag | Every new hire rebuilds context that already existed.</textarea>
+  <label>Verdict bar</label><input id="verdict" value="Recoverable waste is structural, not behavioural.">
+  <label>Verdict subtitle</label><input id="sub" value="You cannot train your way out of a missing system.">
+
+  <div class="grp">ACCENTS</div>
+  <div class="row">
+    <div style="flex:1"><label>Value</label><input type="color" id="c_cyan" value="#188860"></div>
+    <div style="flex:1"><label>Loss</label><input type="color" id="c_pink" value="#C0504A"></div>
+    <div style="flex:1"><label>Heat</label><input type="color" id="c_hot" value="#F07028"></div>
+  </div>
+  <label>Paper / ground</label><input type="color" id="c_ground" value="#F5F4EF">
+  <button id="rnd">Shuffle hero device</button>
+
+  <div class="grp">DECK</div>
+  <div class="row"><button id="add" style="margin:0">Add slide to deck</button><button id="upd" style="margin:0">Update selected</button></div>
+  <ol id="decklist"></ol>
+  <div class="row"><button id="pptx" style="margin:0;border-color:var(--cyan)">Export PPTX</button><button id="clear" style="margin:0">Clear</button></div>
+  <div class="hint" id="deckhint">Talking points also go into the speaker notes.</div>
+</aside>
+<main>
+  <div class="bar"><b id="lbl"></b><code id="call"></code>
+    <div class="sp"><button id="svgb">SVG</button><button id="pngb">PNG 2x</button></div></div>
+  <div class="stage" id="stage"></div>
+</main>
+<script>
+/* ============================================================
+   SIGNAL ASSET KIT  v1
+   Tokens + 12 primitives + 56 parameterised hero recipes.
+   Every asset is a pure function: (params) => SVG string.
+   No text is ever emitted. Every label is a slot you set later.
+   ============================================================ */
+
+const TOKENS = {
+  dark:  { ground:"#0B0C10", card:"#15171F", line:"#2A2E3A", white:"#FFFFFF",
+           mist:"#B9C0CE", faint:"#7A828F", pink:"#F0245C", cyan:"#21E0DC",
+           ink:"#FFFFFF", hatch:"#2A2E3A", glow:true },
+  light: { ground:"#FFFFFF", card:"#F5F6F8", line:"#E1E4EA", white:"#14161C",
+           mist:"#5B6270", faint:"#B9C0CE", pink:"#C71048", cyan:"#0E8A86",
+           ink:"#14161C", hatch:"#E1E4EA", glow:false }
+};
+
+/* ---------- shape helpers ---------- */
+const n = v => Math.round(v * 100) / 100;
+const gl = (E, on) => (E.glow && on ? ' filter="url(#glow)"' : '');
+const sw = w => ` stroke-width="${w}"`;
+
+function L(x1,y1,x2,y2,c,w=2,g=true,E={}){return `<line x1="${n(x1)}" y1="${n(y1)}" x2="${n(x2)}" y2="${n(y2)}" stroke="${c}"${sw(w)} stroke-linecap="round"${gl(E,g)}/>`;}
+function R(x,y,w,h,o={},E={}){const f=o.fill||"none";const s=o.stroke||"none";return `<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" rx="${o.rx||0}" fill="${f}" stroke="${s}"${sw(o.sw||2)}${o.dash?` stroke-dasharray="${o.dash}"`:""}${gl(E,o.glow!==false)}/>`;}
+function C(cx,cy,r,o={},E={}){return `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="${o.fill||"none"}" stroke="${o.stroke||"none"}"${sw(o.sw||2)}${o.dash?` stroke-dasharray="${o.dash}"`:""}${gl(E,o.glow!==false)}/>`;}
+function P(d,o={},E={}){return `<path d="${d}" fill="${o.fill||"none"}" stroke="${o.stroke||"none"}"${sw(o.sw||2)} stroke-linejoin="round" stroke-linecap="round"${o.dash?` stroke-dasharray="${o.dash}"`:""}${gl(E,o.glow!==false)}/>`;}
+function POLY(pts,o={},E={}){return `<polygon points="${pts.map(p=>`${n(p[0])},${n(p[1])}`).join(" ")}" fill="${o.fill||"none"}" stroke="${o.stroke||"none"}"${sw(o.sw||2)} stroke-linejoin="round"${gl(E,o.glow!==false)}/>`;}
+const G = (b,t="") => `<g${t?` transform="${t}"`:""}>${b}</g>`;
+
+/* ---------- P1..P12  the twelve primitives ---------- */
+
+// P1 trace: orthogonal path through points, with schematic tokens
+function trace(pts,c,E,o={}){
+  const d = pts.map((p,i)=>`${i?"L":"M"}${n(p[0])} ${n(p[1])}`).join(" ");
+  let out = P(d,{stroke:c,sw:o.sw||2,dash:o.dash},E);
+  if(o.tokens!==false){
+    for(let i=1;i<pts.length;i++){
+      const mx=(pts[i-1][0]+pts[i][0])/2, my=(pts[i-1][1]+pts[i][1])/2;
+      out += R(mx-3,my-3,6,6,{fill:c,glow:false},E);
+    }
+  }
+  return out;
+}
+// P2 river: thick glowing flow with inner highlight
+function river(pts,c,E,w=12){
+  const d = pts.map((p,i)=>`${i?"L":"M"}${n(p[0])} ${n(p[1])}`).join(" ");
+  return P(d,{stroke:c,sw:w},E) + P(d,{stroke:E.ground,sw:2,glow:false},E);
+}
+// P3 node
+function node(x,y,c,E,kind="junction"){
+  if(kind==="ring") return C(x,y,8,{stroke:c},E);
+  if(kind==="diamond") return POLY([[x,y-12],[x+12,y],[x,y+12],[x-12,y]],{fill:c},E);
+  if(kind==="source"){let s="";for(let i=3;i>=1;i--)s+=C(x,y,i*14,{stroke:i===3?c:E.mist},E);
+    s+=C(x,y,8,{fill:c},E);for(let a=0;a<12;a++){const t=a*Math.PI/6;s+=L(x+Math.cos(t)*48,y+Math.sin(t)*48,x+Math.cos(t)*54,y+Math.sin(t)*54,E.mist,1,false,E);}return s;}
+  return R(x-4,y-4,8,8,{fill:c},E);
+}
+// P4 arrowhead / arrow
+function arrow(x1,y1,x2,y2,c,E,w=3,head=14){
+  const a=Math.atan2(y2-y1,x2-x1);
+  const p=[[x2,y2],[x2-head*Math.cos(a-0.4),y2-head*Math.sin(a-0.4)],[x2-head*Math.cos(a+0.4),y2-head*Math.sin(a+0.4)]];
+  return L(x1,y1,x2-head*0.6*Math.cos(a),y2-head*0.6*Math.sin(a),c,w,true,E)+POLY(p,{fill:c},E);
+}
+// heavy tapered arc arrow (loops, flywheels)
+function arcArrow(cx,cy,r,a0,a1,c,E,w=16){
+  const p=(a,rr)=>[cx+Math.cos(a)*rr, cy+Math.sin(a)*rr];
+  const A=p(a0,r-w/2), B=p(a0,r+w/2), Cc=p(a1-0.14,r+w/2), D=p(a1-0.14,r-w/2);
+  const tip=p(a1,r), o1=p(a1-0.1,r+w), o2=p(a1-0.1,r-w);
+  const big=Math.abs(a1-a0)>Math.PI?1:0;
+  const d=`M${n(A[0])} ${n(A[1])} L${n(B[0])} ${n(B[1])} A${n(r+w/2)} ${n(r+w/2)} 0 ${big} 1 ${n(Cc[0])} ${n(Cc[1])} L${n(o1[0])} ${n(o1[1])} L${n(tip[0])} ${n(tip[1])} L${n(o2[0])} ${n(o2[1])} L${n(D[0])} ${n(D[1])} A${n(r-w/2)} ${n(r-w/2)} 0 ${big} 0 ${n(A[0])} ${n(A[1])} Z`;
+  return P(d,{fill:c,sw:0},E);
+}
+// P5 panel: chamfered rectangle
+function panel(x,y,w,h,c,E,ch=14,fill="none"){
+  const d=`M${n(x+ch)} ${n(y)} L${n(x+w-ch)} ${n(y)} L${n(x+w)} ${n(y+ch)} L${n(x+w)} ${n(y+h-ch)} L${n(x+w-ch)} ${n(y+h)} L${n(x+ch)} ${n(y+h)} L${n(x)} ${n(y+h-ch)} L${n(x)} ${n(y+ch)} Z`;
+  return P(d,{stroke:c,fill,sw:2},E);
+}
+// P6 corner bracket
+function corner(x,y,c,E,rot=0,len=44){
+  const b=L(0,0,len,0,c,2.5,true,E)+L(0,0,0,len,c,2.5,true,E)
+    +L(len*0.3,10,len*0.55,10,c,1.5,true,E)+L(10,len*0.3,10,len*0.55,c,1.5,true,E)
+    +R(14,14,5,5,{fill:c},E);
+  return G(b,`translate(${n(x)},${n(y)}) rotate(${rot})`);
+}
+// P7 chip
+function chip(x,y,w,h,c,E){return R(x,y,w,h,{fill:c,rx:4},E);}
+// chip with pin legs (microprocessor glyph)
+function chipPkg(x,y,s,c,E){
+  let out=R(x-s/2,y-s/2,s,s,{stroke:c,rx:3},E)+R(x-s/6,y-s/6,s/3,s/3,{stroke:c,sw:1.5},E);
+  for(let i=0;i<4;i++){const o=-s/4+i*(s/6);
+    out+=L(x+o,y-s/2,x+o,y-s/2-7,c,1.5,true,E)+L(x+o,y+s/2,x+o,y+s/2+7,c,1.5,true,E)
+        +L(x-s/2,y+o,x-s/2-7,y+o,c,1.5,true,E)+L(x+s/2,y+o,x+s/2+7,y+o,c,1.5,true,E);}
+  return out;
+}
+// P8 padlock
+function padlock(x,y,s,c,E,open=false){
+  const b=R(x-s*0.4,y-s*0.1,s*0.8,s*0.6,{stroke:c,rx:4},E);
+  const sh=open? P(`M${n(x-s*0.25)} ${n(y-s*0.1)} L${n(x-s*0.25)} ${n(y-s*0.4)} A${n(s*0.25)} ${n(s*0.25)} 0 0 1 ${n(x+s*0.35)} ${n(y-s*0.45)}`,{stroke:c},E)
+                : P(`M${n(x-s*0.25)} ${n(y-s*0.1)} L${n(x-s*0.25)} ${n(y-s*0.35)} A${n(s*0.25)} ${n(s*0.25)} 0 0 1 ${n(x+s*0.25)} ${n(y-s*0.35)} L${n(x+s*0.25)} ${n(y-s*0.1)}`,{stroke:c},E);
+  return b+sh+C(x,y+s*0.18,s*0.08,{fill:c},E);
+}
+// P9 gear
+function gear(cx,cy,r,teeth,c,E,o={}){
+  let d="";const tw=Math.PI/teeth*0.55, rt=r*1.16;
+  for(let i=0;i<teeth;i++){
+    const a=i*2*Math.PI/teeth;
+    const p=(ang,rr)=>`${n(cx+Math.cos(ang)*rr)} ${n(cy+Math.sin(ang)*rr)}`;
+    d+=`${i?"L":"M"}${p(a-tw,r)} L${p(a-tw*0.6,rt)} L${p(a+tw*0.6,rt)} L${p(a+tw,r)} A${n(r)} ${n(r)} 0 0 1 ${p(a+2*Math.PI/teeth-tw,r)} `;
+  }
+  d+="Z";
+  let out=P(d,{stroke:c,fill:o.fill||"none",sw:o.sw||2},E)+C(cx,cy,r*0.62,{stroke:c,sw:1.5},E)+C(cx,cy,r*0.2,{stroke:c,sw:1.5},E);
+  if(o.bolts!==false) for(let i=0;i<6;i++){const a=i*Math.PI/3;out+=C(cx+Math.cos(a)*r*0.42,cy+Math.sin(a)*r*0.42,r*0.05,{fill:c,glow:false},E);}
+  return out;
+}
+// P10 ring with ported hubs
+function ring(cx,cy,r,ports,c,E){
+  let out=C(cx,cy,r,{stroke:c,sw:3},E)+C(cx,cy,r*0.78,{stroke:c,sw:2},E);
+  for(let i=0;i<16;i++){const a=i*Math.PI/8;out+=C(cx+Math.cos(a)*r*0.89,cy+Math.sin(a)*r*0.89,4,{fill:c,glow:false},E);}
+  return out;
+}
+// P11 hatch (pattern fill helper)
+const HATCH='url(#hatch)';
+// P12 iso block
+function isoBlock(x,y,w,d,h,lip,E,faceStroke){
+  const fs=faceStroke||E.mist;
+  const top=[[x,y],[x+w,y-d*0.5],[x+w+d,y-d*0.5+d*0.5],[x+d,y+d*0.5]];
+  const top2=[[x,y],[x+w,y-d*0.5],[x+w+d*0.6,y-d*0.5+d*0.35],[x+d*0.6,y+d*0.35]];
+  const left=[[x,y],[x+d*0.6,y+d*0.35],[x+d*0.6,y+d*0.35+h],[x,y+h]];
+  const right=[[x+d*0.6,y+d*0.35],[x+w+d*0.6,y-d*0.5+d*0.35],[x+w+d*0.6,y-d*0.5+d*0.35+h],[x+d*0.6,y+d*0.35+h]];
+  return POLY(top2,{stroke:fs,fill:E.ground,glow:false},E)
+       + POLY(left,{stroke:fs,fill:E.ground,glow:false},E)
+       + POLY(right,{stroke:fs,fill:E.ground,glow:false},E)
+       + P(`M${n(x)} ${n(y)} L${n(x+w)} ${n(y-d*0.5)}`,{stroke:lip,sw:4},E)
+       + P(`M${n(x+w)} ${n(y-d*0.5)} L${n(x+w+d*0.6)} ${n(y-d*0.5+d*0.35)}`,{stroke:lip,sw:4},E);
+}
+
+/* ---------- document wrapper ---------- */
+function wrap(w,h,ed,body,orn=""){
+  const E=TOKENS[ed];
+  const defs=`<defs>
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+  <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="currentColor" flood-opacity="0.9"/>
+  <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="currentColor" flood-opacity="0.5"/>
+</filter>
+<pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  <line x1="0" y1="0" x2="0" y2="10" stroke="${E.hatch}" stroke-width="1.4"/>
+</pattern>
+<linearGradient id="spine" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0%" stop-color="${E.cyan}"/><stop offset="50%" stop-color="#8B4FC0"/><stop offset="100%" stop-color="${E.pink}"/>
+</linearGradient>
+</defs>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${defs}<rect width="${w}" height="${h}" fill="${E.ground}"/><g color="${E.cyan}">${orn}${body}</g></svg>`;
+}
+
+/* ============================================================
+   THE 56 HEROES
+   Each: { name, edition, canvas, encodes, params, draw }
+   ============================================================ */
+const HEROES = {
+
+/* ---------- PROBLEM AND LOSS ---------- */
+H01:{name:"Fractured Funnel",edition:"dark",canvas:[1024,1024],encodes:"the old, broken state",
+ params:{bands:{d:6,min:3,max:10},severity:{d:6,min:0,max:14},leaders:{d:5,min:0,max:8}},
+ draw:(p,E)=>{let s="";const cx=512;
+  for(let i=0;i<p.bands;i++){const t=i/(p.bands-1);const wTop=440-t*300, wBot=440-((i+1)/(p.bands-1))*300;
+   const y=250+i*80, off=(i%2?1:-1)*t*p.severity*2.2, rot=(i%2?1:-1)*t*p.severity*0.5;
+   s+=G(POLY([[cx-wTop/2,y],[cx+wTop/2,y],[cx+wBot/2,y+70],[cx-wBot/2,y+70]],{stroke:E.faint,sw:2,glow:false},E),`rotate(${n(rot)} ${cx} ${y+35}) translate(${n(off)},0)`);
+   for(let k=0;k<3;k++)s+=L(cx-wTop/2+30+k*(wTop-60)/3,y+off,cx-wTop/2+50+k*(wTop-60)/3,y+70,E.faint,1,false,E);}
+  for(let i=0;i<p.leaders;i++){const a=(i/(p.leaders||1))*Math.PI*2, r0=300, r1=460;
+   s+=arrow(cx+Math.cos(a)*r0,512+Math.sin(a)*r0*0.8,cx+Math.cos(a)*r1,512+Math.sin(a)*r1*0.8,E.faint,{...E,glow:false},1.5,10);}
+  return s;}},
+
+H11:{name:"Leaking Vessel",edition:"light",canvas:[1024,576],encodes:"loss as physics",
+ params:{leaks:{d:3,min:1,max:5},welded:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=R(40,150,944,90,{stroke:E.ink,sw:3,fill:HATCH},E);
+  [40,300,600,900].forEach(x=>{s+=R(x,138,26,114,{stroke:E.ink,sw:2.5},E);for(let i=0;i<3;i++)s+=C(x+13,152+i*36,3,{fill:E.ink},E);});
+  for(let i=0;i<p.leaks;i++){const x=220+i*(700/Math.max(p.leaks-1,1));
+   if(!p.welded){for(let k=0;k<5;k++){const a=-0.9+k*0.45;s+=L(x,240,x+Math.cos(a)*34,240+Math.abs(Math.sin(a))*30,E.ink,1.6,false,E);}
+    for(let k=0;k<6;k++)s+=C(x,270+k*34+k*k*1.6,4+k*0.6,{fill:E.pink,glow:false},E);
+    s+=`<ellipse cx="${x}" cy="500" rx="${46}" ry="9" fill="${E.pink}" opacity="0.55"/>`;}
+   else s+=L(x-24,240,x+24,240,E.cyan,4,false,E);}
+  return s;}},
+
+H19:{name:"Bottleneck",edition:"dark",canvas:[1024,1024],encodes:"everything is fine except this one place",
+ params:{inLanes:{d:16,min:6,max:24},outLanes:{d:3,min:1,max:10},gap:{d:40,min:20,max:200}},
+ draw:(p,E)=>{let s="";
+  for(let i=0;i<p.inLanes;i++){const y=180+i*(664/(p.inLanes-1));
+   s+=trace([[0,y],[300,y],[430,512-p.gap/2+ (i/(p.inLanes-1))*p.gap],[470,512-p.gap/2+(i/(p.inLanes-1))*p.gap]],E.cyan,E,{sw:2,tokens:false});}
+  s+=P(`M470 ${n(512-p.gap/2-90)} L540 ${n(512-p.gap/2)} L540 ${n(512+p.gap/2)} L470 ${n(512+p.gap/2+90)}`,{stroke:E.white,sw:6},E);
+  s+=P(`M470 ${n(512-p.gap/2-90)} L540 ${n(512-p.gap/2)}`,{stroke:E.white,sw:6},E);
+  for(let i=0;i<p.outLanes;i++){const y=380+i*(264/Math.max(p.outLanes-1,1));
+   s+=trace([[560,512],[640,y],[1024,y]],E.pink,E,{sw:2,tokens:false});}
+  return s;}},
+
+H20:{name:"Keystone",edition:"light",canvas:[1024,1024],encodes:"pull this and everything falls",
+ params:{voussoirs:{d:9,min:5,max:15}},
+ draw:(p,E)=>{let s="";const cx=512,cy=760,R0=380,R1=250,N=p.voussoirs;
+  for(let i=0;i<N;i++){const a0=Math.PI+i*Math.PI/N, a1=Math.PI+(i+1)*Math.PI/N;
+   const pts=[[cx+Math.cos(a0)*R1,cy+Math.sin(a0)*R1],[cx+Math.cos(a0)*R0,cy+Math.sin(a0)*R0],
+              [cx+Math.cos(a1)*R0,cy+Math.sin(a1)*R0],[cx+Math.cos(a1)*R1,cy+Math.sin(a1)*R1]];
+   const key=i===Math.floor(N/2);
+   s+=POLY(pts,{stroke:E.ink,sw:key?3:2,fill:key?E.pink:HATCH},E);}
+  s+=L(120,cy,904,cy,E.ink,3,false,E);
+  s+=arrow(760,240,cx+40,cy-R0+30,E.ink,{...E,glow:false},1.5,12);
+  return s;}},
+
+H22:{name:"Decay",edition:"light",canvas:[1024,576],encodes:"it degrades silently unless maintained",
+ params:{stages:{d:5,min:3,max:7}},
+ draw:(p,E)=>{let s="";const N=p.stages;
+  for(let i=0;i<N;i++){const x=100+i*(824/(N-1)), t=i/(N-1);
+   s+=R(x-60,220,120,140,{stroke:E.ink,sw:3-t*2,fill:i<N-1?HATCH:"none"},E);
+   s+=C(x,290,34-t*8,{stroke:E.ink,sw:2.5-t*1.5},E);
+   if(i<N-1)for(let k=0;k<4;k++)s+=C(x-40+k*27,240,4,{fill:i<2?E.ink:"none",stroke:E.ink,sw:1,glow:false},E);
+   for(let k=0;k<Math.round(t*t*14);k++){const a=Math.random()*6.28;s+=L(x+Math.cos(a)*20,290+Math.sin(a)*20,x+Math.cos(a)*60,290+Math.sin(a)*60,E.ink,1,false,E);}
+   if(i===2)for(let k=0;k<4;k++)s+=C(x,380+k*30,4,{fill:E.pink,glow:false},E);}
+  return s;}},
+
+H23:{name:"Backlog Hopper",edition:"light",canvas:[1024,1024],encodes:"work piling up faster than it clears",
+ params:{pile:{d:40,min:10,max:70},outlet:{d:30,min:20,max:140}},
+ draw:(p,E)=>{let s="";
+  for(let i=0;i<p.pile;i++){const x=340+(i%7)*54+((i/7|0)%2)*20, y=300-((i/7|0))*30;
+   s+=R(x,y,44,24,{stroke:E.ink,sw:1.6,fill:E.ground,glow:false},E);}
+  s+=POLY([[300,320],[724,320],[512+p.outlet/2,620],[512-p.outlet/2,620]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=R(512-p.outlet/2,620,p.outlet,60,{stroke:E.ink,sw:3},E);
+  s+=R(492,700,44,24,{stroke:E.ink,sw:2},E);
+  s+=L(300,780,724,780,E.ink,3,false,E);
+  for(let i=0;i<5;i++)s+=C(340+i*90,800,20,{stroke:E.ink,sw:2},E);
+  return s;}},
+
+H47:{name:"Treadmill",edition:"dark",canvas:[1024,1024],encodes:"effort that never accumulates",
+ params:{},
+ draw:(p,E)=>{let s=C(300,500,80,{stroke:E.faint,glow:false},E)+C(724,500,80,{stroke:E.faint,glow:false},E);
+  s+=L(300,420,724,420,E.faint,3,false,E)+L(300,580,724,580,E.faint,3,false,E);
+  for(let i=0;i<12;i++)s+=L(310+i*34,420,300+i*34,440,E.faint,1.5,false,E);
+  s+=C(512,340,30,{stroke:E.faint,glow:false},E)+L(512,370,512,420,E.faint,2.5,false,E)
+   +L(512,390,470,410,E.faint,2.5,false,E)+L(512,390,556,405,E.faint,2.5,false,E)
+   +L(512,420,486,412,E.faint,2.5,false,E)+L(512,420,548,414,E.faint,2.5,false,E);
+  s+=L(180,800,844,800,E.faint,2,false,E);
+  return s;}},
+
+H48:{name:"Standoff",edition:"dark",canvas:[1024,1024],encodes:"two forces cancelling out",
+ params:{},
+ draw:(p,E)=>{let s="";
+  s+=POLY([[80,470],[420,470],[420,420],[500,512],[420,604],[420,554],[80,554]],{fill:E.cyan},E);
+  s+=POLY([[944,470],[604,470],[604,420],[524,512],[604,604],[604,554],[944,554]],{fill:E.pink},E);
+  for(let i=0;i<8;i++){const a=-1.2+i*0.34;s+=L(512+Math.cos(a)*40,512+Math.sin(a)*40,512+Math.cos(a)*90,512+Math.sin(a)*90,E.white,2,true,E);}
+  return s;}},
+
+/* ---------- SYSTEM AND STRUCTURE ---------- */
+H02:{name:"Signal Converter",edition:"dark",canvas:[1024,1024],encodes:"messy inputs unified into one accelerating output",
+ params:{inputs:{d:4,min:2,max:8}},
+ draw:(p,E)=>{let s="";const N=p.inputs;
+  for(let i=0;i<N;i++){const y=220+i*(560/(N-1)), warm=i>=N/2;
+   s+=R(60,y-35,160,70,{stroke:warm?"none":E.cyan,fill:warm?E.pink:"none",rx:4},E);
+   s+=trace([[220,y],[380,y],[420,512]],warm?E.pink:E.cyan,E,{sw:2});}
+  s+=POLY([[430,442],[510,472],[510,552],[430,582],[470,512]],{stroke:E.white,sw:3},E);
+  const pts=[[520,512],[620,512],[620,400],[740,400],[740,290],[880,290],[880,170]];
+  s+=trace(pts,E.white,E,{sw:8,tokens:false})+arrow(880,200,940,120,E.white,E,8,26);
+  s+=trace(pts.map(q=>[q[0],q[1]+20]),E.cyan,E,{sw:2,tokens:false});
+  s+=trace(pts.map(q=>[q[0],q[1]-20]),E.pink,E,{sw:2,tokens:false});
+  for(let i=0;i<5;i++){const x=560+i*70,y=760+((i%2)*40);s+=trace([[x,y],[x+18,y-22],[x+36,y-6],[x+54,y-40]],E.cyan,E,{sw:1.5,tokens:false});}
+  return s;}},
+
+H06:{name:"Hub-and-Spoke Key",edition:"dark",canvas:[1024,1024],encodes:"one thing everything depends on",
+ params:{spokes:{d:4,min:3,max:6},ruleBar:{d:1,min:0,max:1}},
+ draw:(p,E)=>{let s="";const quad=[[70,180],[694,180],[70,560],[694,560],[382,60],[382,760]];
+  for(let i=0;i<p.spokes;i++){const q=quad[i];
+   s+=panel(q[0],q[1],260,150,E.pink,E);
+   const cx=q[0]+130, cy=q[1]+75;
+   s+=trace([[cx,cy<512?q[1]+150:q[1]],[cx,512],[cx<512?432:592,512]],E.pink,E,{sw:2});}
+  s+=chip(422,472,180,80,E.pink,E);
+  if(p.ruleBar) s+=P(`M62 800 L462 800 L492 770 L532 770 L562 800 L962 800 L962 870 L62 870 Z`,{stroke:E.cyan,sw:2},E);
+  return s;}},
+
+H12:{name:"Exploded Layer Stack",edition:"light",canvas:[1024,1024],encodes:"architecture and dependency at once",
+ params:{plates:{d:3,min:2,max:5},ghostTop:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s="";const N=p.plates;
+  for(let i=0;i<N;i++){const y=280+i*220, ghost=(p.ghostTop&&i===0);
+   const top=[[240,y],[720,y-70],[820,y-20],[340,y+50]];
+   s+=POLY(top,{stroke:E.ink,sw:ghost?1.5:2.5,dash:ghost?"8 6":null,fill:ghost?"none":E.ground,glow:false},E);
+   s+=POLY([[240,y],[340,y+50],[340,y+72],[240,y+22]],{stroke:E.ink,sw:2,fill:HATCH},E);
+   s+=POLY([[340,y+50],[820,y-20],[820,y+2],[340,y+72]],{stroke:E.ink,sw:2,fill:HATCH},E);
+   if(i<N-1){[[420,y+70],[700,y+20]].forEach(q=>{
+     s+=L(q[0],q[1],q[0],q[1]+150,E.ink,1.5,false,E,)+ '';
+     s+=P(`M${q[0]} ${q[1]+10} L${q[0]} ${q[1]+140}`,{stroke:E.ink,sw:1.5,dash:"7 6"},E);
+     s+=arrow(q[0],q[1]+140,q[0],q[1]+152,E.ink,{...E,glow:false},1.5,10)+arrow(q[0],q[1]+22,q[0],q[1]+8,E.ink,{...E,glow:false},1.5,10);});}
+   if(i===1)s+=P(`M240 ${y} L720 ${y-70}`,{stroke:E.cyan,sw:4},E);}
+  s+=L(150,240,150,940,E.ink,1.2,false,E);
+  s+=arrow(150,300,150,240,E.ink,{...E,glow:false},1.2,10)+arrow(150,880,150,940,E.ink,{...E,glow:false},1.2,10);
+  return s;}},
+
+H17:{name:"Broadcast Fan-Out",edition:"dark",canvas:[1024,1024],encodes:"one source, many destinations",
+ params:{targets:{d:12,min:4,max:20},priority:{d:0,min:0,max:5}},
+ draw:(p,E)=>{let s=chip(60,472,110,80,E.pink,E);
+  for(let i=0;i<p.targets;i++){const y=80+i*(864/(p.targets-1)), c=i<p.priority?E.pink:E.cyan;
+   s+=trace([[170,512],[400,512],[400,y],[880,y]],c,E,{sw:1.6});
+   s+=node(900,y,c,E,"ring");}
+  return s;}},
+
+H18:{name:"Dependency Chain",edition:"light",canvas:[1024,1024],encodes:"nothing moves until the thing before it moves",
+ params:{links:{d:5,min:3,max:7},broken:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s="";const N=p.links, step=880/N;
+  for(let i=0;i<N;i++){const x=70+i*step;
+   s+=R(x,440,step-40,150,{stroke:E.ink,sw:2.5,fill:HATCH},E);
+   s+=gear(x+(step-40)/2,515,52,14,E.ink,E,{});
+   if(i<N-1){const brk=(p.broken&&i===1);
+    s+=L(x+step-40,515,x+step,515,brk?E.pink:E.ink,brk?2:6,false,E);
+    if(brk)s+=L(x+step-30,495,x+step-10,535,E.pink,3,false,E);}}
+  s+=L(80,515,40,440,E.ink,5,false,E)+C(40,440,14,{stroke:E.ink},E);
+  return s;}},
+
+H21:{name:"Vault Rack",edition:"light",canvas:[1024,1024],encodes:"everything has an address",
+ params:{cols:{d:4,min:2,max:6},rows:{d:5,min:2,max:6},openBay:{d:6,min:-1,max:20},ungoverned:{d:1,min:0,max:1}},
+ draw:(p,E)=>{let s="";const w=200,h=140;const x0=(1024-p.cols*w)/2, y0=(1024-p.rows*h)/2;
+  for(let r=0;r<p.rows;r++)for(let c=0;c<p.cols;c++){const i=r*p.cols+c;const x=x0+c*w,y=y0+r*h;
+   const last=(i===p.rows*p.cols-1);
+   const open=(i===p.openBay);
+   const ox=open?26:0;
+   if(last&&p.ungoverned){s+=R(x+6,y+6,w-12,h-12,{stroke:E.ink,sw:2,dash:"8 6",fill:HATCH},E);continue;}
+   s+=R(x+6+ox,y+6,w-12,h-12,{stroke:E.ink,sw:2,fill:E.ground,glow:false},E);
+   s+=R(x+16+ox,y+16,w-32,10,{stroke:E.ink,sw:1.2},E);
+   s+=R(x+22+ox,y+50,70,20,{stroke:E.ink,sw:1.2},E);
+   if(open){s+=L(x+6,y+h-14,x+6+ox,y+h-14,E.ink,1.5,false,E)+L(x+6,y+14,x+6+ox,y+14,E.ink,1.5,false,E);}}
+  return s;}},
+
+H24:{name:"Mesh Network",edition:"dark",canvas:[1024,1024],encodes:"everything connects to everything",
+ params:{nodes:{d:20,min:8,max:30},hubs:{d:3,min:0,max:6}},
+ draw:(p,E)=>{let s="";const pts=[];const cols=Math.ceil(Math.sqrt(p.nodes));
+  for(let i=0;i<p.nodes;i++){const c=i%cols, r=(i/cols)|0;
+   pts.push([120+c*(784/(cols-1))+((r%2)?26:-26), 120+r*(784/(cols-1))]);}
+  pts.forEach((a,i)=>{const near=pts.map((b,j)=>[j,Math.hypot(a[0]-b[0],a[1]-b[1])]).filter(x=>x[0]!==i).sort((x,y)=>x[1]-y[1]).slice(0,2);
+   near.forEach(([j])=>{const b=pts[j];s+=trace([[a[0],a[1]],[b[0],a[1]],[b[0],b[1]]],E.cyan,E,{sw:1.2,tokens:false});});});
+  pts.forEach((a,i)=>{s+= i<p.hubs ? R(a[0]-16,a[1]-16,32,32,{fill:E.pink},E) : R(a[0]-12,a[1]-12,24,24,{stroke:E.cyan},E);});
+  return s;}},
+
+H27:{name:"Assembly Line",edition:"light",canvas:[1024,576],encodes:"built in stages, to a standard",
+ params:{stations:{d:4,min:2,max:6}},
+ draw:(p,E)=>{let s=L(60,430,964,430,E.ink,3,false,E);
+  for(let i=0;i<12;i++)s+=C(90+i*72,455,22,{stroke:E.ink,sw:1.6},E);
+  s+=gear(940,455,34,12,E.ink,E,{});
+  for(let i=0;i<p.stations;i++){const x=140+i*(760/(p.stations-1)), t=i/(p.stations-1);
+   s+=R(x-50,370,100,50,{stroke:i===p.stations-1?E.cyan:E.ink,sw:2.5,fill:HATCH},E);
+   if(i>0)s+=R(x-34,340,68,30,{stroke:i===p.stations-1?E.cyan:E.ink,sw:2},E);
+   if(i>1)s+=R(x-44,310,88,30,{stroke:i===p.stations-1?E.cyan:E.ink,sw:2},E);
+   s+=L(x,120,x,220,E.ink,3,false,E)+L(x,220,x-40,280,E.ink,3,false,E)+C(x,120,12,{stroke:E.ink},E);}
+  return s;}},
+
+H28:{name:"Adapter Plate",edition:"dark",canvas:[1024,1024],encodes:"two systems that should not fit, made to fit",
+ params:{maps:{d:9,min:3,max:12},deadEnd:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=R(80,300,180,430,{stroke:E.cyan,sw:2.5},E);
+  for(let i=0;i<9;i++)s+=R(110+(i%3)*54,340+((i/3)|0)*130,30,30,{stroke:E.cyan,sw:1.6},E);
+  const hex=[];for(let i=0;i<6;i++){const a=i*Math.PI/3-Math.PI/6;hex.push([870+Math.cos(a)*180,512+Math.sin(a)*180]);}
+  s+=POLY(hex,{stroke:E.pink,sw:2.5},E);
+  hex.forEach(h=>{s+=C(h[0]*0.82+870*0.18,h[1]*0.82+512*0.18,16,{stroke:E.pink,sw:1.6},E);});
+  s+=panel(392,280,240,470,E.white,E);
+  for(let i=0;i<p.maps;i++){const y1=350+i*(340/(p.maps-1)), y2=380+((i*7)%p.maps)*(280/(p.maps-1));
+   const dead=(p.deadEnd&&i===p.maps-1);
+   s+=trace([[260,y1],[392,y1],[512,y1],[512,y2],[632,y2],[dead?700:690,y2]],dead?E.faint:E.white,E,{sw:1.4,tokens:false});
+   if(dead)s+=L(694,y2-10,706,y2+10,E.faint,2,false,E)+L(706,y2-10,694,y2+10,E.faint,2,false,E);}
+  return s;}},
+
+H52:{name:"The Jig",edition:"light",canvas:[1024,1024],encodes:"a template that makes every output identical",
+ params:{parts:{d:3,min:1,max:5},malformed:{d:0,min:0,max:1}},
+ draw:(p,E)=>{const cav=`M300 380 L470 380 L470 460 L400 460 L400 600 L300 600 Z`;
+  let s=`<path d="M120 240 L640 240 L640 800 L120 800 Z ${cav}" fill="${HATCH}" fill-rule="evenodd" stroke="${E.ink}" stroke-width="3"/>`;
+  s+=P(cav,{stroke:E.ink,sw:2},E);
+  [[120,240],[640,240],[120,800],[640,800]].forEach(c=>{s+=C(c[0],c[1],16,{stroke:E.ink,sw:2},E);});
+  for(let i=0;i<p.parts;i++){const y=250+i*190, bad=(p.malformed&&i===p.parts-1);
+   s+=G(P(cav,{stroke:bad?E.pink:E.ink,sw:2},E),`translate(${470},${y-380}) scale(0.8)`);}
+  return s;}},
+
+/* ---------- FLOW AND ROUTING ---------- */
+H03:{name:"Convergence Rivers",edition:"dark",canvas:[1024,576],encodes:"run two paths in parallel, then reconcile",
+ params:{rivers:{d:2,min:1,max:3},tributaries:{d:6,min:0,max:10}},
+ draw:(p,E)=>{let s=node(110,290,E.cyan,E,"source");
+  const ys=[200,380,290];
+  for(let r=0;r<p.rivers;r++){const c=r===0?E.cyan:(r===1?E.pink:E.white), y=ys[r];
+   s+=river([[170,290],[260,y],[700,y],[790,290]],c,E,12);
+   for(let t=0;t<p.tributaries;t++){const x=300+t*60;
+    s+=trace([[x,y],[x,y+(r?26:-26)]],c,E,{sw:1.2,tokens:false});}}
+  const oct=[];for(let i=0;i<8;i++){const a=i*Math.PI/4+Math.PI/8;oct.push([830+Math.cos(a)*80,290+Math.sin(a)*80]);}
+  s+=POLY(oct,{stroke:E.white,sw:2.5},E)+POLY(oct.map(q=>[830+(q[0]-830)*0.75,290+(q[1]-290)*0.75]),{stroke:E.white,sw:1.5},E);
+  s+=padlock(830,290,60,E.white,E);
+  s+=POLY([[910,250],[960,270],[910,290]],{fill:E.cyan},E)+POLY([[910,300],[960,320],[910,340]],{fill:E.pink},E);
+  s+=C(990,290,18,{stroke:E.cyan},E)+P("M981 290 L988 298 L1000 282",{stroke:E.cyan,sw:2.5},E);
+  return s;}},
+
+H25:{name:"Refinery Column",edition:"light",canvas:[1024,1024],encodes:"raw input, separated into grades of value",
+ params:{outputs:{d:4,min:2,max:6},trays:{d:8,min:4,max:14}},
+ draw:(p,E)=>{let s=R(372,120,280,760,{stroke:E.ink,sw:3,rx:140,fill:HATCH},E);
+  s+=R(392,150,240,700,{stroke:E.ink,sw:1.5,fill:E.ground,glow:false},E);
+  for(let i=0;i<p.trays;i++){const y=200+i*(600/(p.trays-1));s+=L(400,y,624,y,E.ink,1.6,false,E);
+   s+=C(i%2?560:460,y,7,{stroke:E.ink,sw:1.2},E);}
+  s+=R(140,820,240,40,{stroke:E.ink,sw:3},E)+L(380,840,372,840,E.ink,3,false,E);
+  for(let i=0;i<p.outputs;i++){const y=780-i*(560/(p.outputs-1)), top=(i===p.outputs-1);
+   s+=R(652,y-18,240,36,{stroke:top?E.cyan:E.ink,sw:top?3:2.5},E);}
+  s+=C(340,300,30,{stroke:E.ink,sw:2},E)+C(340,600,30,{stroke:E.ink,sw:2},E);
+  return s;}},
+
+H26:{name:"Switchboard",edition:"dark",canvas:[1024,1024],encodes:"every request routed to exactly one destination",
+ params:{lanes:{d:8,min:4,max:12},pinkRoutes:{d:2,min:0,max:6}},
+ draw:(p,E)=>{let s=panel(212,212,600,600,E.white,E);const N=p.lanes;
+  const route=[];for(let i=0;i<N;i++)route.push((i*3+2)%N);
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++)s+=C(252+j*(520/(N-1)),252+i*(520/(N-1)),4,{fill:E.faint,glow:false},E);
+  for(let i=0;i<N;i++){const y=252+i*(520/(N-1)), j=route[i], x=252+j*(520/(N-1)), oy=252+j*(520/(N-1));
+   const c=i<p.pinkRoutes?E.pink:E.cyan;
+   s+=trace([[0,y],[212,y],[x,y],[x,oy],[812,oy],[1024,oy]],c,E,{sw:1.8,tokens:false});
+   s+=C(x,y,7,{fill:c},E);}
+  return s;}},
+
+H29:{name:"Load Balance",edition:"light",canvas:[1024,1024],encodes:"weight distributed, nothing overloaded",
+ params:{pans:{d:3,min:2,max:5},tilt:{d:0,min:-12,max:12},blocks:{d:4,min:1,max:7}},
+ draw:(p,E)=>{let b=L(112,400,912,400,E.ink,6,false,E);
+  for(let i=0;i<p.pans;i++){const x=200+i*(624/(p.pans-1));
+   b+=L(x,400,x,540,E.ink,1.6,false,E)+P(`M${x-80} 540 L${x+80} 540 L${x+60} 590 L${x-60} 590 Z`,{stroke:E.ink,sw:2.5},E);
+   for(let k=0;k<p.blocks;k++)b+=R(x-50+((k%3)*34),490-((k/3)|0)*34,30,30,{stroke:E.ink,sw:1.6,fill:HATCH},E);}
+  let s=G(b,`rotate(${p.tilt} 512 400)`);
+  s+=POLY([[512,400],[452,700],[572,700]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=L(120,730,904,730,E.ink,3,false,E);
+  s+=P("M160 400 L864 400",{stroke:E.ink,sw:1,dash:"8 6"},E);
+  return s;}},
+
+H33:{name:"Triage Sorter",edition:"light",canvas:[1024,1024],encodes:"incoming work classified before it is touched",
+ params:{chutes:{d:3,min:2,max:5},fill:{d:1,min:0,max:1}},
+ draw:(p,E)=>{let s=POLY([[300,120],[724,120],[600,300],[424,300]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=C(512,380,16,{stroke:E.ink,sw:2.5},E)+L(512,380,600,470,E.ink,5,false,E);
+  s+=P("M420 470 A 130 130 0 0 1 604 470",{stroke:E.ink,sw:1.2,dash:"7 6"},E);
+  s+=R(560,420,40,26,{stroke:E.ink,sw:2},E);
+  const fills=[2,5,9,4,7];
+  for(let i=0;i<p.chutes;i++){const x=170+i*(684/(p.chutes-1)), pri=(i===0);
+   s+=POLY([[512-60,520],[512+60,520],[x+70,650],[x-70,650]],{stroke:pri?E.pink:E.ink,sw:2},E);
+   s+=R(x-90,660,180,240,{stroke:E.ink,sw:2.5},E);
+   for(let k=0;k<(p.fill?fills[i]:0);k++)s+=R(x-70+((k%3)*48),860-(((k/3)|0)*44),40,36,{stroke:E.ink,sw:1.5,fill:HATCH},E);}
+  return s;}},
+
+H49:{name:"The Bridge",edition:"light",canvas:[1024,576],encodes:"migration from the old estate to the new one",
+ params:{progress:{d:5,min:0,max:14}},
+ draw:(p,E)=>{let s=POLY([[0,340],[330,340],[330,576],[0,576]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=POLY([[694,340],[1024,340],[1024,576],[694,576]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  for(let i=0;i<14-p.progress;i++)s+=G(R(40+(i%4)*70,180+((i/4)|0)*54,52,32,{stroke:E.ink,sw:1.6,fill:E.ground,glow:false},E),`rotate(${(i*37)%20-10} ${66+(i%4)*70} ${196+((i/4)|0)*54})`);
+  for(let i=0;i<p.progress;i++)s+=R(730+(i%4)*70,180+((i/4)|0)*54,52,32,{stroke:E.ink,sw:1.6},E);
+  s+=L(330,300,694,300,E.ink,3.5,false,E)+L(330,220,694,220,E.ink,2.5,false,E);
+  for(let i=0;i<8;i++){const x=330+i*(364/8);s+=L(x,300,x+22,220,E.ink,1.6,false,E)+L(x+22,220,x+45,300,E.ink,1.6,false,E);}
+  s+=R(470,268,52,32,{stroke:E.cyan,sw:2},E);
+  return s;}},
+
+/* ---------- CONTROL AND GOVERNANCE ---------- */
+H05:{name:"Self-Loop",edition:"dark",canvas:[1024,1024],encodes:"this system now decides for itself",
+ params:{arrows:{d:4,min:3,max:6},sealed:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=panel(140,300,420,420,E.white,E);
+  for(let i=0;i<p.arrows;i++){const a0=i*2*Math.PI/p.arrows, a1=a0+2*Math.PI/p.arrows-0.18;
+   s+=arcArrow(350,510,140,a0,a1,E.pink,E,14);}
+  if(!p.sealed){s+=trace([[560,510],[700,510],[700,560]],E.pink,E,{sw:2.5});
+   s+=arrow(700,560,700,600,E.pink,E,2.5,14);
+   s+=R(600,600,200,140,{stroke:E.faint,sw:2,glow:false},E);}
+  return s;}},
+
+H13:{name:"Closed Control Loop",edition:"light",canvas:[1024,1024],encodes:"self-correction, whether anyone is watching or not",
+ params:{stages:{d:5,min:3,max:8},brokenArc:{d:-1,min:-1,max:7}},
+ draw:(p,E)=>{const cx=512,cy=512,r=320;let s=ring(cx,cy,r,p.stages,E.ink,E);
+  for(let i=0;i<p.stages;i++){const a=-Math.PI/2+i*2*Math.PI/p.stages;
+   const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r;
+   s+=C(x,y,46,{stroke:E.ink,sw:3,fill:E.ground,glow:false},E)+C(x,y,32,{stroke:E.ink,sw:1.5},E)+C(x,y,18,{fill:E.cyan},E);}
+  for(let i=0;i<p.stages;i++){const a0=-Math.PI/2+i*2*Math.PI/p.stages+0.22, a1=a0+2*Math.PI/p.stages-0.44;
+   const broke=(i===p.brokenArc);
+   s+=arcArrow(cx,cy,r+80,a0,a1,broke?E.pink:E.ink,E,broke?8:20);}
+  return s;}},
+
+H30:{name:"Kill Switch",edition:"dark",canvas:[1024,1024],encodes:"it can be stopped instantly, by design",
+ params:{tripped:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=C(400,400,120,{fill:E.pink},E)+C(400,400,80,{stroke:E.ground,sw:3,glow:false},E);
+  s+=R(300,510,200,90,{stroke:E.white,sw:3},E);
+  for(let i=0;i<4;i++)s+=C(320+i*50,560,6,{fill:E.white,glow:false},E);
+  s+=P("M250 400 A150 170 0 0 1 550 400",{stroke:E.white,sw:2.5},E);
+  s+=L(250,400,250,470,E.white,2.5,true,E)+L(550,400,550,470,E.white,2.5,true,E);
+  s+=trace([[500,600],[700,600],[700,700]],E.pink,E,{sw:2.5});
+  s+=C(700,720,10,{fill:E.white},E)+C(700,860,10,{fill:E.white},E);
+  s+=L(700,720,p.tripped?760:700,860,p.tripped?E.faint:E.cyan,4,!p.tripped,E);
+  return s;}},
+
+H31:{name:"Turnstile",edition:"dark",canvas:[1024,1024],encodes:"permission is checked at every entry, not once",
+ params:{queue:{d:6,min:0,max:10},lockdown:{d:0,min:0,max:1}},
+ draw:(p,E)=>{const c=p.lockdown?E.pink:E.cyan;let s=R(480,420,64,340,{stroke:E.white,sw:3},E);
+  for(let i=0;i<3;i++){const a=i*2*Math.PI/3-0.5;s+=L(512,440,512+Math.cos(a)*160,440+Math.sin(a)*160,E.white,6,true,E);}
+  s+=R(468,300,88,110,{stroke:c,sw:3},E)+R(486,330,52,10,{fill:c},E)+C(512,375,10,{fill:c},E);
+  for(let i=0;i<p.queue;i++)s+=R(60+i*58,600,34,34,{stroke:E.white,sw:2},E);
+  s+=R(760,600,34,34,{stroke:E.cyan,sw:2},E);
+  s+=R(400,600,34,34,{fill:E.pink},E)+C(370,560,16,{stroke:E.pink,sw:2},E)
+    +L(362,552,378,568,E.pink,2,true,E)+L(378,552,362,568,E.pink,2,true,E);
+  return s;}},
+
+H32:{name:"Audit Trail",edition:"light",canvas:[1024,576],encodes:"everything that happened is recorded, in order",
+ params:{checkpoints:{d:3,min:1,max:6},torn:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=P("M0 480 L1024 120",{stroke:E.ink,sw:2.5},E)+P("M0 570 L1024 210",{stroke:E.ink,sw:2.5},E);
+  for(let i=0;i<26;i++){const t=i/26;const x=40+t*940, y=505-t*350;
+   s+=C(x,y,5,{stroke:E.ink,sw:1.2},E);}
+  s+=C(60,520,90,{stroke:E.ink,sw:3},E)+C(60,520,26,{stroke:E.ink,sw:2},E);
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;s+=L(60+Math.cos(a)*26,520+Math.sin(a)*26,60+Math.cos(a)*88,520+Math.sin(a)*88,E.ink,1.4,false,E);}
+  for(let i=0;i<p.checkpoints;i++){const t=(i+1)/(p.checkpoints+1);const x=100+t*820, y=470-t*330;
+   s+=G(R(x-40,y-40,80,80,{stroke:E.ink,sw:2.5,fill:HATCH},E),`rotate(-19 ${x} ${y})`);}
+  if(p.torn){const x=640,y=250;s+=P(`M${x} ${y+70} l14 -16 l-16 -14 l16 -16 l-14 -16`,{stroke:E.pink,sw:3},E);}
+  return s;}},
+
+H34:{name:"Guardrails",edition:"dark",canvas:[1024,576],encodes:"freedom to move, but only inside the safe corridor",
+ params:{width:{d:1,min:0.5,max:1.6},posts:{d:8,min:3,max:14}},
+ draw:(p,E)=>{const vx=512,vy=120;const w=380*p.width;
+  let s=R(0,0,1024,576,{fill:"none"},E);
+  s+=POLY([[0,576],[512-w/2,vy],[0,vy]],{fill:HATCH,stroke:"none",glow:false},E);
+  s+=POLY([[1024,576],[512+w/2,vy],[1024,vy]],{fill:HATCH,stroke:"none",glow:false},E);
+  s+=L(60,576,vx-w/2,vy,E.cyan,3,true,E)+L(964,576,vx+w/2,vy,E.cyan,3,true,E);
+  for(let i=0;i<p.posts;i++){const t=i/p.posts;
+   const lx=60+(vx-w/2-60)*t, rx=964+(vx+w/2-964)*t, y=576+(vy-576)*t, h=60*(1-t*0.7);
+   s+=L(lx,y,lx,y-h,E.cyan,2,true,E)+L(rx,y,rx,y-h,E.cyan,2,true,E);}
+  s+=P("M512 576 C 420 470, 600 380, 500 300 S 540 200, 512 140",{stroke:E.white,sw:3},E);
+  for(let i=0;i<3;i++){const x=[120,900,180][i], y=[480,430,300][i];
+   s+=C(x,y,10,{stroke:E.faint,sw:2,glow:false},E)+L(x-7,y-7,x+7,y+7,E.faint,2,false,E)+L(x+7,y-7,x-7,y+7,E.faint,2,false,E);}
+  return s;}},
+
+H53:{name:"Airlock",edition:"light",canvas:[1024,1024],encodes:"a controlled transition, one door at a time",
+ params:{outerOpen:{d:1,min:0,max:1}},
+ draw:(p,E)=>{let s=R(200,360,624,300,{stroke:E.ink,sw:3,rx:150,fill:HATCH},E);
+  s+=R(240,400,544,220,{stroke:E.ink,sw:1.5,fill:E.ground,glow:false},E);
+  for(let i=0;i<6;i++)s+=L(300+i*90,400,300+i*90,620,E.ink,1.4,false,E);
+  s+=C(240,510,140,{stroke:E.ink,sw:3},E)+C(240,510,50,{stroke:E.ink,sw:2},E);
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;s+=L(240+Math.cos(a)*50,510+Math.sin(a)*50,240+Math.cos(a)*130,510+Math.sin(a)*130,E.ink,2,false,E);}
+  const oa=p.outerOpen?-55:0;
+  s+=G(C(784,510,140,{stroke:E.ink,sw:3},E)+C(784,510,50,{stroke:E.ink,sw:2},E),`rotate(${oa} 784 650)`);
+  s+=P("M300 360 C 380 240, 640 240, 724 360",{stroke:E.ink,sw:2.5},E);
+  s+=C(420,268,22,{stroke:E.cyan,sw:2},E)+C(604,268,22,{stroke:E.ink,sw:2},E);
+  return s;}},
+
+/* ---------- RISK AND FAILURE ---------- */
+H04:{name:"Crossed-Out Legacy",edition:"dark",canvas:[1024,1024],encodes:"discontinued, do not use",
+ params:{},
+ draw:(p,E)=>{const F={...E,glow:false};let s=panel(112,212,800,600,E.faint,F);
+  s+=R(200,430,220,140,{stroke:E.faint,sw:2,glow:false},F)+R(604,430,220,140,{stroke:E.faint,sw:2,glow:false},F);
+  s+=arrow(420,500,604,500,E.faint,F,2,14);
+  s+=L(112,212,912,812,E.faint,14,false,F)+L(912,212,112,812,E.faint,14,false,F);
+  return s;}},
+
+H08:{name:"Mirror Access Gate",edition:"dark",canvas:[1024,1024],encodes:"a binary gate, one path blocked, one flowing",
+ params:{lanes:{d:10,min:4,max:14}},
+ draw:(p,E)=>{let s="";
+  for(let side=0;side<2;side++){const denied=side===0, c=denied?E.pink:E.cyan, dir=denied?1:-1, x0=denied?60:964;
+   for(let i=0;i<p.lanes;i++){const y=120+i*(784/(p.lanes-1));
+    const gx=denied?430:594;
+    s+=trace([[x0,y],[x0+dir*180,y],[gx-dir*30,y]],c,E,{sw:1.6,tokens:false});
+    if(denied){s+=C(gx-24,y,9,{stroke:c,sw:2},E)+L(gx-30,y-6,gx-18,y+6,c,2,true,E)+L(gx-18,y-6,gx-30,y+6,c,2,true,E);}
+    else s+=trace([[gx+30,y],[gx+70,y]],c,E,{sw:1.6,tokens:false});}
+   for(let k=0;k<4;k++){const y=200+k*210, gx=denied?470:554;
+    s+=POLY(denied?[[gx,y-60],[gx+40,y],[gx,y+60]]:[[gx,y-60],[gx-40,y],[gx,y+60]],{stroke:c,sw:2.5},E);}
+   s+=panel(denied?150:614,860,260,110,c,E);}
+  return s;}},
+
+H35:{name:"Failover Pair",edition:"dark",canvas:[1024,1024],encodes:"if this dies, that takes over, automatically",
+ params:{liveLeft:{d:1,min:0,max:1},outage:{d:0,min:0,max:1}},
+ draw:(p,E)=>{const mod=(x,c,glow)=>{let m=panel(x,300,240,420,c,glow?E:{...E,glow:false});
+   for(let i=0;i<5;i++)m+=trace([[x+30,350+i*80],[x+120,350+i*80],[x+120,390+i*80],[x+210,390+i*80]],c,glow?E:{...E,glow:false},{sw:1.6,tokens:false});
+   for(let i=0;i<4;i++)m+=R(x+40+i*50,660,20,20,{fill:c,glow:glow},glow?E:{...E,glow:false});
+   return m;};
+  const L1=p.outage?false:!!p.liveLeft, R1=p.outage?false:!p.liveLeft;
+  let s=mod(180,L1?E.cyan:E.faint,L1)+mod(604,R1?E.cyan:E.faint,R1);
+  s+=P("M420 512 l30 0 l14 -30 l24 60 l16 -30 l40 0 l14 -22 l20 44 l14 -22 l32 0",{stroke:E.white,sw:2},E);
+  s+=C(512,760,12,{fill:E.white},E);
+  s+=trace([[512,760],[512,800],[L1?300:724,800]],E.white,E,{sw:2,tokens:false});
+  return s;}},
+
+H36:{name:"Radar Sweep",edition:"dark",canvas:[1024,1024],encodes:"continuous detection, nothing gets past",
+ params:{sweep:{d:40,min:0,max:359},contacts:{d:3,min:0,max:8}},
+ draw:(p,E)=>{const cx=512,cy=512;let s="";
+  [120,210,300,380].forEach(r=>{s+=C(cx,cy,r,{stroke:E.mist,sw:1.4},E);});
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;s+=L(cx,cy,cx+Math.cos(a)*380,cy+Math.sin(a)*380,E.mist,1,false,E);}
+  for(let i=0;i<30;i++){const a=i*Math.PI/15;s+=L(cx+Math.cos(a)*380,cy+Math.sin(a)*380,cx+Math.cos(a)*400,cy+Math.sin(a)*400,E.mist,2,false,E);}
+  const a=p.sweep*Math.PI/180;
+  s+=`<path d="M${cx} ${cy} L${n(cx+Math.cos(a-0.7)*380)} ${n(cy+Math.sin(a-0.7)*380)} A380 380 0 0 1 ${n(cx+Math.cos(a)*380)} ${n(cy+Math.sin(a)*380)} Z" fill="${E.cyan}" opacity="0.16"/>`;
+  s+=L(cx,cy,cx+Math.cos(a)*380,cy+Math.sin(a)*380,E.cyan,3,true,E);
+  for(let i=0;i<p.contacts;i++){const t=i*2.3, r=140+((i*97)%220);
+   const x=cx+Math.cos(t)*r, y=cy+Math.sin(t)*r;
+   s+=R(x-10,y-10,20,20,{fill:i===0?E.pink:E.cyan},E);}
+  return s;}},
+
+H37:{name:"Black Box and Glass Box",edition:"dark",canvas:[1024,576],encodes:"opaque versus inspectable",
+ params:{},
+ draw:(p,E)=>{const F={...E,glow:false};
+  let s=isoBlock(140,220,240,120,180,E.faint,F,E.faint);
+  s+=POLY([[140,220],[380,160],[452,202],[212,262]],{fill:E.ground,stroke:E.faint,glow:false},F);
+  s+=isoBlock(600,220,240,120,180,E.cyan,E,E.cyan);
+  s+=gear(700,330,44,12,E.cyan,E,{});
+  s+=trace([[640,400],[700,400],[700,360]],E.cyan,E,{sw:1.6,tokens:false});
+  s+=C(790,300,14,{stroke:E.cyan},E)+C(760,370,10,{fill:E.cyan},E);
+  s+=arrow(40,320,130,320,E.white,E,3,14)+arrow(460,320,560,320,E.white,E,3,14);
+  s+=arrow(500,320,590,320,E.white,E,3,14)+arrow(910,320,1000,320,E.white,E,3,14);
+  return s;}},
+
+H38:{name:"Iceberg",edition:"light",canvas:[1024,1024],encodes:"the visible part is a fraction of the whole",
+ params:{ratio:{d:5,min:2,max:9}},
+ draw:(p,E)=>{const wl=300;let s=L(0,wl,1024,wl,E.ink,2.5,false,E);
+  s+=POLY([[512,wl-150],[622,wl],[402,wl]],{stroke:E.ink,sw:3},E);
+  const depth=140+p.ratio*80;
+  s+=POLY([[402,wl],[622,wl],[860,wl+depth*0.6],[512,wl+depth],[164,wl+depth*0.55]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=gear(400,520,60,14,E.ink,E,{})+gear(640,640,44,12,E.ink,E,{});
+  s+=R(300,700,180,60,{stroke:E.ink,sw:2},E)+R(560,760,160,50,{stroke:E.ink,sw:2},E);
+  for(let i=0;i<8;i++)s+=C(260+i*70,620+((i%2)*40),8,{stroke:E.ink,sw:1.5},E);
+  s+=L(90,wl,90,wl+depth,E.ink,1.2,false,E)+arrow(90,wl+60,90,wl,E.ink,{...E,glow:false},1.2,10)+arrow(90,wl+depth-60,90,wl+depth,E.ink,{...E,glow:false},1.2,10);
+  return s;}},
+
+H39:{name:"Tipping Point",edition:"light",canvas:[1024,1024],encodes:"it holds, until suddenly it does not",
+ params:{tilt:{d:12,min:-20,max:30}},
+ draw:(p,E)=>{let s=POLY([[512,660],[452,900],[572,900]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=G(R(262,580,500,80,{stroke:E.ink,sw:3},E)+R(600,480,140,100,{stroke:E.ink,sw:2.5,fill:HATCH},E),`rotate(${p.tilt} 512 660)`);
+  s+=C(512,660,9,{fill:E.pink},E);
+  s+=P("M760 640 A 260 260 0 0 1 850 800",{stroke:E.ink,sw:1.5,dash:"8 6"},E);
+  s+=L(512,660,780,660,E.ink,1,false,E)+P(`M660 660 A 148 148 0 0 0 ${n(512+148*Math.cos(p.tilt*Math.PI/180))} ${n(660+148*Math.sin(p.tilt*Math.PI/180))}`,{stroke:E.ink,sw:1.2},E);
+  s+=L(120,900,904,900,E.ink,3,false,E);
+  return s;}},
+
+/* ---------- GROWTH AND MOMENTUM ---------- */
+H07:{name:"Ascension Staircase",edition:"dark",canvas:[1024,576],encodes:"a mandatory, gated climb where height is capability",
+ params:{steps:{d:3,min:2,max:5},unlocked:{d:-1,min:-1,max:4}},
+ draw:(p,E)=>{const cols=[E.cyan,E.white,E.pink,E.cyan,E.pink];let s="";
+  for(let i=0;i<6;i++)s+=L(60+i*160,540,180+i*160,420,E.line,1,false,E);
+  for(let i=0;i<p.steps;i++){const x=140+i*200, y=470-i*110;
+   s+=isoBlock(x,y,190,110,90,cols[i],E,E.mist);
+   s+=padlock(x+95,y+90,54,cols[i],E,i===p.unlocked);
+   s+=trace([[x+230,y+20],[x+300,y-10],[980,y-10]],E.mist,E,{sw:1.2,tokens:false});}
+  return s;}},
+
+H09:{name:"Journey Spine",edition:"dark",canvas:[1024,576],encodes:"one continuous connected path, no gaps",
+ params:{phases:{d:6,min:3,max:8},zigzag:{d:1,min:0,max:1}},
+ draw:(p,E)=>{let s=`<rect x="12" y="279" width="1000" height="18" rx="9" fill="url(#spine)" filter="url(#glow)"/>`;
+  for(let i=0;i<p.phases;i++){const x=70+i*(884/(p.phases-1)), up=p.zigzag? i%2===0 : true;
+   const c=i/(p.phases-1)<0.5?E.cyan:E.pink;
+   s+=POLY([[x,270],[x+18,288],[x,306],[x-18,288]],{fill:E.white},E);
+   s+=L(x,up?270:306,x,up?240:336,E.white,2,true,E);
+   s+=panel(x-95,up?60:356,190,170,c,E);}
+  return s;}},
+
+H15:{name:"Escalation Ramp",edition:"light",canvas:[1024,576],encodes:"proportional response, height is severity",
+ params:{treads:{d:4,min:3,max:6}},
+ draw:(p,E)=>{const cols=[E.cyan,E.mist,E.mist,E.pink,E.pink,E.pink];let s="";
+  for(let i=0;i<p.treads;i++){const x=90+i*170, y=460-i*90;
+   s+=isoBlock(x,y,150,80,60,E.ink,E,E.ink);
+   s+=R(x+20,y-52,110,50,{stroke:E.ink,sw:2,fill:cols[Math.min(i,cols.length-1)]},E);
+   s+=L(x,y+60,x+30,y+118,E.ink,1.6,false,E)+L(x+150,y+30,x+180,y+88,E.ink,1.6,false,E);}
+  const tx=90+(p.treads-1)*170;
+  s+=POLY([[tx+40,460-(p.treads-1)*90-70],[tx+58,460-(p.treads-1)*90-40],[tx+22,460-(p.treads-1)*90-40]],{stroke:E.pink,sw:2},E);
+  s+=C(tx+90,460-(p.treads-1)*90-60,12,{fill:E.pink},E);
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;s+=L(tx+90+Math.cos(a)*18,460-(p.treads-1)*90-60+Math.sin(a)*18,tx+90+Math.cos(a)*30,460-(p.treads-1)*90-60+Math.sin(a)*30,E.pink,1.5,false,E);}
+  s+=gear(120,540,26,10,E.ink,E,{})+gear(220,548,20,10,E.ink,E,{});
+  s+=arrow(120,520,tx+40,460-(p.treads-1)*90+40,E.ink,{...E,glow:false},6,22);
+  return s;}},
+
+H16:{name:"Flywheel",edition:"light",canvas:[1024,1024],encodes:"compounding, each turn makes the next easier",
+ params:{stages:{d:6,min:4,max:8},accel:{d:0,min:0,max:1}},
+ draw:(p,E)=>{const cx=512,cy=512;
+  let s=gear(cx,cy,280,24,E.ink,E,{fill:E.ink,bolts:false});
+  s+=C(cx,cy,180,{stroke:E.ground,sw:2,glow:false},E)+C(cx,cy,120,{stroke:E.ground,sw:2,glow:false},E)+C(cx,cy,40,{fill:E.cyan},E);
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;s+=L(cx+Math.cos(a)*50,cy+Math.sin(a)*50,cx+Math.cos(a)*170,cy+Math.sin(a)*170,E.ground,6,false,E);}
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;s+=C(cx+Math.cos(a)*220,cy+Math.sin(a)*220,8,{fill:E.ground,glow:false},E);}
+  for(let i=0;i<4;i++){const a=Math.PI/4+i*Math.PI/2;
+   s+=gear(cx+Math.cos(a)*330,cy+Math.sin(a)*330,64,10,i%2?E.cyan:E.pink,E,{});}
+  for(let i=0;i<p.stages;i++){const a0=i*2*Math.PI/p.stages+0.14, a1=a0+2*Math.PI/p.stages-0.28;
+   const w=p.accel? 10+i*4 : 20;
+   s+=arcArrow(cx,cy,420,a0,a1,E.ink,E,w);
+   const a=i*2*Math.PI/p.stages;
+   s+=chipPkg(cx+Math.cos(a)*420,cy+Math.sin(a)*420,60,E.cyan,E);}
+  return s;}},
+
+H40:{name:"Version Tree",edition:"dark",canvas:[1024,1024],encodes:"one lineage, branching, but with one main line",
+ params:{branches:{d:5,min:2,max:8},abandoned:{d:2,min:0,max:4}},
+ draw:(p,E)=>{let s=trace([[512,950],[512,60]],E.cyan,E,{sw:4,tokens:false});
+  for(let i=0;i<12;i++)s+=C(512,900-i*72,7,{fill:E.cyan},E);
+  for(let i=0;i<p.branches;i++){const y=840-i*140, dir=i%2?1:-1, dead=i>=p.branches-p.abandoned;
+   const x=512+dir*(150+i*22);
+   const F=dead?{...E,glow:false}:E;const c=dead?E.faint:E.cyan;
+   s+=trace([[512,y],[x,y],[x,y-110]],c,F,{sw:2,tokens:false});
+   if(dead){s+=C(x,y-124,10,{stroke:c,sw:2,glow:false},F)+L(x-7,y-131,x+7,y-117,c,2,false,F)+L(x+7,y-131,x-7,y-117,c,2,false,F);}
+   else s+=trace([[x,y-110],[x,y-170],[512,y-170]],c,F,{sw:2,tokens:false});}
+  return s;}},
+
+H41:{name:"Ratchet",edition:"dark",canvas:[1024,1024],encodes:"progress that cannot slip backwards",
+ params:{teeth:{d:16,min:8,max:26}},
+ draw:(p,E)=>{const cx=490,cy=530,r=260;let d="";
+  for(let i=0;i<p.teeth;i++){const a=i*2*Math.PI/p.teeth, b=(i+1)*2*Math.PI/p.teeth;
+   d+=`${i?"L":"M"}${n(cx+Math.cos(a)*r)} ${n(cy+Math.sin(a)*r)} L${n(cx+Math.cos(a)*(r*1.2))} ${n(cy+Math.sin(a)*(r*1.2))} L${n(cx+Math.cos(b)*r)} ${n(cy+Math.sin(b)*r)} `;}
+  d+="Z";
+  let s=P(d,{stroke:E.white,sw:2.5},E)+C(cx,cy,60,{stroke:E.white,sw:2},E)+C(cx,cy,16,{fill:E.white},E);
+  s+=POLY([[cx+300,cy-190],[cx+250,cy-120],[cx+310,cy-90]],{stroke:E.white,sw:3},E);
+  s+=P(`M${cx+300} ${cy-190} l40 -20 l-24 -22 l40 -20`,{stroke:E.white,sw:2},E);
+  s+=arcArrow(cx,cy,360,-2.4,-0.9,E.cyan,E,16);
+  s+=arcArrow(cx,cy,360,-0.2,-1.5,E.pink,E,16);
+  for(let i=0;i<4;i++){const a=-1.5+i*0.12;s+=L(cx+Math.cos(a)*330,cy+Math.sin(a)*330,cx+Math.cos(a)*390,cy+Math.sin(a)*390,E.pink,2,true,E);}
+  return s;}},
+
+H42:{name:"Sync Handshake",edition:"dark",canvas:[1024,1024],encodes:"two systems agreeing, continuously",
+ params:{drift:{d:0,min:0,max:90}},
+ draw:(p,E)=>{const dial=(cx,c,ang)=>{let m=C(cx,512,180,{stroke:c,sw:3},E)+C(cx,512,14,{fill:c},E);
+   for(let i=0;i<24;i++){const a=i*Math.PI/12;m+=L(cx+Math.cos(a)*160,512+Math.sin(a)*160,cx+Math.cos(a)*178,512+Math.sin(a)*178,c,i%6?1.2:2.6,true,E);}
+   const t=(ang-90)*Math.PI/180;
+   m+=L(cx,512,cx+Math.cos(t)*140,512+Math.sin(t)*140,c,5,true,E);return m;};
+  let s=dial(280,E.cyan,45)+dial(744,E.pink,45+p.drift);
+  s+=P("M460 440 C 560 360, 660 360, 760 440",{stroke:E.white,sw:2.5},E)+arrow(700,392,764,436,E.white,E,2.5,14);
+  s+=P("M760 584 C 660 664, 560 664, 460 584",{stroke:E.white,sw:2.5},E)+arrow(520,632,458,588,E.white,E,2.5,14);
+  return s;}},
+
+H43:{name:"Compounding Spiral",edition:"dark",canvas:[1024,1024],encodes:"the same loop, but each turn is bigger",
+ params:{turns:{d:4,min:2,max:6}},
+ draw:(p,E)=>{const cx=512,cy=512;let d="",last=[cx,cy];
+  const steps=p.turns*60;
+  for(let i=0;i<=steps;i++){const t=i/steps, a=t*p.turns*2*Math.PI, r=40+t*400;
+   const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r;
+   d+=`${i?"L":"M"}${n(x)} ${n(y)} `;last=[x,y,a];}
+  let s=`<path d="${d}" fill="none" stroke="url(#spine)" stroke-width="9" stroke-linecap="round" filter="url(#glow)"/>`;
+  s+=arrow(last[0]-Math.cos(last[2])*30,last[1]-Math.sin(last[2])*30,last[0]+Math.cos(last[2]+1.2)*40,last[1]+Math.sin(last[2]+1.2)*40,E.pink,E,8,26);
+  for(let i=1;i<=p.turns;i++){const r=40+(i/p.turns)*400;s+=R(cx+r-5,cy-5,10,10,{fill:E.cyan},E);}
+  return s;}},
+
+H44:{name:"The Press",edition:"light",canvas:[1024,1024],encodes:"pressure applied deliberately, producing value",
+ params:{ram:{d:60,min:0,max:160}},
+ draw:(p,E)=>{let s=P("M180 120 L720 120 L720 900 L580 900 L580 800 L300 800 L300 900 L180 900 Z",{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=R(380,160,160,180,{stroke:E.ink,sw:3,fill:E.ground,glow:false},E);
+  s+=R(430,340,60,120+p.ram,{stroke:E.ink,sw:2.5},E);
+  s+=R(340,460+p.ram,240,70,{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=R(300,640,320,60,{stroke:E.ink,sw:3},E);
+  s+=POLY([[620,660],[780,660],[820,720],[660,720]],{stroke:E.ink,sw:2.5},E);
+  s+=R(760,700,70,50,{stroke:E.cyan,sw:3},E);
+  s+=C(250,260,40,{stroke:E.ink,sw:2},E)+C(650,260,40,{stroke:E.ink,sw:2},E);
+  for(let i=0;i<8;i++)s+=C(220+i*40,880,8,{fill:E.ink,glow:false},E);
+  return s;}},
+
+H45:{name:"Launch Rail",edition:"dark",canvas:[1024,576],encodes:"everything is built, all that remains is release",
+ params:{released:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s=L(80,520,860,90,E.white,4,true,E)+L(110,560,890,130,E.white,4,true,E);
+  for(let i=0;i<12;i++){const t=i/12;s+=L(80+t*780,520-t*430,110+t*780,560-t*430,E.mist,1.6,true,E);}
+  s+=G(POLY([[0,0],[120,0],[150,-30],[120,-60],[0,-60]],{stroke:E.cyan,sw:3},E),`translate(300,420) rotate(-29)`);
+  s+=P("M170 500 L120 560 L230 560 Z",{stroke:p.released?E.faint:E.pink,sw:3},E);
+  s+=P("M60 300 L160 470 M60 300 L20 300",{stroke:E.cyan,sw:2.5},E);
+  s+=P("M700 60 L640 200 M700 60 L760 60",{stroke:E.cyan,sw:2.5},E);
+  return s;}},
+
+H46:{name:"North Star",edition:"dark",canvas:[1024,1024],encodes:"one metric everything else serves",
+ params:{nodes:{d:18,min:6,max:30},misaligned:{d:0,min:0,max:1}},
+ draw:(p,E)=>{let s="";
+  for(let i=0;i<p.nodes;i++){const x=120+((i*137)%800), y=420+((i*211)%520);
+   const bad=(p.misaligned&&i===0);
+   s+=L(x,y,bad?60:512,bad?900:140,E.cyan,1,true,E);
+   s+=R(x-7,y-7,14,14,{fill:bad?E.faint:E.cyan,glow:!bad},bad?{...E,glow:false}:E);}
+  s+=C(512,140,30,{fill:E.pink},E)+C(512,140,52,{stroke:E.pink,sw:2},E);
+  return s;}},
+
+H50:{name:"Cadence Wheel",edition:"dark",canvas:[1024,1024],encodes:"it happens on a rhythm, not on a whim",
+ params:{pulses:{d:14,min:5,max:20},missed:{d:-1,min:-1,max:19}},
+ draw:(p,E)=>{let s=gear(330,500,160,20,E.white,E,{});
+  s+=G(L(330,180,330,800,E.white,4,true,E)+C(330,800,40,{stroke:E.white,sw:3},E),`rotate(12 330 180)`);
+  s+=POLY([[470,440],[540,470],[470,500]],{stroke:E.white,sw:2.5},E);
+  for(let i=0;i<p.pulses;i++){const x=590+i*(400/p.pulses);
+   if(i===p.missed)continue;
+   s+=L(x,440,x,580,E.cyan,3,true,E);}
+  return s;}},
+
+/* ---------- DECISION AND CLOSE ---------- */
+H10:{name:"Cutaway Engine",edition:"light",canvas:[1024,1024],encodes:"the whole system as one serviceable machine",
+ params:{gears:{d:3,min:1,max:5},failing:{d:0,min:0,max:1}},
+ draw:(p,E)=>{const cx=512,cy=480;
+  let s=`<path d="M${cx} ${cy} m-300 0 a300 300 0 1 1 600 0 a300 300 0 1 1 -600 0 M${cx} ${cy} l0 -300 A300 300 0 0 1 ${n(cx+300*Math.cos(-0.3))} ${n(cy+300*Math.sin(-0.3))} Z" fill="${HATCH}" fill-rule="evenodd" stroke="${E.ink}" stroke-width="3"/>`;
+  s+=C(cx,cy,300,{stroke:E.ink,sw:3},E)+C(cx,cy,240,{stroke:E.ink,sw:1.5},E);
+  s+=C(cx,cy,90,{fill:p.failing?E.pink:E.cyan},E);
+  const rs=[140,100,74,60,50];
+  for(let i=0;i<p.gears;i++){const a=-0.6+i*1.5;
+   s+=gear(cx+Math.cos(a)*180,cy+Math.sin(a)*180,rs[i],12,E.ink,E,{});}
+  s+=R(60,440,240,80,{stroke:E.ink,sw:3,fill:HATCH},E)+C(300,480,18,{stroke:E.ink,sw:2},E);
+  s+=R(724,440,240,80,{stroke:E.ink,sw:3,fill:HATCH},E)+C(724,480,18,{stroke:E.ink,sw:2},E);
+  s+=R(300,800,424,60,{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=R(420,815,180,30,{stroke:E.ink,sw:1.6},E)+C(432,830,4,{fill:E.ink},E)+C(588,830,4,{fill:E.ink},E);
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;s+=L(cx+Math.cos(a)*318,cy+Math.sin(a)*318,cx+Math.cos(a)*340,cy+Math.sin(a)*340,E.ink,2,false,E);}
+  return s;}},
+
+H14:{name:"Concentric Shield",edition:"light",canvas:[1024,1024],encodes:"defence in depth",
+ params:{rings:{d:3,min:2,max:5},gapRing:{d:-1,min:-1,max:4}},
+ draw:(p,E)=>{const sh=k=>`M512 ${140+(1-k)*120} L${512+300*k} ${300+(1-k)*90} L${512+300*k} ${560+(1-k)*40} Q512 ${880-(1-k)*80} ${512-300*k} ${560+(1-k)*40} L${512-300*k} ${300+(1-k)*90} Z`;
+  let s="";
+  for(let i=0;i<p.rings;i++){const k=1-i*(0.7/p.rings), gap=(i===p.gapRing);
+   s+=P(sh(k),{stroke:gap?E.faint:(i===1?E.cyan:E.ink),sw:4-i,dash:gap?"10 8":null,fill:i===0?HATCH:E.ground},E);}
+  const hex=[];for(let i=0;i<6;i++){const a=i*Math.PI/3-Math.PI/6;hex.push([512+Math.cos(a)*80,500+Math.sin(a)*80]);}
+  s+=POLY(hex,{stroke:E.ink,sw:2.5},E);
+  for(let i=0;i<24;i++){const a=i*Math.PI/12;const r0=340+((i*37)%40);
+   s+=L(512+Math.cos(a)*r0,500+Math.sin(a)*r0,512+Math.cos(a)*(r0+70),500+Math.sin(a)*(r0+70),E.ink,1,false,E);
+   s+=C(512+Math.cos(a)*(r0+78),500+Math.sin(a)*(r0+78),4,{fill:E.ink,glow:false},E);}
+  s+=padlock(512,760,70,E.ink,E);
+  return s;}},
+
+H51:{name:"The Lever",edition:"light",canvas:[1024,1024],encodes:"the whole decision is one physical act",
+ params:{angle:{d:0,min:-30,max:30}},
+ draw:(p,E)=>{let s=R(300,700,424,160,{stroke:E.ink,sw:3,fill:HATCH},E);
+  [340,684].forEach(x=>{s+=C(x,740,12,{stroke:E.ink,sw:2},E);s+=C(x,820,12,{stroke:E.ink,sw:2},E);});
+  s+=P("M280 420 A 260 260 0 0 1 744 420",{stroke:E.ink,sw:3},E);
+  [-30,0,30].forEach(a=>{const t=(a-90)*Math.PI/180;
+   const c=(a===30)?E.cyan:E.ink;
+   s+=C(512+Math.cos(t)*260,700+Math.sin(t)*260,16,{stroke:c,sw:a===30?3:2},E);});
+  const t=(p.angle-90)*Math.PI/180;
+  s+=L(512,700,512+Math.cos(t)*250,700+Math.sin(t)*250,E.ink,12,false,E);
+  s+=C(512,700,26,{stroke:E.ink,sw:3,fill:E.ground,glow:false},E)+C(512,700,8,{fill:E.ink},E);
+  s+=G(R(-26,-70,52,70,{stroke:E.ink,sw:3,fill:HATCH},E),`translate(${n(512+Math.cos(t)*260)},${n(700+Math.sin(t)*260)}) rotate(${p.angle})`);
+  s+=P("M470 700 l-30 -20 l30 -20 l-30 -20",{stroke:E.ink,sw:2},E);
+  return s;}},
+
+H54:{name:"Countdown Gantry",edition:"light",canvas:[1024,1024],encodes:"the sequence has already started",
+ params:{arms:{d:4,min:2,max:6},connected:{d:1,min:0,max:6}},
+ draw:(p,E)=>{let s=L(440,100,440,940,E.ink,4,false,E)+L(560,100,560,940,E.ink,4,false,E);
+  for(let i=0;i<14;i++){const y=100+i*60;s+=L(440,y,560,y+60,E.ink,1.4,false,E)+L(560,y,440,y+60,E.ink,1.4,false,E);}
+  for(let i=0;i<p.arms;i++){const y=200+i*(600/(p.arms-1));
+   const swung = i >= p.connected;
+   const arm=R(0,-16,240,32,{stroke:swung?E.ink:E.pink,sw:3,fill:HATCH},E)+R(60,-40,60,24,{stroke:swung?E.ink:E.pink,sw:2},E);
+   s+=G(arm,`translate(560,${y}) rotate(${swung?-52:0})`);
+   s+=C(560,y,10,{fill:E.ink},E);}
+  s+=R(380,940,240,50,{stroke:E.ink,sw:3,fill:HATCH},E);
+  return s;}},
+
+H55:{name:"Control Tower",edition:"dark",canvas:[1024,576],encodes:"one place where the whole system is visible",
+ params:{panels:{d:6,min:3,max:8},alert:{d:2,min:-1,max:7}},
+ draw:(p,E)=>{let s="";const N=p.panels;
+  for(let i=0;i<N;i++){const t=i/(N-1)-0.5;
+   const x=512+t*820-120, y=120+Math.abs(t)*70;
+   const c=(i===p.alert)?E.pink:E.cyan;
+   s+=panel(x,y,240,180,c,E,10);
+   if(i%3===0){s+=P(`M${x+50} ${y+140} A70 70 0 0 1 ${x+190} ${y+140}`,{stroke:c,sw:2},E)+L(x+120,y+140,x+160,y+90,c,2.5,true,E);}
+   else if(i%3===1){for(let k=0;k<4;k++)s+=R(x+40+k*45,y+140-((k*20)%60)-20,26,((k*20)%60)+20,{stroke:c,sw:1.6},E);}
+   else {s+=trace([[x+40,y+120],[x+90,y+80],[x+140,y+130],[x+200,y+70]],c,E,{sw:2,tokens:false});}}
+  s+=P("M340 470 L684 470 L724 560 L300 560 Z",{stroke:E.white,sw:2.5},E);
+  s+=R(400,490,224,40,{stroke:E.white,sw:1.6},E);
+  return s;}},
+
+H56:{name:"Dashboard Wall",edition:"dark",canvas:[1024,576],encodes:"from today, this is all visible, daily",
+ params:{cols:{d:4,min:2,max:5},rows:{d:2,min:1,max:3},alert:{d:5,min:-1,max:14}},
+ draw:(p,E)=>{let s="";const w=(1024-40-(p.cols-1)*20)/p.cols, h=(576-40-(p.rows-1)*20)/p.rows;
+  for(let r=0;r<p.rows;r++)for(let c=0;c<p.cols;c++){const i=r*p.cols+c, x=20+c*(w+20), y=20+r*(h+20);
+   const col=(i===p.alert)?E.pink:E.cyan;
+   s+=panel(x,y,w,h,col,E,12);
+   s+=corner(x+8,y+8,col,E,0,26)+corner(x+w-8,y+h-8,col,E,180,26);
+   const cx=x+w/2, cy=y+h/2+10;
+   const kind=i%4;
+   if(kind===0){s+=P(`M${cx-60} ${cy+20} A60 60 0 0 1 ${cx+60} ${cy+20}`,{stroke:col,sw:2},E)+L(cx,cy+20,cx+34,cy-24,col,2.5,true,E);}
+   if(kind===1){s+=trace([[cx-60,cy+10],[cx-20,cy-20],[cx+16,cy+16],[cx+60,cy-30]],col,E,{sw:2,tokens:false});}
+   if(kind===2){s+=R(cx-50,cy-20,36,50,{stroke:col,sw:2},E)+R(cx+10,cy-40,36,70,{stroke:col,sw:2},E);}
+   if(kind===3){s+=C(cx,cy,36,{stroke:col,sw:2},E)+C(cx,cy,10,{fill:col},E);}}
+  return s;}}
+};
+
+/* ---------- render one asset ---------- */
+function render(id, overrides={}){
+  const H = HEROES[id];
+  if(!H) throw new Error("unknown asset: "+id);
+  const E = TOKENS[H.edition];
+  const p = {};
+  for(const k in H.params) p[k] = (k in overrides) ? overrides[k] : H.params[k].d;
+  return wrap(H.canvas[0], H.canvas[1], H.edition, H.draw(p, E));
+}
+function manifest(){
+  return Object.entries(HEROES).map(([id,h])=>({
+    id, name:h.name, edition:h.edition, canvas:h.canvas, encodes:h.encodes,
+    params:Object.fromEntries(Object.entries(h.params).map(([k,v])=>[k,{default:v.d,min:v.min,max:v.max}]))
+  }));
+}
+
+
+
+/* ============================================================
+   SIGNAL DETAIL LAYER  v2
+   The kit draws structure. This draws MACHINING.
+   Adds: 11 greeble generators, an ornament layer per edition,
+   and densified recipes for the 14 flagship heroes.
+   Every asset gains a `detail` param: 0 clean, 1 standard, 2 dense.
+   ============================================================ */
+
+
+
+/* ---------- deterministic pseudo-random, so a rebuild is identical ---------- */
+let SEED = 1;
+const rnd = () => (SEED = (SEED * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+const reseed = s => { SEED = s || 1; };
+
+/* ============================================================
+   GREEBLES: the eleven detail generators
+   ============================================================ */
+
+// G1 bolt circle: N fasteners on a radius, each with a slot
+const bolts = (cx, cy, r, N, c, E, sz = 6) => {
+  let s = "";
+  for (let i = 0; i < N; i++) {
+    const a = i * 2 * Math.PI / N;
+    const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+    s += C(x, y, sz, { stroke: c, sw: 1.2, glow: false }, E);
+    s += L(x - sz * 0.6, y, x + sz * 0.6, y, c, 1, false, E);
+  }
+  return s;
+};
+
+// G2 rivet line: fasteners along a segment
+const rivets = (x1, y1, x2, y2, N, c, E, sz = 3.5) => {
+  let s = "";
+  for (let i = 0; i < N; i++) {
+    const t = (i + 0.5) / N;
+    s += C(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, sz, { fill: c, glow: false }, E);
+  }
+  return s;
+};
+
+// G3 rib stack: structural ribs across a body
+const ribs = (x, y, w, h, N, c, E) => {
+  let s = "";
+  for (let i = 1; i < N; i++) {
+    const xx = x + (w / N) * i;
+    s += L(xx, y + 4, xx, y + h - 4, c, 1.2, false, E);
+    s += C(xx, y + 10, 2.4, { fill: c, glow: false }, E);
+    s += C(xx, y + h - 10, 2.4, { fill: c, glow: false }, E);
+  }
+  return s;
+};
+
+// G4 tick scale: graduated arc or line, major and minor
+const ticks = (cx, cy, r, a0, a1, N, c, E, len = 14) => {
+  let s = "";
+  for (let i = 0; i <= N; i++) {
+    const a = a0 + (a1 - a0) * i / N, maj = i % 5 === 0;
+    s += L(cx + Math.cos(a) * r, cy + Math.sin(a) * r,
+           cx + Math.cos(a) * (r + (maj ? len : len * 0.5)), cy + Math.sin(a) * (r + (maj ? len : len * 0.5)),
+           c, maj ? 2 : 1, false, E);
+  }
+  return s;
+};
+
+// G5 knurl: grip texture on a handle
+const knurl = (x, y, w, h, c, E) => {
+  let s = "";
+  for (let i = 0; i < w; i += 5) {
+    s += L(x + i, y, x + i + 5, y + h, c, 0.8, false, E);
+    s += L(x + i + 5, y, x + i, y + h, c, 0.8, false, E);
+  }
+  return s;
+};
+
+// G6 pads and vias: PCB detail scattered in a region
+const vias = (x, y, w, h, N, c, E) => {
+  let s = "";
+  for (let i = 0; i < N; i++) {
+    const px = x + rnd() * w, py = y + rnd() * h, k = rnd();
+    if (k < 0.4) s += C(px, py, 3.5, { stroke: c, sw: 1, glow: false }, E) + C(px, py, 1.2, { fill: c, glow: false }, E);
+    else if (k < 0.7) s += R(px, py, 7, 4, { fill: c, glow: false }, E);
+    else s += L(px, py, px + 12, py, c, 1, false, E);
+  }
+  return s;
+};
+
+// G7 panel seams: plate lines across a face
+const seams = (x, y, w, h, N, c, E) => {
+  let s = "";
+  for (let i = 1; i < N; i++) {
+    const yy = y + (h / N) * i;
+    s += L(x + 6, yy, x + w - 6, yy, c, 0.9, false, E);
+  }
+  return s;
+};
+
+// G8 hatch band: shaded strip between two radii (depth face)
+const hatchBand = (cx, cy, r0, r1, c, E) => {
+  const d = `M${n(cx - r1)} ${n(cy)} A${n(r1)} ${n(r1)} 0 1 1 ${n(cx + r1)} ${n(cy)} A${n(r1)} ${n(r1)} 0 1 1 ${n(cx - r1)} ${n(cy)} Z ` +
+            `M${n(cx - r0)} ${n(cy)} A${n(r0)} ${n(r0)} 0 1 0 ${n(cx + r0)} ${n(cy)} A${n(r0)} ${n(r0)} 0 1 0 ${n(cx - r0)} ${n(cy)} Z`;
+  return `<path d="${d}" fill="${HATCH}" fill-rule="evenodd" stroke="${c}" stroke-width="1.2"/>`;
+};
+
+// G9 wire bundle: cable runs with clips
+const wires = (pts, c, E, N = 3) => {
+  let s = "";
+  for (let k = 0; k < N; k++) {
+    const off = (k - (N - 1) / 2) * 5;
+    const d = pts.map((p, i) => `${i ? "C" : "M"}${n(p[0])} ${n(p[1] + off)}${i ? ` ${n(p[0])} ${n(p[1] + off)} ${n(p[0])} ${n(p[1] + off)}` : ""}`).join(" ");
+    s += P(pts.map((p, i) => `${i ? "L" : "M"}${n(p[0])} ${n(p[1] + off)}`).join(" "), { stroke: c, sw: 1.2 }, E);
+  }
+  for (let i = 1; i < pts.length; i++) {
+    const mx = (pts[i - 1][0] + pts[i][0]) / 2, my = (pts[i - 1][1] + pts[i][1]) / 2;
+    s += R(mx - 7, my - 9, 14, 18, { stroke: c, sw: 1, glow: false }, E);
+  }
+  return s;
+};
+
+// G10 fillet corners: chamfer marks at a box's corners
+const fillets = (x, y, w, h, c, E, k = 12) => {
+  let s = "";
+  [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([px, py, sx, sy]) => {
+    s += L(px + sx * k, py, px, py + sy * k, c, 1, false, E);
+  });
+  return s;
+};
+
+// G11 gauge face: full instrument face, reusable machine detail
+const gaugeFace = (cx, cy, r, val, c, E) => {
+  let s = C(cx, cy, r, { stroke: c, sw: 2 }, E) + C(cx, cy, r * 0.88, { stroke: c, sw: 1 }, E);
+  s += ticks(cx, cy, r * 0.72, Math.PI * 0.75, Math.PI * 2.25, 20, c, E, r * 0.12);
+  const a = Math.PI * 0.75 + (Math.PI * 1.5) * val;
+  s += L(cx, cy, cx + Math.cos(a) * r * 0.66, cy + Math.sin(a) * r * 0.66, c, 2.5, true, E);
+  s += C(cx, cy, r * 0.1, { fill: c }, E);
+  return s;
+};
+
+/* ============================================================
+   ORNAMENT LAYER: chrome that makes every asset read as one set
+   ============================================================ */
+function ornament(ed, w, h, level) {
+  if (!level) return "";
+  const E = TOKENS[ed];
+  reseed(7);
+  let s = "";
+  if (ed === "dark") {
+    // faint PCB substrate + hairline grid + HUD corners
+    s += `<g opacity="0.10">` + vias(0, 0, w, h, level === 2 ? 160 : 80, E.mist, { ...E, glow: false });
+    for (let i = 0; i < 14; i++) {
+      const y = rnd() * h, x0 = rnd() * w * 0.5;
+      s += trace([[x0, y], [x0 + 120 + rnd() * 200, y], [x0 + 160 + rnd() * 240, y + (rnd() > 0.5 ? 90 : -90)]], E.mist, { ...E, glow: false }, { sw: 1, tokens: false });
+    }
+    s += `</g>`;
+    s += `<g opacity="0.5">` + R(20, 20, w - 40, h - 40, { stroke: E.line, sw: 1, rx: 10, glow: false }, E) + `</g>`;
+    s += corner(24, 24, E.mist, { ...E, glow: false }, 0, 34) + corner(w - 24, h - 24, E.mist, { ...E, glow: false }, 180, 34);
+  } else {
+    // drafting grid + frame + registration marks + a scale ruler
+    s += `<g opacity="0.55"><defs><pattern id="dg" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0 L0 0 0 26" fill="none" stroke="${E.line}" stroke-width="0.8"/></pattern></defs>
+      <rect width="${w}" height="${h}" fill="url(#dg)"/></g>`;
+    s += R(20, 20, w - 40, h - 40, { stroke: E.line, sw: 1.2, glow: false }, E);
+    [[20, 20], [w - 20, 20], [20, h - 20], [w - 20, h - 20]].forEach(([x, y]) => {
+      s += C(x, y, 9, { stroke: E.mist, sw: 1, glow: false }, E) + L(x - 14, y, x + 14, y, E.mist, 0.8, false, E) + L(x, y - 14, x, y + 14, E.mist, 0.8, false, E);
+    });
+    for (let i = 0; i < 20; i++) {
+      const y = 40 + i * ((h - 80) / 19);
+      s += L(20, y, i % 5 === 0 ? 40 : 32, y, E.mist, i % 5 === 0 ? 1.4 : 0.8, false, E);
+    }
+  }
+  return s;
+}
+
+/* ============================================================
+   DENSIFIED FLAGSHIP RECIPES
+   Same subjects, 5 to 10x the element count.
+   ============================================================ */
+const D = {
+
+/* --- H10 Cutaway Engine: the cover asset. Now a real machine. --- */
+H10: (p, E) => {
+  reseed(11);
+  const cx = 512, cy = 470, R0 = 300;
+  let s = "";
+  // housing shell with cutaway wedge
+  s += `<path d="M${cx} ${cy} m-${R0} 0 a${R0} ${R0} 0 1 1 ${R0 * 2} 0 a${R0} ${R0} 0 1 1 -${R0 * 2} 0 M${cx} ${cy} L${cx} ${cy - R0} A${R0} ${R0} 0 0 1 ${n(cx + R0 * Math.cos(-0.35))} ${n(cy + R0 * Math.sin(-0.35))} Z" fill="${HATCH}" fill-rule="evenodd" stroke="${E.ink}" stroke-width="3"/>`;
+  s += C(cx, cy, R0, { stroke: E.ink, sw: 3 }, E);
+  s += hatchBand(cx, cy, R0 - 34, R0 - 12, E.ink, E);
+  s += C(cx, cy, R0 - 46, { stroke: E.ink, sw: 1.6 }, E);
+  s += bolts(cx, cy, R0 - 23, 24, E.ink, E, 7);
+  // cut edge shading
+  s += P(`M${cx} ${cy} L${cx} ${cy - R0}`, { stroke: E.ink, sw: 2 }, E);
+  s += P(`M${cx} ${cy} L${n(cx + R0 * Math.cos(-0.35))} ${n(cy + R0 * Math.sin(-0.35))}`, { stroke: E.ink, sw: 2 }, E);
+  for (let i = 0; i < 16; i++) { const t = i / 16; s += L(cx + t * R0 * 0.98, cy - 4 - t * 3, cx + t * R0 * 0.98 - 12, cy - 20 - t * 3, E.ink, 0.9, false, E); }
+  // gear train
+  const gs = [[cx - 130, cy + 70, 96, 18], [cx + 120, cy + 90, 74, 14], [cx + 90, cy - 120, 60, 12], [cx - 150, cy - 110, 52, 10], [cx + 190, cy - 20, 44, 10]];
+  for (let i = 0; i < Math.min(p.gears, 5); i++) {
+    const [gx, gy, gr, gt] = gs[i];
+    s += gear(gx, gy, gr, gt, E.ink, E, {});
+    s += bolts(gx, gy, gr * 0.42, 6, E.ink, E, 4);
+    s += C(gx, gy, gr * 0.16, { fill: E.ink }, E);
+  }
+  // rotor core with vanes
+  s += C(cx, cy, 92, { fill: p.failing ? E.pink : E.cyan }, E);
+  s += C(cx, cy, 70, { stroke: E.ground, sw: 2, glow: false }, E);
+  for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; s += L(cx + Math.cos(a) * 24, cy + Math.sin(a) * 24, cx + Math.cos(a + 0.5) * 66, cy + Math.sin(a + 0.5) * 66, E.ground, 3, false, E); }
+  s += C(cx, cy, 20, { stroke: E.ground, sw: 2, glow: false }, E);
+  // intake and exhaust pipework with flanges, bolts, ribs
+  [[60, 430, 250], [714, 430, 250]].forEach(([px, py, pw], k) => {
+    s += R(px, py, pw, 84, { stroke: E.ink, sw: 3, fill: HATCH }, E);
+    s += seams(px, py, pw, 84, 4, E.ink, E);
+    s += R(px + (k ? pw - 30 : 0), py - 12, 30, 108, { stroke: E.ink, sw: 2.5 }, E);
+    s += rivets(px + (k ? pw - 15 : 15), py - 6, px + (k ? pw - 15 : 15), py + 90, 5, E.ink, E);
+    s += C(k ? px : px + pw, py + 42, 22, { stroke: E.ink, sw: 2 }, E);
+    s += ribs(px, py, pw, 84, 6, E.ink, E);
+  });
+  // mounting plate, nameplate, feet
+  s += R(280, 800, 464, 66, { stroke: E.ink, sw: 3, fill: HATCH }, E);
+  s += R(300, 866, 60, 34, { stroke: E.ink, sw: 2.5 }, E) + R(664, 866, 60, 34, { stroke: E.ink, sw: 2.5 }, E);
+  s += R(410, 814, 204, 38, { stroke: E.ink, sw: 1.8, fill: E.ground, glow: false }, E);
+  s += C(422, 833, 4.5, { fill: E.ink }, E) + C(602, 833, 4.5, { fill: E.ink }, E);
+  s += rivets(280, 806, 744, 806, 14, E.ink, E, 3);
+  // motion ticks + two service gauges
+  s += ticks(cx, cy, R0 + 8, 0, Math.PI * 2, 36, E.ink, E, 12);
+  s += gaugeFace(180, 250, 52, 0.62, E.ink, E) + gaugeFace(844, 250, 52, 0.34, E.ink, E);
+  s += wires([[180, 302], [180, 380], [230, 430]], E.ink, E, 2);
+  if (p.detail === 2) { s += vias(40, 60, 940, 120, 40, E.mist, { ...E, glow: false }); }
+  return s;
+},
+
+/* --- H16 Flywheel: machined mass --- */
+H16: (p, E) => {
+  reseed(3);
+  const cx = 512, cy = 512;
+  let s = gear(cx, cy, 285, 30, E.ink, E, { fill: E.ink, bolts: false });
+  s += C(cx, cy, 250, { stroke: E.ground, sw: 2, glow: false }, E);
+  s += C(cx, cy, 190, { stroke: E.ground, sw: 1.4, glow: false }, E);
+  s += C(cx, cy, 120, { stroke: E.ground, sw: 1.4, glow: false }, E);
+  // spokes with lightening holes
+  for (let i = 0; i < 8; i++) {
+    const a = i * Math.PI / 4;
+    s += L(cx + Math.cos(a) * 46, cy + Math.sin(a) * 46, cx + Math.cos(a) * 186, cy + Math.sin(a) * 186, E.ground, 14, false, E);
+    s += C(cx + Math.cos(a + 0.39) * 150, cy + Math.sin(a + 0.39) * 150, 20, { stroke: E.ground, sw: 2, glow: false }, E);
+  }
+  s += bolts(cx, cy, 222, 18, E.ground, { ...E, glow: false }, 7);
+  s += C(cx, cy, 44, { fill: E.cyan }, E) + C(cx, cy, 22, { stroke: E.ground, sw: 2, glow: false }, E);
+  // meshed satellites with their own bolt rings
+  for (let i = 0; i < 4; i++) {
+    const a = Math.PI / 4 + i * Math.PI / 2, gx = cx + Math.cos(a) * 336, gy = cy + Math.sin(a) * 336;
+    const c = i % 2 ? E.cyan : E.pink;
+    s += gear(gx, gy, 66, 12, c, E, {});
+    s += bolts(gx, gy, 30, 6, c, E, 4);
+  }
+  // orbit: tapered arrows + chip packages + trace ring
+  for (let i = 0; i < p.stages; i++) {
+    const a0 = i * 2 * Math.PI / p.stages + 0.14, a1 = a0 + 2 * Math.PI / p.stages - 0.28;
+    s += arcArrow(cx, cy, 430, a0, a1, E.ink, E, p.accel ? 10 + i * 4 : 20);
+    const a = i * 2 * Math.PI / p.stages;
+    s += chipPkg(cx + Math.cos(a) * 430, cy + Math.sin(a) * 430, 62, E.cyan, E);
+    s += trace([[cx + Math.cos(a) * 300, cy + Math.sin(a) * 300], [cx + Math.cos(a) * 380, cy + Math.sin(a) * 380]], E.cyan, E, { sw: 1.2, tokens: false });
+  }
+  s += ticks(cx, cy, 470, 0, Math.PI * 2, 48, E.mist, { ...E, glow: false }, 10);
+  return s;
+},
+
+/* --- H13 Control Loop: a real machined ring --- */
+H13: (p, E) => {
+  reseed(5);
+  const cx = 512, cy = 512, r = 300;
+  let s = hatchBand(cx, cy, r - 52, r, E.ink, E);
+  s += C(cx, cy, r, { stroke: E.ink, sw: 3 }, E) + C(cx, cy, r - 52, { stroke: E.ink, sw: 2 }, E);
+  s += bolts(cx, cy, r - 26, 20, E.ink, E, 7);
+  s += C(cx, cy, r - 84, { stroke: E.ink, sw: 1.2 }, E);
+  for (let i = 0; i < p.stages; i++) {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / p.stages;
+    const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+    s += G(R(-46, -30, 92, 60, { stroke: E.ink, sw: 2.5, fill: E.ground, glow: false }, E) + rivets(-40, -24, 40, -24, 4, E.ink, E, 3),
+           `translate(${n(x)},${n(y)}) rotate(${n(a * 180 / Math.PI + 90)})`);
+    s += C(x, y, 40, { stroke: E.ink, sw: 3, fill: E.ground, glow: false }, E);
+    s += C(x, y, 30, { stroke: E.ink, sw: 1.4 }, E) + C(x, y, 20, { stroke: E.ink, sw: 1 }, E);
+    s += C(x, y, 12, { fill: E.cyan }, E);
+    s += ticks(x, y, 42, 0, Math.PI * 2, 12, E.ink, E, 6);
+  }
+  for (let i = 0; i < p.stages; i++) {
+    const a0 = -Math.PI / 2 + i * 2 * Math.PI / p.stages + 0.24, a1 = a0 + 2 * Math.PI / p.stages - 0.48;
+    const broke = (i === p.brokenArc);
+    s += arcArrow(cx, cy, r + 86, a0, a1, broke ? E.pink : E.ink, E, broke ? 8 : 22);
+  }
+  s += ticks(cx, cy, r + 130, 0, Math.PI * 2, 40, E.mist, { ...E, glow: false }, 9);
+  s += gaugeFace(512, 512, 92, 0.7, E.ink, E);
+  return s;
+},
+
+/* --- H15 Escalation Ramp: industrial machinery --- */
+H15: (p, E) => {
+  reseed(9);
+  const cols = [E.cyan, E.mist, E.mist, E.pink, E.pink, E.pink];
+  let s = "";
+  // base frame with cross bracing
+  s += L(60, 540, 964, 540, E.ink, 3, false, E);
+  for (let i = 0; i < 10; i++) { const x = 70 + i * 90; s += L(x, 540, x + 45, 470, E.ink, 1.4, false, E) + L(x + 45, 540, x, 470, E.ink, 1.4, false, E); }
+  s += L(60, 470, 964, 470, E.ink, 2, false, E);
+  for (let i = 0; i < p.treads; i++) {
+    const x = 90 + i * 170, y = 450 - i * 88;
+    s += isoBlock(x, y, 150, 78, 56, E.ink, E, E.ink);
+    // cargo block, banded and rivetted
+    s += R(x + 18, y - 54, 116, 52, { stroke: E.ink, sw: 2.4, fill: cols[Math.min(i, 5)] }, E);
+    s += seams(x + 18, y - 54, 116, 52, 3, E.ground, { ...E, glow: false });
+    s += rivets(x + 24, y - 48, x + 128, y - 48, 6, E.ground, { ...E, glow: false }, 2.4);
+    // legs, rollers, hydraulic lines
+    s += L(x + 10, y + 56, x + 30, y + 130, E.ink, 2, false, E) + L(x + 140, y + 26, x + 160, y + 100, E.ink, 2, false, E);
+    s += C(x + 30, y + 134, 12, { stroke: E.ink, sw: 1.6 }, E) + C(x + 160, y + 104, 12, { stroke: E.ink, sw: 1.6 }, E);
+    s += wires([[x + 30, y + 120], [x + 90, y + 96], [x + 160, y + 90]], E.ink, E, 2);
+    s += bolts(x + 76, y + 20, 30, 6, E.ink, E, 4);
+  }
+  const tx = 90 + (p.treads - 1) * 170, ty = 450 - (p.treads - 1) * 88;
+  // beacons and warning triangles on the top unit
+  [tx + 40, tx + 100].forEach((bx, k) => {
+    s += R(bx - 12, ty - 96, 24, 22, { stroke: E.ink, sw: 2 }, E);
+    s += C(bx, ty - 104, 13, { fill: E.pink }, E);
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; s += L(bx + Math.cos(a) * 18, ty - 104 + Math.sin(a) * 18, bx + Math.cos(a) * 30, ty - 104 + Math.sin(a) * 30, E.pink, 1.6, false, E); }
+  });
+  s += POLY([[tx + 150, ty - 70], [tx + 172, ty - 30], [tx + 128, ty - 30]], { stroke: E.pink, sw: 2 }, E) + L(tx + 150, ty - 58, tx + 150, ty - 42, E.pink, 2, false, E);
+  s += gear(130, 555, 28, 12, E.ink, E, {}) + gear(215, 562, 22, 10, E.ink, E, {}) + gear(880, 555, 26, 12, E.ink, E, {});
+  for (let i = 0; i < 8; i++) s += C(280 + i * 70, 560, 14, { stroke: E.ink, sw: 1.4 }, E);
+  s += arrow(120, 520, tx + 30, ty + 40, E.ink, { ...E, glow: false }, 7, 24);
+  return s;
+},
+
+/* --- H11 Leaking Vessel: valves, flanges, gauges --- */
+H11: (p, E) => {
+  reseed(4);
+  let s = R(40, 150, 944, 96, { stroke: E.ink, sw: 3, fill: HATCH }, E);
+  s += seams(40, 150, 944, 96, 3, E.ink, E);
+  [70, 320, 620, 900].forEach(x => {
+    s += R(x, 136, 30, 124, { stroke: E.ink, sw: 2.5 }, E);
+    s += rivets(x + 15, 146, x + 15, 250, 5, E.ink, E, 3);
+    s += R(x - 8, 132, 46, 10, { stroke: E.ink, sw: 1.6 }, E);
+  });
+  // valve wheels on the run
+  [200, 760].forEach(x => {
+    s += R(x - 26, 106, 52, 46, { stroke: E.ink, sw: 2.2, fill: HATCH }, E);
+    s += C(x, 88, 26, { stroke: E.ink, sw: 2.4 }, E) + C(x, 88, 8, { stroke: E.ink, sw: 1.6 }, E);
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; s += L(x + Math.cos(a) * 8, 88 + Math.sin(a) * 8, x + Math.cos(a) * 24, 88 + Math.sin(a) * 24, E.ink, 1.4, false, E); }
+  });
+  s += gaugeFace(480, 84, 40, 0.82, E.ink, E) + L(480, 124, 480, 150, E.ink, 2, false, E);
+  s += ribs(40, 150, 944, 96, 16, E.ink, E);
+  for (let i = 0; i < p.leaks; i++) {
+    const x = 220 + i * (700 / Math.max(p.leaks - 1, 1));
+    if (!p.welded) {
+      for (let k = 0; k < 7; k++) { const a = -1.1 + k * 0.36; s += L(x, 246, x + Math.cos(a) * (26 + rnd() * 22), 246 + Math.abs(Math.sin(a)) * (22 + rnd() * 18), E.ink, 1.5, false, E); }
+      for (let k = 0; k < 7; k++) s += C(x + (rnd() - 0.5) * 8, 276 + k * 32 + k * k * 1.4, 4 + k * 0.7, { fill: E.pink, glow: false }, E);
+      s += `<ellipse cx="${x}" cy="512" rx="52" ry="10" fill="${E.pink}" opacity="0.5"/>`;
+      s += `<ellipse cx="${x}" cy="512" rx="30" ry="6" fill="${E.pink}" opacity="0.7"/>`;
+    } else {
+      s += L(x - 26, 246, x + 26, 246, E.cyan, 5, false, E);
+      for (let k = 0; k < 5; k++) s += L(x - 22 + k * 11, 240, x - 16 + k * 11, 252, E.cyan, 1.6, false, E);
+    }
+  }
+  return s;
+},
+
+/* --- H25 Refinery Column: trays, valves, feed loops --- */
+H25: (p, E) => {
+  reseed(6);
+  let s = R(372, 110, 280, 780, { stroke: E.ink, sw: 3, rx: 140, fill: HATCH }, E);
+  s += R(394, 150, 236, 700, { stroke: E.ink, sw: 1.6, fill: E.ground, glow: false }, E);
+  for (let i = 0; i < p.trays; i++) {
+    const y = 200 + i * (620 / (p.trays - 1));
+    s += L(400, y, 624, y, E.ink, 1.8, false, E);
+    for (let k = 0; k < 6; k++) s += C(414 + k * 40, y, 5, { stroke: E.ink, sw: 1.1 }, E);
+    s += L(i % 2 ? 400 : 624, y, i % 2 ? 430 : 594, y + 30, E.ink, 1.2, false, E);
+  }
+  s += ribs(372, 110, 280, 780, 10, E.ink, E);
+  s += bolts(512, 130, 120, 12, E.ink, E, 5);
+  s += R(140, 830, 250, 44, { stroke: E.ink, sw: 3, fill: HATCH }, E) + C(150, 852, 16, { stroke: E.ink, sw: 2 }, E);
+  s += wires([[150, 836], [150, 760], [230, 700]], E.ink, E, 2);
+  for (let i = 0; i < p.outputs; i++) {
+    const y = 790 - i * (580 / (p.outputs - 1)), top = i === p.outputs - 1, c = top ? E.cyan : E.ink;
+    s += R(652, y - 20, 250, 40, { stroke: c, sw: top ? 3 : 2.5, fill: HATCH }, E);
+    s += R(880, y - 30, 26, 60, { stroke: c, sw: 2 }, E) + rivets(893, y - 22, 893, y + 22, 3, c, E, 2.5);
+    s += C(760, y - 34, 16, { stroke: c, sw: 1.8 }, E) + L(760, y - 20, 760, y - 18, c, 2, false, E);
+  }
+  s += gaugeFace(280, 300, 46, 0.55, E.ink, E) + gaugeFace(280, 560, 46, 0.72, E.ink, E);
+  s += wires([[326, 300], [352, 340], [372, 400]], E.ink, E, 2);
+  return s;
+},
+
+/* --- H14 Concentric Shield: layered armour + circuit halo --- */
+H14: (p, E) => {
+  reseed(8);
+  const sh = k => `M512 ${140 + (1 - k) * 110} L${512 + 300 * k} ${300 + (1 - k) * 80} L${512 + 300 * k} ${560 + (1 - k) * 36} Q512 ${880 - (1 - k) * 70} ${512 - 300 * k} ${560 + (1 - k) * 36} L${512 - 300 * k} ${300 + (1 - k) * 80} Z`;
+  let s = "";
+  for (let i = 0; i < p.rings; i++) {
+    const k = 1 - i * (0.72 / p.rings), gap = i === p.gapRing;
+    s += P(sh(k), { stroke: gap ? E.faint : (i === 1 ? E.cyan : E.ink), sw: 4.5 - i * 0.7, dash: gap ? "10 8" : null, fill: i === 0 ? HATCH : E.ground }, E);
+    if (!gap) s += P(sh(k - 0.04), { stroke: E.ink, sw: 0.9 }, E);
+  }
+  const hex = []; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 - Math.PI / 6; hex.push([512 + Math.cos(a) * 84, 500 + Math.sin(a) * 84]); }
+  s += POLY(hex, { stroke: E.ink, sw: 2.5, fill: HATCH }, E);
+  s += POLY(hex.map(q => [512 + (q[0] - 512) * 0.6, 500 + (q[1] - 500) * 0.6]), { stroke: E.ink, sw: 1.4 }, E);
+  s += C(512, 500, 10, { fill: E.cyan }, E);
+  // circuit halo, denser and terminated
+  for (let i = 0; i < 40; i++) {
+    const a = i * Math.PI / 20, r0 = 330 + ((i * 41) % 60);
+    const x0 = 512 + Math.cos(a) * r0, y0 = 500 + Math.sin(a) * r0 * 1.05;
+    const x1 = 512 + Math.cos(a) * (r0 + 60 + rnd() * 40), y1 = 500 + Math.sin(a) * (r0 + 60 + rnd() * 40) * 1.05;
+    s += L(x0, y0, x1, y0, E.ink, 1, false, E) + L(x1, y0, x1, y1, E.ink, 1, false, E);
+    s += C(x1, y1, 4, { stroke: E.ink, sw: 1, glow: false }, E);
+  }
+  s += padlock(512, 770, 76, E.ink, E);
+  s += bolts(512, 500, 250, 12, E.ink, E, 6);
+  return s;
+},
+
+/* --- H07 Ascension Staircase: lit risers, service detail --- */
+H07: (p, E) => {
+  reseed(2);
+  const cols = [E.cyan, E.white, E.pink, E.cyan, E.pink];
+  let s = "";
+  for (let i = 0; i < 9; i++) s += L(-40 + i * 150, 560, 120 + i * 150, 400, E.line, 1, false, E);
+  for (let i = 0; i < 5; i++) s += L(40, 560 - i * 40, 1000, 560 - i * 40 - 120, E.line, 0.8, false, E);
+  for (let i = 0; i < p.steps; i++) {
+    const x = 130 + i * 200, y = 470 - i * 110, c = cols[i];
+    s += isoBlock(x, y, 190, 110, 92, c, E, E.mist);
+    // face detail: seams, vents, bolt rows
+    s += seams(x + 12, y + 46, 100, 80, 4, E.mist, { ...E, glow: false });
+    s += rivets(x + 14, y + 40, x + 108, y + 40, 5, E.mist, { ...E, glow: false }, 2.4);
+    for (let k = 0; k < 4; k++) s += L(x + 130, y + 30 + k * 14, x + 178, y + 6 + k * 14, E.mist, 1, false, E);
+    s += padlock(x + 95, y + 92, 52, c, E, i === p.unlocked);
+    s += trace([[x + 232, y + 16], [x + 300, y - 14], [980, y - 14]], E.mist, { ...E, glow: false }, { sw: 1.2, tokens: false });
+    s += C(x + 232, y + 16, 5, { fill: c }, E);
+  }
+  return s;
+},
+
+/* --- H03 Convergence Rivers: tributaries, housing detail --- */
+H03: (p, E) => {
+  reseed(12);
+  let s = node(110, 288, E.cyan, E, "source");
+  const ys = [190, 386, 288];
+  for (let r = 0; r < p.rivers; r++) {
+    const c = r === 0 ? E.cyan : (r === 1 ? E.pink : E.white), y = ys[r];
+    s += river([[170, 288], [258, y], [700, y], [788, 288]], c, E, 13);
+    for (let t = 0; t < p.tributaries; t++) {
+      const x = 292 + t * (392 / Math.max(p.tributaries - 1, 1)), up = r ? 1 : -1;
+      s += trace([[x, y], [x, y + up * 30], [x + 22, y + up * 30]], c, E, { sw: 1.2, tokens: false });
+      s += C(x + 26, y + up * 30, 4, { fill: c }, E);
+      s += L(x - 14, y + up * 8, x - 14, y + up * 20, c, 1, true, E);
+    }
+  }
+  const oct = []; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + Math.PI / 8; oct.push([832, 288].map((v, j) => v + (j ? Math.sin(a) : Math.cos(a)) * 86)); }
+  s += POLY(oct, { stroke: E.white, sw: 2.5 }, E);
+  s += POLY(oct.map(q => [832 + (q[0] - 832) * 0.78, 288 + (q[1] - 288) * 0.78]), { stroke: E.white, sw: 1.4 }, E);
+  s += POLY(oct.map(q => [832 + (q[0] - 832) * 0.58, 288 + (q[1] - 288) * 0.58]), { stroke: E.white, sw: 1 }, E);
+  s += bolts(832, 288, 96, 8, E.mist, { ...E, glow: false }, 5);
+  s += padlock(832, 288, 58, E.white, E);
+  s += POLY([[918, 246], [968, 266], [918, 286]], { fill: E.cyan }, E);
+  s += POLY([[918, 296], [968, 316], [918, 336]], { fill: E.pink }, E);
+  s += C(996, 288, 18, { stroke: E.cyan }, E) + P("M987 288 L994 296 L1006 280", { stroke: E.cyan, sw: 2.5 }, E);
+  return s;
+},
+
+/* --- H44 The Press: frame, ram, hydraulics --- */
+H44: (p, E) => {
+  reseed(14);
+  let s = P("M170 110 L730 110 L730 910 L580 910 L580 800 L320 800 L320 910 L170 910 Z", { stroke: E.ink, sw: 3.5, fill: HATCH }, E);
+  s += P("M210 150 L690 150 L690 760 L560 760 L560 660 L340 660 L340 760 L210 760 Z", { stroke: E.ink, sw: 1.2 }, E);
+  s += rivets(180, 130, 720, 130, 14, E.ink, E, 3.5);
+  s += rivets(180, 890, 720, 890, 14, E.ink, E, 3.5);
+  s += R(370, 160, 170, 190, { stroke: E.ink, sw: 3, fill: E.ground, glow: false }, E);
+  s += ribs(370, 160, 170, 190, 5, E.ink, E);
+  s += bolts(455, 255, 66, 8, E.ink, E, 5);
+  s += R(425, 350, 62, 130 + p.ram, { stroke: E.ink, sw: 2.5, fill: HATCH }, E);
+  s += L(408, 350, 408, 480 + p.ram, E.ink, 1.6, false, E) + L(504, 350, 504, 480 + p.ram, E.ink, 1.6, false, E);
+  s += R(330, 470 + p.ram, 250, 76, { stroke: E.ink, sw: 3, fill: HATCH }, E);
+  s += rivets(345, 482 + p.ram, 565, 482 + p.ram, 8, E.ink, E, 3);
+  s += R(300, 650, 320, 66, { stroke: E.ink, sw: 3 }, E) + seams(300, 650, 320, 66, 4, E.ink, E);
+  s += POLY([[620, 668], [790, 668], [830, 730], [660, 730]], { stroke: E.ink, sw: 2.5, fill: HATCH }, E);
+  s += R(770, 706, 74, 54, { stroke: E.cyan, sw: 3 }, E) + C(807, 733, 12, { stroke: E.cyan, sw: 1.6 }, E);
+  s += gaugeFace(250, 250, 48, 0.78, E.ink, E) + gaugeFace(650, 250, 48, 0.4, E.ink, E);
+  s += wires([[250, 298], [250, 380], [370, 420]], E.ink, E, 3);
+  s += wires([[650, 298], [650, 380], [540, 420]], E.ink, E, 3);
+  return s;
+},
+
+/* --- H36 Radar: bezel, range rings, contact detail --- */
+H36: (p, E) => {
+  reseed(13);
+  const cx = 512, cy = 512;
+  let s = C(cx, cy, 430, { stroke: E.mist, sw: 3 }, E) + C(cx, cy, 410, { stroke: E.mist, sw: 1 }, E);
+  s += bolts(cx, cy, 420, 16, E.mist, { ...E, glow: false }, 6);
+  [120, 210, 300, 380].forEach(r => { s += C(cx, cy, r, { stroke: E.mist, sw: 1.3 }, E); });
+  for (let i = 0; i < 36; i++) { const a = i * Math.PI / 18; s += L(cx + Math.cos(a) * 40, cy + Math.sin(a) * 40, cx + Math.cos(a) * 380, cy + Math.sin(a) * 380, E.mist, i % 3 ? 0.6 : 1, false, E); }
+  s += ticks(cx, cy, 380, 0, Math.PI * 2, 40, E.mist, { ...E, glow: false }, 16);
+  const a = p.sweep * Math.PI / 180;
+  s += `<path d="M${cx} ${cy} L${n(cx + Math.cos(a - 0.8) * 380)} ${n(cy + Math.sin(a - 0.8) * 380)} A380 380 0 0 1 ${n(cx + Math.cos(a) * 380)} ${n(cy + Math.sin(a) * 380)} Z" fill="${E.cyan}" opacity="0.14"/>`;
+  s += L(cx, cy, cx + Math.cos(a) * 380, cy + Math.sin(a) * 380, E.cyan, 3, true, E);
+  s += C(cx, cy, 14, { fill: E.cyan }, E);
+  for (let i = 0; i < p.contacts; i++) {
+    const t = i * 2.3, r = 140 + ((i * 97) % 210);
+    const x = cx + Math.cos(t) * r, y = cy + Math.sin(t) * r, c = i === 0 ? E.pink : E.cyan;
+    s += R(x - 11, y - 11, 22, 22, { fill: c }, E);
+    s += R(x - 20, y - 20, 40, 40, { stroke: c, sw: 1, glow: false }, E);
+    s += L(x + 20, y - 20, x + 50, y - 40, c, 1, false, E);
+  }
+  return s;
+},
+
+/* --- H53 Airlock: dogged doors, piping, ribs --- */
+H53: (p, E) => {
+  reseed(15);
+  let s = R(190, 350, 644, 320, { stroke: E.ink, sw: 3.5, rx: 160, fill: HATCH }, E);
+  s += R(236, 396, 552, 228, { stroke: E.ink, sw: 1.6, fill: E.ground, glow: false }, E);
+  for (let i = 0; i < 7; i++) { const x = 290 + i * 82; s += L(x, 396, x, 624, E.ink, 1.4, false, E) + C(x, 410, 3.5, { fill: E.ink }, E) + C(x, 610, 3.5, { fill: E.ink }, E); }
+  [236, 788].forEach((x, k) => {
+    const swung = (k === 1 && p.outerOpen);
+    const door = C(0, 0, 142, { stroke: E.ink, sw: 3.5, fill: HATCH }, E) + C(0, 0, 118, { stroke: E.ink, sw: 1.4 }, E) +
+      C(0, 0, 52, { stroke: E.ink, sw: 2.5 }, E) + C(0, 0, 14, { fill: E.ink }, E) + bolts(0, 0, 130, 12, E.ink, E, 6);
+    let spokes = ""; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; spokes += L(Math.cos(a) * 14, Math.sin(a) * 14, Math.cos(a) * 50, Math.sin(a) * 50, E.ink, 3, false, E); }
+    s += G(door + spokes, `translate(${x},510) rotate(${swung ? -58 : 0})`);
+  });
+  s += P("M300 350 C 390 220, 640 220, 724 350", { stroke: E.ink, sw: 3 }, E);
+  s += P("M330 356 C 410 244, 620 244, 700 356", { stroke: E.ink, sw: 1.2 }, E);
+  [430, 600].forEach((x, k) => {
+    s += R(x - 22, 236, 44, 40, { stroke: E.ink, sw: 2.2, fill: HATCH }, E);
+    s += C(x, 220, 22, { stroke: k ? E.ink : E.cyan, sw: 2.4 }, E);
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; s += L(x + Math.cos(a) * 7, 220 + Math.sin(a) * 7, x + Math.cos(a) * 20, 220 + Math.sin(a) * 20, k ? E.ink : E.cyan, 1.4, false, E); }
+  });
+  s += gaugeFace(880, 250, 44, 0.6, E.ink, E);
+  s += wires([[880, 294], [880, 380], [834, 430]], E.ink, E, 2);
+  s += R(190, 680, 644, 40, { stroke: E.ink, sw: 2.5, fill: HATCH }, E) + rivets(210, 700, 814, 700, 16, E.ink, E, 3);
+  return s;
+},
+
+/* --- H30 Kill Switch: guarded, wired, mounted --- */
+H30: (p, E) => {
+  reseed(16);
+  let s = R(250, 500, 300, 130, { stroke: E.white, sw: 3, fill: E.card, glow: false }, E);
+  s += bolts(400, 565, 120, 8, E.mist, { ...E, glow: false }, 6);
+  s += C(400, 400, 124, { fill: E.pink }, E) + C(400, 400, 96, { stroke: E.ground, sw: 3, glow: false }, E) + C(400, 400, 60, { stroke: E.ground, sw: 2, glow: false }, E);
+  s += C(400, 400, 140, { stroke: E.white, sw: 2 }, E);
+  s += ticks(400, 400, 148, 0, Math.PI * 2, 24, E.mist, { ...E, glow: false }, 10);
+  for (let i = 0; i < 3; i++) s += P(`M${250 + i * 12} 400 A${150 - i * 12} ${170 - i * 12} 0 0 1 ${550 - i * 12} 400`, { stroke: E.white, sw: 2 }, E);
+  s += L(250, 400, 250, 500, E.white, 2.5, true, E) + L(550, 400, 550, 500, E.white, 2.5, true, E);
+  s += trace([[550, 590], [700, 590], [700, 680]], E.pink, E, { sw: 2.5 });
+  s += R(640, 680, 120, 220, { stroke: E.white, sw: 2.5 }, E) + seams(640, 680, 120, 220, 4, E.mist, { ...E, glow: false });
+  s += C(700, 710, 10, { fill: E.white }, E) + C(700, 870, 10, { fill: E.white }, E);
+  s += L(700, 710, p.tripped ? 756 : 700, 870, p.tripped ? E.faint : E.cyan, 4, !p.tripped, E);
+  s += vias(80, 700, 500, 240, 40, E.mist, { ...E, glow: false });
+  return s;
+},
+
+/* --- H21 Vault Rack: uprights, runners, labels --- */
+H21: (p, E) => {
+  reseed(17);
+  const w = 200, h = 140, x0 = (1024 - p.cols * w) / 2, y0 = (1024 - p.rows * h) / 2;
+  let s = R(x0 - 24, y0 - 24, p.cols * w + 48, p.rows * h + 48, { stroke: E.ink, sw: 3, fill: HATCH }, E);
+  for (let c = 0; c <= p.cols; c++) s += L(x0 + c * w, y0 - 24, x0 + c * w, y0 + p.rows * h + 24, E.ink, 2, false, E);
+  for (let r = 0; r <= p.rows; r++) s += L(x0 - 24, y0 + r * h, x0 + p.cols * w + 24, y0 + r * h, E.ink, 2, false, E);
+  for (let r = 0; r < p.rows; r++) for (let c = 0; c < p.cols; c++) {
+    const i = r * p.cols + c, x = x0 + c * w, y = y0 + r * h;
+    const last = i === p.rows * p.cols - 1, open = i === p.openBay, ox = open ? 30 : 0;
+    if (last && p.ungoverned) { s += R(x + 8, y + 8, w - 16, h - 16, { stroke: E.ink, sw: 2, dash: "9 6", fill: HATCH }, E); continue; }
+    s += R(x + 8 + ox, y + 8, w - 16, h - 16, { stroke: E.ink, sw: 2, fill: E.ground, glow: false }, E);
+    s += R(x + 18 + ox, y + 16, w - 36, 12, { stroke: E.ink, sw: 1.2 }, E);
+    s += R(x + 24 + ox, y + 52, 74, 22, { stroke: E.ink, sw: 1.2 }, E);
+    s += C(x + w - 34 + ox, y + h - 34, 8, { stroke: E.ink, sw: 1.4 }, E);
+    s += rivets(x + 16 + ox, y + h - 16, x + w - 16 + ox, y + h - 16, 4, E.ink, E, 2.4);
+    if (open) { s += L(x + 8, y + h - 18, x + 8 + ox, y + h - 18, E.ink, 1.6, false, E) + L(x + 8, y + 18, x + 8 + ox, y + 18, E.ink, 1.6, false, E); }
+  }
+  s += bolts(x0 - 24, y0 - 24, 14, 4, E.ink, E, 4);
+  return s;
+}
+};
+
+/* ---------- patch the kit ---------- */
+for (const id in D) HEROES[id].draw = D[id];
+for (const id in HEROES) {
+  if (!HEROES[id].params.detail) HEROES[id].params.detail = { d: 1, min: 0, max: 2 };
+}
+
+function render2(id, overrides = {}) {
+  const H = HEROES[id];
+  if (!H) throw new Error("unknown asset: " + id);
+  const E = TOKENS[H.edition];
+  const p = {};
+  for (const k in H.params) p[k] = (k in overrides) ? overrides[k] : H.params[k].d;
+  const orn = ornament(H.edition, H.canvas[0], H.canvas[1], p.detail);
+  return wrap(H.canvas[0], H.canvas[1], H.edition, H.draw(p, E), orn);
+}
+
+
+
+/* ============================================================
+   PASS 2: densify the remaining light-edition mechanicals.
+   Same greebles, applied to the assets that were still thin.
+   ============================================================ */
+const D2 = {
+H20: (p,E)=>{ reseed(21); const cx=512,cy=760,R0=380,R1=250,N=p.voussoirs; let s="";
+  for(let i=0;i<N;i++){const a0=Math.PI+i*Math.PI/N,a1=Math.PI+(i+1)*Math.PI/N,key=i===Math.floor(N/2);
+   const pts=[[cx+Math.cos(a0)*R1,cy+Math.sin(a0)*R1],[cx+Math.cos(a0)*R0,cy+Math.sin(a0)*R0],[cx+Math.cos(a1)*R0,cy+Math.sin(a1)*R0],[cx+Math.cos(a1)*R1,cy+Math.sin(a1)*R1]];
+   s+=POLY(pts,{stroke:E.ink,sw:key?3.5:2,fill:key?E.pink:HATCH},E);
+   const mx=(pts[0][0]+pts[2][0])/2,my=(pts[0][1]+pts[2][1])/2; s+=C(mx,my,5,{stroke:E.ink,sw:1.2,glow:false},E);}
+  for(let i=0;i<N;i++){const a=Math.PI+i*Math.PI/N; s+=L(cx+Math.cos(a)*R1,cy+Math.sin(a)*R1,cx+Math.cos(a)*R0,cy+Math.sin(a)*R0,E.ink,1,false,E);}
+  s+=R(80,760,180,120,{stroke:E.ink,sw:3,fill:HATCH},E)+R(764,760,180,120,{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=rivets(90,880,934,880,20,E.ink,E,3)+L(60,884,964,884,E.ink,3,false,E);
+  const kx=cx,ky=cy-R0+42; s+=L(kx+130,300,kx+30,ky-10,E.ink,1.2,false,E)+arrow(kx+60,ky-30,kx+16,ky-6,E.ink,{...E,glow:false},1.2,10);
+  s+=L(150,300,150,760,E.ink,1,false,E)+arrow(150,360,150,300,E.ink,{...E,glow:false},1,9)+arrow(150,700,150,760,E.ink,{...E,glow:false},1,9);
+  for(let i=0;i<10;i++)s+=L(cx-R0-20,300+i*46,cx-R0-4,300+i*46,E.mist,i%5?0.8:1.4,false,E);
+  return s;},
+
+H29:(p,E)=>{ reseed(22); let b=R(112,392,800,18,{stroke:E.ink,sw:2.5,fill:HATCH},E)+rivets(140,401,884,401,16,E.ink,E,3);
+  for(let i=0;i<p.pans;i++){const x=200+i*(624/(p.pans-1));
+   b+=L(x,410,x,540,E.ink,2,false,E)+C(x,410,7,{fill:E.ink},E);
+   b+=P(`M${x-84} 540 L${x+84} 540 L${x+62} 596 L${x-62} 596 Z`,{stroke:E.ink,sw:2.5,fill:HATCH},E);
+   b+=rivets(x-70,552,x+70,552,6,E.ink,E,2.4);
+   for(let k=0;k<p.blocks;k++)b+=R(x-52+((k%3)*36),484-((k/3)|0)*36,32,32,{stroke:E.ink,sw:1.6,fill:HATCH},E)+C(x-36+((k%3)*36),500-((k/3)|0)*36,3,{fill:E.ink},E);}
+  let s=G(b,`rotate(${p.tilt} 512 400)`);
+  s+=POLY([[512,392],[448,700],[576,700]],{stroke:E.ink,sw:3,fill:HATCH},E)+C(512,400,14,{stroke:E.ink,sw:2},E)+C(512,400,5,{fill:E.ink},E);
+  s+=R(400,700,224,60,{stroke:E.ink,sw:3,fill:HATCH},E)+rivets(420,730,604,730,8,E.ink,E,3);
+  s+=L(120,764,904,764,E.ink,3,false,E)+ticks(512,400,320,Math.PI,Math.PI*2,24,E.mist,{...E,glow:false},10);
+  s+=P("M170 400 L854 400",{stroke:E.ink,sw:1,dash:"8 6"},E);
+  return s;},
+
+H39:(p,E)=>{ reseed(23); let s=POLY([[512,656],[440,904],[584,904]],{stroke:E.ink,sw:3,fill:HATCH},E)+rivets(460,890,564,890,5,E.ink,E,3);
+  const blk=R(262,572,500,84,{stroke:E.ink,sw:3,fill:HATCH},E)+seams(262,572,500,84,5,E.ink,E)+rivets(280,586,744,586,14,E.ink,E,3)
+   +R(596,468,148,104,{stroke:E.ink,sw:2.5,fill:HATCH},E)+bolts(670,520,36,6,E.ink,E,4);
+  s+=G(blk,`rotate(${p.tilt} 512 656)`);
+  s+=C(512,656,10,{fill:E.pink},E)+C(512,656,22,{stroke:E.pink,sw:1.5},E);
+  s+=P("M770 630 A 270 270 0 0 1 862 800",{stroke:E.ink,sw:1.5,dash:"8 6"},E)+arrow(846,760,864,806,E.ink,{...E,glow:false},1.5,11);
+  s+=L(512,656,800,656,E.ink,1,false,E)+P(`M672 656 A160 160 0 0 0 ${n(512+160*Math.cos(p.tilt*Math.PI/180))} ${n(656+160*Math.sin(p.tilt*Math.PI/180))}`,{stroke:E.ink,sw:1.2},E);
+  s+=L(120,904,904,904,E.ink,3,false,E)+rivets(140,918,884,918,18,E.ink,E,2.6);
+  s+=ticks(512,656,300,Math.PI,Math.PI*2,20,E.mist,{...E,glow:false},9);
+  return s;},
+
+H51:(p,E)=>{ reseed(24); let s=R(280,690,464,180,{stroke:E.ink,sw:3.5,fill:HATCH},E)+seams(280,690,464,180,3,E.ink,E);
+  s+=bolts(512,780,190,10,E.ink,E,6)+rivets(300,856,724,856,12,E.ink,E,3);
+  s+=P("M270 410 A 262 262 0 0 1 754 410",{stroke:E.ink,sw:3.5},E)+P("M296 430 A 236 236 0 0 1 728 430",{stroke:E.ink,sw:1.2},E);
+  [-30,0,30].forEach(a=>{const t=(a-90)*Math.PI/180,c=(a===30)?E.cyan:E.ink;
+   s+=C(512+Math.cos(t)*262,690+Math.sin(t)*262,17,{stroke:c,sw:a===30?3:2},E)+C(512+Math.cos(t)*262,690+Math.sin(t)*262,7,{fill:c},E);});
+  const t=(p.angle-90)*Math.PI/180;
+  s+=L(512,690,512+Math.cos(t)*254,690+Math.sin(t)*254,E.ink,13,false,E)+L(512,690,512+Math.cos(t)*254,690+Math.sin(t)*254,E.ground,3,false,E);
+  s+=C(512,690,30,{stroke:E.ink,sw:3.5,fill:E.ground,glow:false},E)+C(512,690,18,{stroke:E.ink,sw:1.4},E)+C(512,690,7,{fill:E.ink},E);
+  s+=bolts(512,690,24,6,E.ink,E,3.5);
+  const gx=512+Math.cos(t)*266, gy=690+Math.sin(t)*266;
+  s+=G(R(-28,-76,56,76,{stroke:E.ink,sw:3,fill:E.ground,glow:false},E)+knurl(-24,-70,48,64,E.ink,E),`translate(${n(gx)},${n(gy)}) rotate(${p.angle})`);
+  s+=P("M474 690 l-34 -22 l34 -22 l-34 -22",{stroke:E.ink,sw:2},E);
+  s+=gaugeFace(200,300,50,0.5+p.angle/90,E.ink,E)+wires([[200,352],[200,470],[280,560]],E.ink,E,2);
+  return s;},
+
+H52:(p,E)=>{ reseed(25); const cav=`M300 380 L470 380 L470 460 L400 460 L400 600 L300 600 Z`;
+  let s=`<path d="M110 230 L650 230 L650 810 L110 810 Z ${cav}" fill="${HATCH}" fill-rule="evenodd" stroke="${E.ink}" stroke-width="3.5"/>`;
+  s+=P(cav,{stroke:E.ink,sw:2.5},E)+P(`M310 390 L460 390 L460 450 L390 450 L390 590 L310 590 Z`,{stroke:E.ink,sw:1},E);
+  s+=bolts(380,520,180,10,E.ink,E,6);
+  [[110,230],[650,230],[110,810],[650,810]].forEach(c=>{s+=C(c[0],c[1],18,{stroke:E.ink,sw:2.5},E)+C(c[0],c[1],7,{fill:E.ink},E)
+   +R(c[0]-30,c[1]-12,60,24,{stroke:E.ink,sw:1.6},E);});
+  s+=C(200,300,12,{stroke:E.ink,sw:2},E)+C(560,740,12,{stroke:E.ink,sw:2},E);
+  s+=seams(110,650,540,160,3,E.ink,E);
+  for(let i=0;i<p.parts;i++){const y=250+i*190,bad=(p.malformed&&i===p.parts-1);
+   s+=G(P(cav,{stroke:bad?E.pink:E.ink,sw:2.5},E)+P(cav,{stroke:E.ink,sw:0.8,dash:"5 4"},E),`translate(${470},${y-380}) scale(0.82)`);}
+  s+=L(80,230,80,810,E.ink,1,false,E)+arrow(80,290,80,230,E.ink,{...E,glow:false},1,9)+arrow(80,750,80,810,E.ink,{...E,glow:false},1,9);
+  return s;},
+
+H38:(p,E)=>{ reseed(26); const wl=300; let s=L(0,wl,1024,wl,E.ink,2.5,false,E);
+  for(let i=0;i<26;i++)s+=L(i*40,wl,i*40+22,wl,E.mist,1,false,E);
+  s+=POLY([[512,wl-160],[634,wl],[390,wl]],{stroke:E.ink,sw:3,fill:E.ground,glow:false},E)+seams(430,wl-100,164,100,3,E.ink,E);
+  const depth=140+p.ratio*80;
+  s+=POLY([[390,wl],[634,wl],[880,wl+depth*0.6],[512,wl+depth],[144,wl+depth*0.55]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=gear(400,520,62,16,E.ink,E,{})+gear(650,650,48,12,E.ink,E,{})+gear(300,700,36,10,E.ink,E,{});
+  s+=R(480,560,180,70,{stroke:E.ink,sw:2.5,fill:E.ground,glow:false},E)+ribs(480,560,180,70,5,E.ink,E);
+  s+=R(560,760,190,60,{stroke:E.ink,sw:2.5},E)+rivets(575,790,735,790,6,E.ink,E,2.6);
+  s+=wires([[400,590],[480,620],[560,760]],E.ink,E,2);
+  for(let i=0;i<10;i++)s+=C(230+i*62,640+((i%3)*44),9,{stroke:E.ink,sw:1.4},E);
+  s+=vias(200,700,600,180,50,E.mist,{...E,glow:false});
+  s+=L(80,wl,80,wl+depth,E.ink,1.2,false,E)+arrow(80,wl+60,80,wl,E.ink,{...E,glow:false},1.2,10)+arrow(80,wl+depth-60,80,wl+depth,E.ink,{...E,glow:false},1.2,10);
+  return s;},
+
+H23:(p,E)=>{ reseed(27); let s="";
+  for(let i=0;i<p.pile;i++){const x=330+(i%7)*54+((i/7|0)%2)*20,y=300-((i/7|0))*30;
+   s+=R(x,y,46,26,{stroke:E.ink,sw:1.6,fill:E.ground,glow:false},E)+L(x+6,y+13,x+40,y+13,E.mist,0.8,false,E);}
+  s+=POLY([[290,320],[734,320],[512+p.outlet/2,624],[512-p.outlet/2,624]],{stroke:E.ink,sw:3.5,fill:HATCH},E);
+  s+=P(`M310 336 L714 336`,{stroke:E.ink,sw:1.2},E)+rivets(300,330,724,330,14,E.ink,E,3);
+  s+=R(512-p.outlet/2,624,p.outlet,64,{stroke:E.ink,sw:3,fill:HATCH},E)+ribs(512-p.outlet/2,624,p.outlet,64,3,E.ink,E);
+  s+=R(490,700,46,26,{stroke:E.ink,sw:2},E);
+  s+=R(280,780,464,26,{stroke:E.ink,sw:3,fill:HATCH},E);
+  for(let i=0;i<6;i++)s+=C(320+i*82,822,20,{stroke:E.ink,sw:2},E)+C(320+i*82,822,7,{fill:E.ink},E);
+  s+=gear(760,822,30,12,E.ink,E,{})+wires([[760,790],[820,740],[860,640]],E.ink,E,2);
+  s+=gaugeFace(180,420,46,0.9,E.ink,E);
+  return s;},
+
+H49:(p,E)=>{ reseed(28); let s=POLY([[0,340],[330,340],[330,576],[0,576]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  s+=POLY([[694,340],[1024,340],[1024,576],[694,576]],{stroke:E.ink,sw:3,fill:HATCH},E);
+  for(let i=0;i<14-p.progress;i++)s+=G(R(30+(i%4)*72,170+((i/4)|0)*56,54,34,{stroke:E.ink,sw:1.6,fill:E.ground,glow:false},E),`rotate(${(i*37)%20-10} ${57+(i%4)*72} ${187+((i/4)|0)*56})`);
+  for(let i=0;i<p.progress;i++){const x=726+(i%4)*72,y=170+((i/4)|0)*56;
+   s+=R(x,y,54,34,{stroke:E.ink,sw:1.6},E)+L(x+8,y+17,x+46,y+17,E.mist,0.9,false,E);}
+  for(let r=0;r<3;r++)for(let c=0;c<4;c++)s+=R(720+c*72,160+r*56,66,48,{stroke:E.mist,sw:0.9,glow:false},E);
+  s+=L(330,300,694,300,E.ink,4,false,E)+L(330,214,694,214,E.ink,3,false,E);
+  for(let i=0;i<8;i++){const x=330+i*45.5;s+=L(x,300,x+22,214,E.ink,1.8,false,E)+L(x+22,214,x+45,300,E.ink,1.8,false,E)+C(x,300,4,{fill:E.ink},E)+C(x+22,214,4,{fill:E.ink},E);}
+  s+=L(330,318,694,318,E.ink,2,false,E);
+  for(let i=0;i<9;i++)s+=C(346+i*42,330,10,{stroke:E.ink,sw:1.4},E);
+  s+=R(466,278,56,34,{stroke:E.cyan,sw:2.4},E);
+  s+=R(300,330,40,120,{stroke:E.ink,sw:2.5,fill:HATCH},E)+R(684,330,40,120,{stroke:E.ink,sw:2.5,fill:HATCH},E);
+  return s;},
+
+H32:(p,E)=>{ reseed(29); let s=P("M0 480 L1024 120",{stroke:E.ink,sw:2.5},E)+P("M0 570 L1024 210",{stroke:E.ink,sw:2.5},E);
+  for(let i=0;i<34;i++){const t=i/34,x=30+t*960,y=508-t*352;
+   s+=C(x,y,5,{stroke:E.ink,sw:1.2},E)+C(x+16,y+64,3.5,{fill:E.ink},E);}
+  for(let i=0;i<17;i++){const t=i/17,x=40+t*950,y=530-t*350;s+=L(x,y,x+8,y+34,E.mist,0.9,false,E);}
+  s+=C(60,520,94,{stroke:E.ink,sw:3.5,fill:HATCH},E)+C(60,520,60,{stroke:E.ink,sw:1.6},E)+C(60,520,26,{stroke:E.ink,sw:2},E)+C(60,520,8,{fill:E.ink},E);
+  for(let i=0;i<10;i++){const a=i*Math.PI/5;s+=L(60+Math.cos(a)*26,520+Math.sin(a)*26,60+Math.cos(a)*90,520+Math.sin(a)*90,E.ink,1.6,false,E);}
+  s+=bolts(60,520,104,10,E.ink,E,5);
+  for(let i=0;i<p.checkpoints;i++){const t=(i+1)/(p.checkpoints+1),x=100+t*820,y=470-t*330;
+   s+=G(R(-44,-44,88,88,{stroke:E.ink,sw:2.5,fill:HATCH},E)+R(-26,-26,52,52,{stroke:E.ink,sw:1.4},E)+bolts(0,0,34,4,E.ink,E,4),`translate(${x},${y}) rotate(-19)`);
+   s+=L(x,y-46,x,y-90,E.ink,2,false,E)+R(x-20,y-118,40,28,{stroke:E.ink,sw:2},E);}
+  if(p.torn){const x=640,y=250;s+=P(`M${x} ${y+80} l16 -18 l-18 -16 l18 -18 l-16 -18`,{stroke:E.pink,sw:3},E);}
+  return s;},
+
+H33:(p,E)=>{ reseed(30); let s=POLY([[290,110],[734,110],[604,300],[420,300]],{stroke:E.ink,sw:3.5,fill:HATCH},E);
+  s+=rivets(300,124,724,124,14,E.ink,E,3)+P("M310 130 L714 130",{stroke:E.ink,sw:1},E);
+  s+=R(470,300,84,44,{stroke:E.ink,sw:2.5,fill:HATCH},E);
+  s+=C(512,386,20,{stroke:E.ink,sw:3},E)+C(512,386,7,{fill:E.ink},E)+L(512,386,604,478,E.ink,6,false,E)+C(604,478,10,{fill:E.ink},E);
+  s+=P("M416 478 A 136 136 0 0 1 608 478",{stroke:E.ink,sw:1.2,dash:"7 6"},E);
+  s+=R(556,424,44,30,{stroke:E.ink,sw:2},E);
+  const fills=[2,5,9,4,7];
+  for(let i=0;i<p.chutes;i++){const x=170+i*(684/(p.chutes-1)),pri=(i===0);
+   s+=POLY([[452,530],[572,530],[x+76,660],[x-76,660]],{stroke:pri?E.pink:E.ink,sw:2.2},E);
+   s+=R(x-94,662,188,244,{stroke:E.ink,sw:3,fill:i===0?"none":"none"},E)+ribs(x-94,662,188,244,4,E.ink,E);
+   s+=rivets(x-80,676,x+80,676,6,E.ink,E,2.4);
+   for(let k=0;k<(p.fill?fills[i]:0);k++)s+=R(x-72+((k%3)*50),864-(((k/3)|0)*46),42,38,{stroke:E.ink,sw:1.5,fill:HATCH},E);}
+  s+=gaugeFace(140,260,44,0.66,E.ink,E);
+  return s;},
+
+H27:(p,E)=>{ reseed(31); let s=L(50,432,974,432,E.ink,3.5,false,E)+L(50,470,974,470,E.ink,2,false,E);
+  for(let i=0;i<14;i++)s+=C(80+i*66,452,22,{stroke:E.ink,sw:1.6},E)+C(80+i*66,452,7,{fill:E.ink},E);
+  s+=gear(946,452,36,14,E.ink,E,{});
+  for(let i=0;i<p.stations;i++){const x=140+i*(760/(p.stations-1)),fin=(i===p.stations-1);const c=fin?E.cyan:E.ink;
+   s+=R(x-52,372,104,52,{stroke:c,sw:2.5,fill:HATCH},E)+rivets(x-42,414,x+42,414,5,E.ink,E,2.4);
+   if(i>0)s+=R(x-36,340,72,32,{stroke:c,sw:2},E)+seams(x-36,340,72,32,2,E.ink,E);
+   if(i>1)s+=R(x-46,306,92,34,{stroke:c,sw:2},E)+C(x,323,9,{stroke:c,sw:1.4},E);
+   if(fin)s+=bolts(x,350,34,6,c,E,4);
+   s+=L(x,110,x,200,E.ink,4,false,E)+L(x,200,x-44,268,E.ink,4,false,E)+C(x,110,14,{stroke:E.ink,sw:2},E)+C(x,200,9,{stroke:E.ink,sw:2},E);
+   s+=R(x-16,80,32,30,{stroke:E.ink,sw:2,fill:HATCH},E);
+   s+=wires([[x,268],[x-20,300],[x-52,340]],E.ink,E,2);}
+  s+=R(30,470,964,40,{stroke:E.ink,sw:2.5,fill:HATCH},E)+rivets(50,490,974,490,24,E.ink,E,2.6);
+  return s;},
+
+H54:(p,E)=>{ reseed(32); let s=L(430,90,430,950,E.ink,4,false,E)+L(570,90,570,950,E.ink,4,false,E);
+  for(let i=0;i<15;i++){const y=90+i*58;s+=L(430,y,570,y+58,E.ink,1.5,false,E)+L(570,y,430,y+58,E.ink,1.5,false,E)+L(430,y,570,y,E.ink,1.2,false,E);
+   s+=C(430,y,4,{fill:E.ink},E)+C(570,y,4,{fill:E.ink},E);}
+  for(let i=0;i<p.arms;i++){const y=200+i*(600/(p.arms-1)),swung=i>=p.connected,c=swung?E.ink:E.pink;
+   const arm=R(0,-18,250,36,{stroke:c,sw:3,fill:HATCH},E)+R(66,-44,64,26,{stroke:c,sw:2},E)+rivets(14,0,236,0,8,E.ink,E,2.6)
+    +R(200,-30,30,60,{stroke:c,sw:2},E)+C(250,0,9,{stroke:c,sw:2},E);
+   s+=G(arm,`translate(570,${y}) rotate(${swung?-52:0})`);
+   s+=C(570,y,12,{fill:E.ink},E)+C(570,y,20,{stroke:E.ink,sw:1.4},E);}
+  s+=R(370,950,260,56,{stroke:E.ink,sw:3.5,fill:HATCH},E)+rivets(390,978,610,978,8,E.ink,E,3);
+  s+=wires([[430,300],[400,500],[400,900]],E.ink,E,3);
+  s+=gaugeFace(200,200,48,0.35,E.ink,E);
+  return s;},
+
+H12:(p,E)=>{ reseed(33); let s="";const N=p.plates;
+  for(let i=0;i<N;i++){const y=280+i*210,ghost=(p.ghostTop&&i===0);
+   const top=[[240,y],[720,y-70],[820,y-20],[340,y+50]];
+   s+=POLY(top,{stroke:E.ink,sw:ghost?1.5:2.8,dash:ghost?"8 6":null,fill:ghost?"none":E.ground,glow:false},E);
+   if(!ghost){for(let k=0;k<5;k++)s+=L(280+k*100,y+((k*-14)),300+k*100,y+8+((k*-14)),E.mist,1,false,E);
+    for(let k=0;k<6;k++)s+=C(300+k*88,y+6-k*11,4,{stroke:E.ink,sw:1,glow:false},E);}
+   s+=POLY([[240,y],[340,y+50],[340,y+76],[240,y+26]],{stroke:E.ink,sw:2,fill:HATCH},E);
+   s+=POLY([[340,y+50],[820,y-20],[820,y+6],[340,y+76]],{stroke:E.ink,sw:2,fill:HATCH},E);
+   s+=rivets(360,y+62,800,y+2,10,E.ink,E,2.4);
+   if(i===1)s+=P(`M240 ${y} L720 ${y-70}`,{stroke:E.cyan,sw:4},E);
+   if(i<N-1){[[420,y+70],[700,y+22]].forEach(q=>{
+     s+=P(`M${q[0]} ${q[1]+12} L${q[0]} ${q[1]+140}`,{stroke:E.ink,sw:1.6,dash:"7 6"},E);
+     s+=arrow(q[0],q[1]+130,q[0],q[1]+150,E.ink,{...E,glow:false},1.6,11)+arrow(q[0],q[1]+30,q[0],q[1]+10,E.ink,{...E,glow:false},1.6,11);
+     s+=R(q[0]-9,q[1]+70,18,18,{stroke:E.ink,sw:1.4,glow:false},E);});}}
+  s+=L(150,240,150,940,E.ink,1.2,false,E)+arrow(150,300,150,240,E.ink,{...E,glow:false},1.2,10)+arrow(150,880,150,940,E.ink,{...E,glow:false},1.2,10);
+  s+=L(240,180,820,110,E.ink,1.2,false,E)+arrow(300,172,240,180,E.ink,{...E,glow:false},1.2,10)+arrow(760,118,820,110,E.ink,{...E,glow:false},1.2,10);
+  return s;},
+
+H18:(p,E)=>{ reseed(34); let s="";const N=p.links,step=880/N;
+  for(let i=0;i<N;i++){const x=70+i*step,w=step-40;
+   s+=R(x,430,w,170,{stroke:E.ink,sw:3,fill:HATCH},E)+seams(x,430,w,170,3,E.ink,E);
+   s+=rivets(x+10,444,x+w-10,444,6,E.ink,E,2.6)+rivets(x+10,586,x+w-10,586,6,E.ink,E,2.6);
+   s+=gear(x+w/2,515,54,14,E.ink,E,{})+bolts(x+w/2,515,26,5,E.ink,E,3.5);
+   s+=R(x+w/2-16,600,32,54,{stroke:E.ink,sw:2,fill:HATCH},E)+C(x+w/2,668,12,{stroke:E.ink,sw:1.8},E);
+   if(i<N-1){const brk=(p.broken&&i===1);
+    s+=L(x+w,515,x+step,515,brk?E.pink:E.ink,brk?2:8,false,E)+C(x+w,515,7,{fill:E.ink},E)+C(x+step,515,7,{fill:E.ink},E);
+    if(brk)s+=L(x+step-32,490,x+step-8,540,E.pink,3,false,E);}}
+  s+=L(80,515,34,430,E.ink,6,false,E)+C(34,430,16,{stroke:E.ink,sw:2.5},E)+knurl(20,414,28,32,E.ink,E);
+  s+=L(60,690,964,690,E.ink,3,false,E)+rivets(80,704,944,704,20,E.ink,E,2.6);
+  return s;}
+};
+for(const id in D2) HEROES[id].draw = D2[id];
+
+/* ============================================================
+   SIGNAL SHADE  v3   the 10x detail engine
+   ------------------------------------------------------------
+   The kit draws structure. The detail layer added machining.
+   THIS adds what actually separates a diagram from an illustration:
+
+     1. TONAL SHADING with a light direction (upper left).
+        Six hatch densities, layered, give 10+ tonal levels.
+     2. MACHINING MARKS: concentric turning rings, rim ticks,
+        bolt circles, seams, rivet rows, chamfers, weld beads.
+     3. EDGE LIGHTING: highlight on the lit edge, shadow on the
+        dark edge. This is what gives flat vector shapes volume.
+     4. MICRO-GREEBLES: hex nuts, LEDs, connectors, cable clips,
+        grub screws, scale plates.
+
+   It works by PARSING the emitted SVG of any device and enriching
+   every shape it finds. So it applies to all 56 devices without
+   rewriting a single recipe, and it scales with a level knob:
+
+     level 0  structure only          ~60 elements
+     level 1  machined                ~190
+     level 2  shaded                  ~700
+     level 3  illustrated             ~1800   (10x the old default)
+   ============================================================ */
+
+
+
+let SEED_S = 99;
+const rndS = () => (SEED_S = (SEED_S * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+const reseedS = s => { SEED_S = s || 99; };
+
+const LIGHT = -2.36; // light from the upper left, in radians
+
+/* ---------- the six-step tonal ramp ---------- */
+/* Six hatch patterns at increasing density. Layering two or three of
+   them at different opacities is what produces a continuous-looking
+   grey ramp out of pure line art. */
+function shadeDefs(S){
+  const c = S.hatch || "#DCE0E3";
+  let d = "";
+  [3,5,7,10,14,20].forEach((sp,i)=>{
+    d += `<pattern id="tone${i}" width="${sp}" height="${sp}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="${sp}" stroke="${c}" stroke-width="${(1.4 - i*0.12).toFixed(2)}"/></pattern>`;
+  });
+  d += `<pattern id="toneX" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="6" stroke="${c}" stroke-width="1.2"/>
+    <line x1="0" y1="0" x2="6" y2="0" stroke="${c}" stroke-width="1.2"/></pattern>`;
+  d += `<radialGradient id="formLight" cx="32%" cy="30%" r="78%">
+    <stop offset="0%" stop-color="${S.ground}" stop-opacity="0.55"/>
+    <stop offset="55%" stop-color="${S.ground}" stop-opacity="0"/>
+    <stop offset="100%" stop-color="${S.ink}" stop-opacity="0.16"/></radialGradient>`;
+  return d;
+}
+
+/* ---------- shape parser: pull every drawable out of a device ---------- */
+const attrs = tag => {
+  const o = {};
+  for (const m of tag.matchAll(/([a-zA-Z-]+)="([^"]*)"/g)) o[m[1]] = m[2];
+  return o;
+};
+function shapes(body){
+  const out = [];
+  for (const m of body.matchAll(/<circle[^>]*>/g)) { const a = attrs(m[0]); out.push({t:"c", x:+a.cx, y:+a.cy, r:+a.r, stroke:a.stroke, fill:a.fill}); }
+  for (const m of body.matchAll(/<rect[^>]*>/g))   { const a = attrs(m[0]); out.push({t:"r", x:+a.x, y:+a.y, w:+a.width, h:+a.height, stroke:a.stroke, fill:a.fill}); }
+  for (const m of body.matchAll(/<polygon[^>]*>/g)){ const a = attrs(m[0]); const pts=(a.points||"").trim().split(/\s+/).map(p=>p.split(",").map(Number));
+    if(pts.length>2) out.push({t:"p", pts, stroke:a.stroke, fill:a.fill}); }
+  return out.filter(s => Number.isFinite(s.x ?? s.pts?.[0]?.[0]));
+}
+const bbox = s => s.t==="c" ? [s.x-s.r,s.y-s.r,s.r*2,s.r*2]
+  : s.t==="r" ? [s.x,s.y,s.w,s.h]
+  : [Math.min(...s.pts.map(p=>p[0])), Math.min(...s.pts.map(p=>p[1])),
+     Math.max(...s.pts.map(p=>p[0]))-Math.min(...s.pts.map(p=>p[0])),
+     Math.max(...s.pts.map(p=>p[1]))-Math.min(...s.pts.map(p=>p[1]))];
+const area = s => { const b=bbox(s); return b[2]*b[3]; };
+
+/* ============================================================
+   ENRICHERS
+   ============================================================ */
+
+/* Turned metal: concentric machining rings, rim ticks, bolt circle,
+   a terminator of radial hatch on the shadow side, and edge lighting. */
+function enrichCircle(s, S, lvl){
+  const E = {...S, glow:false};
+  const { x:cx, y:cy, r } = s;
+  if (r < 16) return "";
+  let out = "";
+  const ink = S.ink, faint = S.faint, hatch = S.hatch;
+
+  // 1. form shading: radial gradient wash, then a hatched terminator
+  if (lvl >= 2) {
+    out += `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="url(#formLight)"/>`;
+    const N = Math.round(r * (lvl >= 3 ? 0.9 : 0.45));
+    for (let i = 0; i < N; i++) {
+      const a = LIGHT + Math.PI + (i / N - 0.5) * 2.4;      // shadow side arc
+      const t = 1 - Math.abs(i / N - 0.5) * 2;               // 0 at edges, 1 mid-shadow
+      const len = r * (0.10 + 0.30 * t);
+      out += L(cx + Math.cos(a) * (r - len), cy + Math.sin(a) * (r - len),
+               cx + Math.cos(a) * r * 0.985, cy + Math.sin(a) * r * 0.985,
+               hatch, 0.6 + t * 1.1, false, E);
+    }
+  }
+  // 2. turning rings (machined face)
+  const rings = lvl >= 3 ? 7 : lvl >= 2 ? 4 : 2;
+  for (let i = 1; i <= rings; i++)
+    out += C(cx, cy, r * (1 - i * (0.55 / rings)), { stroke: hatch, sw: 0.7, glow:false }, E);
+  // 3. rim ticks
+  if (r > 34) {
+    const T = lvl >= 3 ? 72 : lvl >= 2 ? 40 : 24;
+    for (let i = 0; i < T; i++) {
+      const a = i * 2 * Math.PI / T, maj = i % 6 === 0;
+      out += L(cx + Math.cos(a) * r, cy + Math.sin(a) * r,
+               cx + Math.cos(a) * (r + (maj ? 9 : 5)), cy + Math.sin(a) * (r + (maj ? 9 : 5)),
+               maj ? ink : faint, maj ? 1.4 : 0.7, false, E);
+    }
+  }
+  // 4. bolt circle with slots
+  if (r > 52 && lvl >= 1) {
+    const B = lvl >= 3 ? 20 : 12;
+    for (let i = 0; i < B; i++) {
+      const a = i * 2 * Math.PI / B, bx = cx + Math.cos(a) * r * 0.84, by = cy + Math.sin(a) * r * 0.84;
+      out += C(bx, by, r * 0.045, { stroke: ink, sw: 1, glow:false }, E);
+      out += L(bx - r*0.03, by, bx + r*0.03, by, ink, 0.8, false, E);
+      if (lvl >= 3) out += C(bx, by, r * 0.062, { stroke: faint, sw: 0.6, glow:false }, E);
+    }
+  }
+  // 5. edge lighting
+  const la = LIGHT, sa = LIGHT + Math.PI;
+  const arc = (a0, a1, col, w) => {
+    const p0 = [cx + Math.cos(a0)*r, cy + Math.sin(a0)*r], p1 = [cx + Math.cos(a1)*r, cy + Math.sin(a1)*r];
+    return P(`M${n(p0[0])} ${n(p0[1])} A${n(r)} ${n(r)} 0 0 1 ${n(p1[0])} ${n(p1[1])}`, { stroke: col, sw: w, glow:false }, E);
+  };
+  out += arc(la - 0.9, la + 0.9, S.ground, 1.6);
+  out += arc(sa - 1.0, sa + 1.0, ink, lvl >= 2 ? 2.6 : 1.6);
+  // 6. micro greebles on the face
+  if (lvl >= 3 && r > 60) {
+    for (let i = 0; i < 6; i++) {
+      const a = rndS() * 6.28, rr = r * (0.3 + rndS() * 0.35);
+      out += hexNut(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 5 + rndS() * 3, ink, E);
+    }
+  }
+  return out;
+}
+
+/* Plate metal: seams, rivet rows, chamfered corners, directional hatch,
+   an edge-lit top and left, a shadowed bottom and right. */
+function enrichRect(s, S, lvl){
+  const E = {...S, glow:false};
+  let { x, y, w, h } = s;
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w < 22 || h < 18) return "";
+  const ink = S.ink, faint = S.faint;
+  let out = "";
+  // 1. tonal wash biased away from the light
+  if (lvl >= 2) {
+    const tone = w*h > 40000 ? 1 : 2;
+    out += `<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" fill="url(#tone${tone})" opacity="${lvl>=3?0.55:0.35}"/>`;
+    out += `<rect x="${n(x+w*0.55)}" y="${n(y+h*0.5)}" width="${n(w*0.45)}" height="${n(h*0.5)}" fill="url(#toneX)" opacity="${lvl>=3?0.45:0.25}"/>`;
+  }
+  // 2. seams
+  const seams = lvl >= 3 ? Math.max(2, Math.round(h / 22)) : lvl >= 2 ? Math.max(1, Math.round(h / 44)) : 1;
+  for (let i = 1; i < seams; i++)
+    out += L(x + 3, y + (h / seams) * i, x + w - 3, y + (h / seams) * i, faint, 0.7, false, E);
+  // 3. rivet rows
+  if (lvl >= 1 && w > 40) {
+    const N = Math.max(3, Math.round(w / (lvl >= 3 ? 18 : 34)));
+    for (let i = 0; i < N; i++) {
+      const px = x + (w / N) * (i + 0.5);
+      out += C(px, y + 5, 1.8, { fill: ink, glow:false }, E);
+      out += C(px, y + h - 5, 1.8, { fill: ink, glow:false }, E);
+      if (lvl >= 3) { out += C(px, y + 5, 3, { stroke: faint, sw: 0.5, glow:false }, E); }
+    }
+  }
+  // 4. chamfers
+  const k = Math.min(9, w * 0.12, h * 0.12);
+  [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([px,py,sx,sy]) => {
+    out += L(px + sx*k, py, px, py + sy*k, faint, 0.8, false, E);
+  });
+  // 5. edge lighting
+  out += L(x + 1.5, y + 1.5, x + w - 1.5, y + 1.5, S.ground, 1.4, false, E);
+  out += L(x + 1.5, y + 1.5, x + 1.5, y + h - 1.5, S.ground, 1.4, false, E);
+  out += L(x + 2, y + h - 2, x + w - 2, y + h - 2, ink, lvl >= 2 ? 2 : 1.2, false, E);
+  out += L(x + w - 2, y + 2, x + w - 2, y + h - 2, ink, lvl >= 2 ? 2 : 1.2, false, E);
+  // 6. micro greebles
+  if (lvl >= 3 && w > 60 && h > 40) {
+    out += hexNut(x + 10, y + h - 10, 4.5, ink, E);
+    out += hexNut(x + w - 10, y + 10, 4.5, ink, E);
+    if (w > 110) out += platePlate(x + w/2 - 22, y + h/2 - 8, 44, 16, S, E);
+    if (h > 80) out += connector(x + w - 6, y + h/2, 12, S, E);
+    for (let i = 0; i < 3; i++) out += C(x + 12 + i*9, y + h/2, 2.2, { stroke: faint, sw: 0.7, glow:false }, E);
+  }
+  return out;
+}
+
+/* Cast bodies: hatch the lower-right half, shade the lower edges. */
+function enrichPoly(s, S, lvl){
+  if (lvl < 2) return "";
+  const E = {...S, glow:false};
+  const pts = s.pts, [bx, by, bw, bh] = bbox(s);
+  if (bw < 30 || bh < 24) return "";
+  const id = "clip" + (SEED_S = (SEED_S * 16807) % 2147483647);
+  let out = `<clipPath id="${id}"><polygon points="${pts.map(p=>`${n(p[0])},${n(p[1])}`).join(" ")}"/></clipPath>`;
+  out += `<g clip-path="url(#${id})">`;
+  out += `<rect x="${n(bx)}" y="${n(by)}" width="${n(bw)}" height="${n(bh)}" fill="url(#tone${lvl>=3?1:2})" opacity="${lvl>=3?0.5:0.3}"/>`;
+  out += `<rect x="${n(bx+bw*0.5)}" y="${n(by+bh*0.45)}" width="${n(bw*0.5)}" height="${n(bh*0.55)}" fill="url(#toneX)" opacity="0.4"/>`;
+  out += `</g>`;
+  // shade the edges facing away from the light
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    const ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    const nrm = ang - Math.PI / 2;
+    const lit = Math.cos(nrm - LIGHT) > 0;
+    out += L(a[0], a[1], b[0], b[1], lit ? S.ground : S.ink, lit ? 1.2 : 2.2, false, E);
+  }
+  return out;
+}
+
+/* ---------- micro components ---------- */
+function hexNut(x, y, r, c, E){
+  const p = []; for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; p.push([x + Math.cos(a) * r, y + Math.sin(a) * r]); }
+  return POLY(p, { stroke: c, sw: 0.9, glow:false }, E) + C(x, y, r * 0.45, { stroke: c, sw: 0.7, glow:false }, E);
+}
+function platePlate(x, y, w, h, S, E){
+  return R(x, y, w, h, { stroke: S.faint, sw: 0.8, glow:false }, E)
+       + C(x + 4, y + h/2, 1.6, { fill: S.ink, glow:false }, E)
+       + C(x + w - 4, y + h/2, 1.6, { fill: S.ink, glow:false }, E)
+       + L(x + 9, y + h/2, x + w - 9, y + h/2, S.faint, 0.6, false, E);
+}
+function connector(x, y, s, S, E){
+  let o = R(x, y - s/2, s * 0.7, s, { stroke: S.ink, sw: 1, glow:false }, E);
+  for (let i = 0; i < 3; i++) o += L(x + s*0.7, y - s/3 + i*(s/3), x + s*1.1, y - s/3 + i*(s/3), S.ink, 0.8, false, E);
+  return o;
+}
+/* scattered service detail around the device, so the frame is not empty */
+function fieldDetail(box, S, lvl){
+  if (lvl < 3) return "";
+  const E = {...S, glow:false};
+  reseedS(404);
+  let out = "";
+  for (let i = 0; i < 26; i++) {
+    const x = box.x + rndS() * box.w, y = box.y + rndS() * box.h, k = rndS();
+    if (k < 0.3) out += hexNut(x, y, 3 + rndS()*2, S.faint, E);
+    else if (k < 0.5) out += C(x, y, 2 + rndS()*2, { stroke: S.faint, sw: 0.7, glow:false }, E);
+    else if (k < 0.7) out += L(x, y, x + 10 + rndS()*14, y, S.faint, 0.7, false, E) + C(x + 12, y, 1.6, { fill: S.faint, glow:false }, E);
+    else out += R(x, y, 6 + rndS()*8, 4, { stroke: S.faint, sw: 0.6, glow:false }, E);
+  }
+  return out;
+}
+
+/* ============================================================
+   ENRICH: parse a device body, return it with detail layered in
+   ============================================================ */
+function enrich(body, S, lvl = 2, opts = {}){
+  if (lvl <= 0) return body;
+  reseedS(opts.seed || 99);
+  const all = shapes(body).sort((a, b) => area(b) - area(a));
+  const cap = lvl >= 3 ? 120 : lvl >= 2 ? 70 : 36;
+  const list = all.slice(0, cap);
+  let under = "", over = "";
+  for (const s of list) {
+    if (s.t === "c") under += enrichCircle(s, S, lvl);
+    else if (s.t === "r") under += enrichRect(s, S, lvl);
+    else over += enrichPoly(s, S, lvl);
+  }
+  let out = under + body + over;
+
+  // SPARSE RESCUE: a device with few shapes still has to hold a slide.
+  // Fill its field with service detail and hatch its interior volumes.
+  const count = c => (c.match(/<(path|rect|circle|line|polygon)/g) || []).length;
+  if (lvl >= 2 && all.length) {
+    const xs = all.map(bbox);
+    const bx = Math.min(...xs.map(b=>b[0])), by = Math.min(...xs.map(b=>b[1]));
+    const bw = Math.max(...xs.map(b=>b[0]+b[2])) - bx, bh = Math.max(...xs.map(b=>b[1]+b[3])) - by;
+    const box = { x:bx, y:by, w:bw, h:bh };
+    let target = lvl >= 3 ? 900 : 420;
+    let guard = 0;
+    while (count(out) < target && guard++ < 6) {
+      out += fieldDetail(box, S, 3);
+      out += contours(box, S, lvl, guard);
+    }
+  }
+  return out;
+}
+
+/* contour lines across the device field: section marks, datum lines,
+   dimension witnesses. Cheap, and it reads as a drafted plate. */
+function contours(box, S, lvl, pass){
+  const E = {...S, glow:false};
+  let o = "";
+  const N = lvl >= 3 ? 16 : 8;
+  for (let i = 0; i < N; i++) {
+    const y = box.y + (box.h / N) * i + pass * 3;
+    o += L(box.x - 14, y, box.x - 4, y, S.faint, i % 4 ? 0.7 : 1.4, false, E);
+    o += L(box.x + box.w + 4, y, box.x + box.w + 14, y, S.faint, i % 4 ? 0.7 : 1.4, false, E);
+  }
+  for (let i = 0; i < N; i++) {
+    const x = box.x + (box.w / N) * i + pass * 3;
+    o += L(x, box.y - 14, x, box.y - 4, S.faint, i % 4 ? 0.7 : 1.4, false, E);
+    o += L(x, box.y + box.h + 4, x, box.y + box.h + 14, S.faint, i % 4 ? 0.7 : 1.4, false, E);
+  }
+  return o;
+}
+
+
+
+/* ============================================================
+   SIGNAL STANDARD LAYOUTS
+   The ordinary slides every deck needs: agenda, bullets, tables,
+   timelines, quotes, closing.
+
+   Each layout is defined ONCE, in inches, and rendered two ways:
+     svg(content, S)        for the studio preview and SVG export
+     pptx(slide, content, S) as NATIVE PowerPoint shapes and text
+
+   That second one is the point. Artwork slides go into a deck as
+   images because the shading costs 3000 elements. These do not:
+   they arrive as real text boxes you can edit after export.
+
+   Canvas: 13.3 x 7.5in  ==  1376 x 768px in the SVG preview.
+   ============================================================ */
+const PX = 1376 / 13.3, PY = 768 / 7.5;                 // in -> px
+const X = i => +(i * PX).toFixed(1), Y = i => +(i * PY).toFixed(1);
+const HEX = c => (c || "").replace("#", "");            // pptxgenjs: never '#', never 8 digits
+
+/* ---------- SVG helpers (preview) ---------- */
+const sq = (x,y,w,h,o={}) => `<rect x="${X(x)}" y="${Y(y)}" width="${X(w)}" height="${Y(h)}" rx="${o.r||0}" fill="${o.fill||"none"}" stroke="${o.stroke||"none"}" stroke-width="${o.sw||2}"/>`;
+const ln = (x1,y1,x2,y2,c,w=1.4) => `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="${c}" stroke-width="${w}"/>`;
+const ci = (x,y,r,o={}) => `<circle cx="${X(x)}" cy="${Y(y)}" r="${X(r)}" fill="${o.fill||"none"}" stroke="${o.stroke||"none"}" stroke-width="${o.sw||1.5}"/>`;
+const escS = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const tx = (x,y,t,o={}) => t==null||t==="" ? "" :
+  `<text x="${X(x)}" y="${Y(y)}" fill="${o.color}" font-family="Carlito, Calibri, sans-serif" font-size="${(o.size||14)*1.34}" font-weight="${o.bold?700:400}" text-anchor="${o.align==="center"?"middle":o.align==="right"?"end":"start"}" letter-spacing="${o.track||0}">${escS(t)}</text>`;
+function wrapT(x,y,t,wIn,o={}){
+  if(!t) return "";
+  const cpl = Math.floor((wIn*72) / ((o.size||14)*0.5));
+  const words=String(t).split(/\s+/); const lines=[]; let cur="";
+  for(const w of words){ if((cur+" "+w).trim().length>cpl){lines.push(cur.trim());cur=w;} else cur+=" "+w; }
+  if(cur.trim()) lines.push(cur.trim());
+  return lines.map((l,i)=>tx(x, y + i*((o.size||14)*1.34/72), l, o)).join("");
+}
+
+/* ---------- shared chrome ---------- */
+let BG = null;                       // injected by signal-slide.js: the shared chrome
+function chrome(S, o={}){
+  if (BG) return BG;
+  let s = `<rect width="1376" height="768" fill="${S.ground}"/>`;
+  s += `<defs><pattern id="sg" width="24" height="24" patternUnits="userSpaceOnUse">
+    <path d="M24 0 L0 0 0 24" fill="none" stroke="${S.grid}" stroke-width="0.9"/></pattern></defs>`;
+  s += `<rect width="1376" height="768" fill="url(#sg)"/>`;
+  return s;
+}
+function head(S, c){
+  let s = "";
+  if (c.eyebrow) {
+    s += sq(0.46, 0.33, 0.1, 0.1, { fill: S.pink });
+    s += ln(0.62, 0.38, 1.06, 0.38, S.pink, 2);
+    s += tx(1.16, 0.44, String(c.eyebrow).toUpperCase(), { color: S.pink, size: 9.5, bold: true, track: 2.2 });
+  }
+  s += tx(0.46, c.eyebrow ? 0.86 : 0.72, c.title, { color: S.ink, size: 27, bold: true });
+  return s;
+}
+function pHead(sl, S, c, P){
+  if (c.eyebrow) {
+    sl.addShape(P.ShapeType.rect, { x:0.46, y:0.30, w:0.1, h:0.1, fill:{ color:HEX(S.pink) }, line:{ width:0 } });
+    sl.addShape(P.ShapeType.line, { x:0.62, y:0.35, w:0.44, h:0, line:{ color:HEX(S.pink), width:2 } });
+    sl.addText(String(c.eyebrow).toUpperCase(), { x:1.14, y:0.20, w:6, h:0.3, margin:0, fontFace:"Calibri",
+      fontSize:9.5, bold:true, charSpacing:2.2, color:HEX(S.pink), valign:"middle" });
+  }
+  sl.addText(c.title || "", { x:0.44, y: c.eyebrow?0.52:0.38, w:12.4, h:0.62, margin:0, fontFace:"Calibri",
+    fontSize:27, bold:true, color:HEX(S.ink), valign:"middle" });
+}
+function pCard(sl, S, P, x, y, w, h, accent){
+  sl.addShape(P.ShapeType.roundRect, { x, y, w, h, rectRadius:0.06,
+    fill:{ color:HEX(S.panel) }, line:{ color:HEX(accent || S.faint), width: accent?1.75:1 } });
+}
+function pVerdict(sl, S, c, P){
+  if (!c.verdict) return;
+  sl.addShape(P.ShapeType.roundRect, { x:0.4, y:6.52, w:12.5, h:0.7, rectRadius:0.06,
+    fill:{ color:HEX(S.ink) }, line:{ width:0 } });
+  sl.addText(c.verdict, { x:0.5, y:6.56, w:12.3, h:c.sub?0.36:0.62, margin:0, fontFace:"Calibri",
+    fontSize:17, bold:true, color:HEX(S.ground), align:"center", valign:"middle" });
+  if (c.sub) sl.addText(c.sub, { x:0.5, y:6.92, w:12.3, h:0.26, margin:0, fontFace:"Calibri",
+    fontSize:11, color:HEX(S.faint), align:"center", valign:"middle" });
+}
+function svgVerdict(S, c){
+  if (!c.verdict) return "";
+  let s = sq(0.4, 6.52, 12.5, 0.7, { fill: S.ink, r: 6 });
+  s += tx(6.65, c.sub ? 6.86 : 6.98, c.verdict, { color: S.ground, size: 17, bold: true, align: "center" });
+  if (c.sub) s += tx(6.65, 7.14, c.sub, { color: S.faint, size: 11, align: "center" });
+  return s;
+}
+
+/* ============================================================
+   THE LAYOUTS
+   ============================================================ */
+const STD = {
+
+/* ---- 1. agenda ---- */
+"std-agenda": {
+  label: "Agenda",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    const it = (c.items || []).slice(0, 8), col = Math.ceil(it.length / 2);
+    it.forEach((k, i) => {
+      const cx = i < col ? 0.5 : 6.9, y = 1.6 + (i % col) * 0.78;
+      s += sq(cx, y, 5.9, 0.62, { stroke: S.faint, fill: S.panel, r: 5, sw: 1.2 });
+      s += sq(cx + 0.14, y + 0.14, 0.34, 0.34, { fill: i === (c.active|0) ? S.cyan : S.ink, r: 3 });
+      s += tx(cx + 0.31, y + 0.4, String(i + 1), { color: S.ground, size: 12, bold: true, align: "center" });
+      s += tx(cx + 0.62, y + 0.41, k.head || k, { color: S.ink, size: 14, bold: true });
+      if (k.body) s += tx(cx + 3.3, y + 0.41, k.body, { color: S.mist, size: 11.5 });
+    });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    const it = (c.items || []).slice(0, 8), col = Math.ceil(it.length / 2);
+    it.forEach((k, i) => {
+      const x = i < col ? 0.5 : 6.9, y = 1.6 + (i % col) * 0.78;
+      pCard(sl, S, P, x, y, 5.9, 0.62);
+      sl.addShape(P.ShapeType.roundRect, { x: x+0.14, y: y+0.14, w:0.34, h:0.34, rectRadius:0.04,
+        fill:{ color: HEX(i === (c.active|0) ? S.cyan : S.ink) }, line:{ width:0 } });
+      sl.addText(String(i+1), { x:x+0.14, y:y+0.14, w:0.34, h:0.34, margin:0, fontFace:"Calibri",
+        fontSize:12, bold:true, color:HEX(S.ground), align:"center", valign:"middle" });
+      sl.addText(k.head || k, { x:x+0.6, y:y+0.05, w:2.6, h:0.5, margin:0, fontFace:"Calibri",
+        fontSize:14, bold:true, color:HEX(S.ink), valign:"middle" });
+      if (k.body) sl.addText(k.body, { x:x+3.28, y:y+0.05, w:2.5, h:0.5, margin:0, fontFace:"Calibri",
+        fontSize:11.5, color:HEX(S.mist), valign:"middle" });
+    });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 2. section divider ---- */
+"std-section": {
+  label: "Section divider",
+  svg: (c, S) => {
+    let s = chrome(S);
+    s += tx(0.5, 4.6, String(c.number || "01"), { color: S.grid, size: 170, bold: true });
+    s += ln(0.52, 4.9, 7.6, 4.9, S.pink, 3);
+    s += tx(0.5, 5.6, c.title, { color: S.ink, size: 40, bold: true });
+    if (c.sub) s += wrapT(0.52, 6.1, c.sub, 8, { color: S.mist, size: 15 });
+    return s;
+  },
+  pptx: (sl, c, S, P) => {
+    sl.addText(String(c.number || "01"), { x:0.4, y:1.5, w:5, h:2.6, margin:0, fontFace:"Calibri",
+      fontSize:150, bold:true, color:HEX(S.grid), valign:"middle" });
+    sl.addShape(P.ShapeType.line, { x:0.5, y:4.78, w:6.9, h:0, line:{ color:HEX(S.pink), width:3 } });
+    sl.addText(c.title || "", { x:0.44, y:4.95, w:11, h:0.8, margin:0, fontFace:"Calibri",
+      fontSize:40, bold:true, color:HEX(S.ink), valign:"middle" });
+    if (c.sub) sl.addText(c.sub, { x:0.46, y:5.8, w:8, h:0.5, margin:0, fontFace:"Calibri",
+      fontSize:15, color:HEX(S.mist) });
+  }
+},
+
+/* ---- 3. bullets ---- */
+"std-bullets": {
+  label: "Bulleted list",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    (c.items || []).slice(0, 7).forEach((k, i) => {
+      const y = 1.75 + i * 0.62;
+      s += sq(0.52, y - 0.14, 0.12, 0.12, { fill: i === 0 ? S.cyan : S.ink });
+      s += tx(0.86, y, k.head || k, { color: S.ink, size: 15.5, bold: !!k.head });
+      if (k.body) s += tx(0.86 + (String(k.head).length * 0.115), y, k.body, { color: S.mist, size: 13.5 });
+    });
+    if (c.note) { s += sq(8.9, 1.6, 3.98, 3.2, { stroke: S.cyan, fill: S.panel, r: 6, sw: 1.8 });
+      s += tx(9.14, 2.05, (c.noteHead || "Note").toUpperCase(), { color: S.cyan, size: 10, bold: true, track: 1.6 });
+      s += wrapT(9.14, 2.5, c.note, 3.5, { color: S.ink, size: 13 }); }
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    const items = (c.items || []).slice(0, 7).map((k, i) => ({
+      text: (k.head || k) + (k.body ? "  " + k.body : ""),
+      options: { bullet: true, breakLine: true, fontSize: 15, bold: false,
+                 color: HEX(S.ink), paraSpaceAfter: 10 }
+    }));
+    sl.addText(items, { x: 0.5, y: 1.5, w: c.note ? 7.9 : 12.3, h: 4.6, margin: 0, fontFace: "Calibri", valign: "top" });
+    if (c.note) {
+      pCard(sl, S, P, 8.9, 1.5, 4, 3.2, S.cyan);
+      sl.addText((c.noteHead || "Note").toUpperCase(), { x:9.12, y:1.66, w:3.5, h:0.28, margin:0,
+        fontFace:"Calibri", fontSize:10, bold:true, charSpacing:1.6, color:HEX(S.cyan) });
+      sl.addText(c.note, { x:9.12, y:2.02, w:3.56, h:2.5, margin:0, fontFace:"Calibri", fontSize:13, color:HEX(S.ink) });
+    }
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 4. card grid (2 x 3) ---- */
+"std-cards": {
+  label: "Card grid",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    (c.cards || []).slice(0, 6).forEach((k, i) => {
+      const x = 0.5 + (i % 3) * 4.2, y = 1.6 + ((i / 3) | 0) * 2.35;
+      const acc = k.accent || [S.cyan, S.ink, S.hot, S.ink, S.pink, S.ink][i];
+      s += sq(x, y, 3.9, 2.05, { stroke: acc, fill: S.panel, r: 6, sw: 1.6 });
+      s += sq(x + 0.22, y + 0.24, 0.4, 0.4, { fill: acc, r: 3 });
+      s += tx(x + 0.42, y + 0.53, String(i + 1), { color: S.ground, size: 13, bold: true, align: "center" });
+      s += tx(x + 0.8, y + 0.54, k.head, { color: S.ink, size: 15, bold: true });
+      s += ln(x + 0.22, y + 0.86, x + 3.68, y + 0.86, S.grid, 1.2);
+      s += wrapT(x + 0.22, y + 1.16, k.body, 3.4, { color: S.mist, size: 12.5 });
+    });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    (c.cards || []).slice(0, 6).forEach((k, i) => {
+      const x = 0.5 + (i % 3) * 4.2, y = 1.55 + ((i / 3) | 0) * 2.35;
+      const acc = k.accent || [S.cyan, S.ink, S.hot, S.ink, S.pink, S.ink][i];
+      pCard(sl, S, P, x, y, 3.9, 2.05, acc);
+      sl.addShape(P.ShapeType.roundRect, { x:x+0.22, y:y+0.22, w:0.4, h:0.4, rectRadius:0.05,
+        fill:{ color:HEX(acc) }, line:{ width:0 } });
+      sl.addText(String(i+1), { x:x+0.22, y:y+0.22, w:0.4, h:0.4, margin:0, fontFace:"Calibri",
+        fontSize:13, bold:true, color:HEX(S.ground), align:"center", valign:"middle" });
+      sl.addText(k.head || "", { x:x+0.76, y:y+0.24, w:2.9, h:0.36, margin:0, fontFace:"Calibri",
+        fontSize:15, bold:true, color:HEX(S.ink), valign:"middle" });
+      sl.addShape(P.ShapeType.line, { x:x+0.22, y:y+0.78, w:3.46, h:0, line:{ color:HEX(S.grid), width:1 } });
+      sl.addText(k.body || "", { x:x+0.2, y:y+0.9, w:3.5, h:1.0, margin:0, fontFace:"Calibri",
+        fontSize:12.5, color:HEX(S.mist) });
+    });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 5. table ---- */
+"std-table": {
+  label: "Table",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    const cols = c.columns || [], rows = (c.rows || []).slice(0, 8);
+    const w = 12.4 / cols.length;
+    s += sq(0.46, 1.6, 12.4, 0.5, { fill: S.ink });
+    cols.forEach((h2, i) => s += tx(0.62 + i * w, 1.94, String(h2).toUpperCase(), { color: S.ground, size: 11, bold: true, track: 1.2 }));
+    rows.forEach((r, ri) => {
+      const y = 2.1 + ri * 0.56;
+      if (ri % 2) s += sq(0.46, y, 12.4, 0.56, { fill: S.panel });
+      r.forEach((cell, i) => s += tx(0.62 + i * w, y + 0.36, cell, { color: i === 0 ? S.ink : S.mist, size: 13, bold: i === 0 }));
+      s += ln(0.46, y + 0.56, 12.86, y + 0.56, S.grid, 1);
+    });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    const cols = c.columns || [], rows = (c.rows || []).slice(0, 8);
+    const head2 = cols.map(h2 => ({ text: String(h2).toUpperCase(),
+      options: { fill: { color: HEX(S.ink) }, color: HEX(S.ground), bold: true, fontSize: 11 } }));
+    const body = rows.map((r, ri) => r.map((cell, i) => ({ text: String(cell),
+      options: { fill: { color: HEX(ri % 2 ? S.panel : S.ground) }, color: HEX(i === 0 ? S.ink : S.mist),
+                 bold: i === 0, fontSize: 12.5 } })));
+    sl.addTable([head2, ...body], { x: 0.46, y: 1.55, w: 12.4, fontFace: "Calibri",
+      border: { type: "solid", color: HEX(S.grid), pt: 0.75 }, autoPage: false, valign: "middle", rowH: 0.5 });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 6. timeline ---- */
+"std-timeline": {
+  label: "Timeline",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    const ms = (c.milestones || []).slice(0, 5), N = ms.length;
+    s += ln(0.8, 3.5, 12.5, 3.5, S.ink, 3);
+    ms.forEach((k, i) => {
+      const x = 1.2 + i * ((11.2) / Math.max(N - 1, 1)), up = i % 2 === 0;
+      const acc = k.accent || (i === N - 1 ? S.cyan : S.ink);
+      s += ci(x, 3.5, 0.11, { fill: acc });
+      s += ci(x, 3.5, 0.2, { stroke: acc, sw: 1.4 });
+      s += ln(x, up ? 3.3 : 3.7, x, up ? 2.85 : 4.15, acc, 1.4);
+      const cy = up ? 1.65 : 4.15;
+      s += sq(x - 1.15, cy, 2.3, 1.2, { stroke: acc, fill: S.panel, r: 5, sw: 1.4 });
+      s += tx(x, cy + 0.42, k.head, { color: S.ink, size: 13.5, bold: true, align: "center" });
+      s += wrapT(x - 0.98, cy + 0.72, k.body, 2, { color: S.mist, size: 11.5, align: "center" });
+      if (k.when) s += tx(x, up ? 3.95 : 3.15, k.when, { color: acc, size: 11, bold: true, align: "center" });
+    });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    const ms = (c.milestones || []).slice(0, 5), N = ms.length;
+    sl.addShape(P.ShapeType.line, { x: 0.8, y: 3.42, w: 11.7, h: 0, line: { color: HEX(S.ink), width: 3 } });
+    ms.forEach((k, i) => {
+      const x = 1.2 + i * (11.2 / Math.max(N - 1, 1)), up = i % 2 === 0;
+      const acc = k.accent || (i === N - 1 ? S.cyan : S.ink);
+      sl.addShape(P.ShapeType.ellipse, { x: x - 0.11, y: 3.31, w: 0.22, h: 0.22, fill: { color: HEX(acc) }, line: { width: 0 } });
+      sl.addShape(P.ShapeType.line, { x, y: up ? 2.8 : 3.5, w: 0, h: 0.5, line: { color: HEX(acc), width: 1.4 } });
+      const cy = up ? 1.6 : 4.05;
+      pCard(sl, S, P, x - 1.15, cy, 2.3, 1.2, acc);
+      sl.addText(k.head || "", { x: x - 1.1, y: cy + 0.12, w: 2.2, h: 0.32, margin: 0, fontFace: "Calibri",
+        fontSize: 13.5, bold: true, color: HEX(S.ink), align: "center", valign: "middle" });
+      sl.addText(k.body || "", { x: x - 1.08, y: cy + 0.46, w: 2.16, h: 0.66, margin: 0, fontFace: "Calibri",
+        fontSize: 11.5, color: HEX(S.mist), align: "center" });
+      if (k.when) sl.addText(k.when, { x: x - 0.7, y: up ? 3.72 : 2.9, w: 1.4, h: 0.28, margin: 0,
+        fontFace: "Calibri", fontSize: 11, bold: true, color: HEX(acc), align: "center" });
+    });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 7. checklist: do and avoid ---- */
+"std-checklist": {
+  label: "Do / avoid",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    [[0.5, c.doHead || "Do", c.dos || [], S.cyan, true], [6.9, c.avoidHead || "Avoid", c.avoids || [], S.pink, false]]
+      .forEach(([x, h2, items, acc, good]) => {
+        s += sq(x, 1.6, 5.9, 4.5, { stroke: acc, fill: S.panel, r: 6, sw: 1.8 });
+        s += sq(x, 1.6, 5.9, 0.5, { fill: acc, r: 6 });
+        s += tx(x + 2.95, 1.94, String(h2).toUpperCase(), { color: S.ground, size: 12, bold: true, align: "center", track: 1.6 });
+        items.slice(0, 6).forEach((k, i) => {
+          const y = 2.5 + i * 0.6;
+          s += ci(x + 0.35, y - 0.06, 0.11, { stroke: acc, sw: 1.6 });
+          s += good ? `<path d="M${X(x + 0.29)} ${Y(y - 0.06)} l${X(0.045)} ${Y(0.06)} l${X(0.09)} ${Y(-0.11)}" stroke="${acc}" stroke-width="2" fill="none"/>`
+                    : ln(x + 0.3, y - 0.11, x + 0.4, y - 0.01, acc, 1.6) + ln(x + 0.4, y - 0.11, x + 0.3, y - 0.01, acc, 1.6);
+          s += tx(x + 0.62, y, k, { color: good ? S.ink : S.mist, size: 13.5, bold: good });
+        });
+      });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    [[0.5, c.doHead || "Do", c.dos || [], S.cyan, true], [6.9, c.avoidHead || "Avoid", c.avoids || [], S.pink, false]]
+      .forEach(([x, h2, items, acc, good]) => {
+        pCard(sl, S, P, x, 1.55, 5.9, 4.5, acc);
+        sl.addShape(P.ShapeType.roundRect, { x, y: 1.55, w: 5.9, h: 0.5, rectRadius: 0.06,
+          fill: { color: HEX(acc) }, line: { width: 0 } });
+        sl.addText(String(h2).toUpperCase(), { x, y: 1.55, w: 5.9, h: 0.5, margin: 0, fontFace: "Calibri",
+          fontSize: 12, bold: true, charSpacing: 1.6, color: HEX(S.ground), align: "center", valign: "middle" });
+        const rows = items.slice(0, 6).map(k => ({ text: k, options: { bullet: { code: good ? "2713" : "2717" },
+          fontSize: 13.5, bold: !!good, color: HEX(good ? S.ink : S.mist), breakLine: true, paraSpaceAfter: 8 } }));
+        sl.addText(rows, { x: x + 0.25, y: 2.2, w: 5.4, h: 3.6, margin: 0, fontFace: "Calibri", valign: "top" });
+      });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 8. quote ---- */
+"std-quote": {
+  label: "Quote",
+  svg: (c, S) => {
+    let s = chrome(S);
+    s += tx(0.7, 2.4, "\u201C", { color: S.pink, size: 120, bold: true });
+    s += wrapT(1.7, 2.5, c.quote, 10.4, { color: S.ink, size: 27, bold: true });
+    s += ln(1.72, 5.3, 4.2, 5.3, S.pink, 3);
+    s += tx(1.7, 5.75, c.who, { color: S.ink, size: 15, bold: true });
+    if (c.role) s += tx(1.7, 6.1, c.role, { color: S.mist, size: 13 });
+    return s;
+  },
+  pptx: (sl, c, S, P) => {
+    sl.addText("\u201C", { x: 0.45, y: 1.1, w: 1.4, h: 1.8, margin: 0, fontFace: "Calibri",
+      fontSize: 110, bold: true, color: HEX(S.pink), valign: "middle" });
+    sl.addText(c.quote || "", { x: 1.65, y: 1.6, w: 10.6, h: 3.2, margin: 0, fontFace: "Calibri",
+      fontSize: 27, bold: true, color: HEX(S.ink), valign: "top" });
+    sl.addShape(P.ShapeType.line, { x: 1.7, y: 5.2, w: 2.5, h: 0, line: { color: HEX(S.pink), width: 3 } });
+    sl.addText(c.who || "", { x: 1.66, y: 5.35, w: 8, h: 0.34, margin: 0, fontFace: "Calibri",
+      fontSize: 15, bold: true, color: HEX(S.ink) });
+    if (c.role) sl.addText(c.role, { x: 1.66, y: 5.72, w: 8, h: 0.3, margin: 0, fontFace: "Calibri",
+      fontSize: 13, color: HEX(S.mist) });
+  }
+},
+
+/* ---- 9. progress / status ---- */
+"std-progress": {
+  label: "Progress bars",
+  svg: (c, S) => {
+    let s = chrome(S) + head(S, c);
+    (c.tracks || []).slice(0, 6).forEach((k, i) => {
+      const y = 1.9 + i * 0.78, pct = Math.max(0, Math.min(100, k.pct || 0));
+      const acc = k.accent || (pct >= 100 ? S.cyan : pct < 34 ? S.pink : S.hot);
+      s += tx(0.5, y, k.head, { color: S.ink, size: 14, bold: true });
+      s += tx(12.86, y, pct + "%", { color: acc, size: 14, bold: true, align: "right" });
+      s += sq(0.5, y + 0.14, 12.36, 0.28, { fill: S.grid, r: 4 });
+      s += sq(0.5, y + 0.14, 12.36 * pct / 100, 0.28, { fill: acc, r: 4 });
+      if (k.body) s += tx(0.5, y + 0.66, k.body, { color: S.mist, size: 11.5 });
+    });
+    return s + svgVerdict(S, c);
+  },
+  pptx: (sl, c, S, P) => {
+    pHead(sl, S, c, P);
+    (c.tracks || []).slice(0, 6).forEach((k, i) => {
+      const y = 1.7 + i * 0.78, pct = Math.max(0, Math.min(100, k.pct || 0));
+      const acc = k.accent || (pct >= 100 ? S.cyan : pct < 34 ? S.pink : S.hot);
+      sl.addText(k.head || "", { x: 0.48, y, w: 8, h: 0.28, margin: 0, fontFace: "Calibri",
+        fontSize: 14, bold: true, color: HEX(S.ink), valign: "middle" });
+      sl.addText(pct + "%", { x: 11.4, y, w: 1.46, h: 0.28, margin: 0, fontFace: "Calibri",
+        fontSize: 14, bold: true, color: HEX(acc), align: "right", valign: "middle" });
+      sl.addShape(P.ShapeType.roundRect, { x: 0.48, y: y + 0.3, w: 12.38, h: 0.28, rectRadius: 0.04,
+        fill: { color: HEX(S.grid) }, line: { width: 0 } });
+      sl.addShape(P.ShapeType.roundRect, { x: 0.48, y: y + 0.3, w: Math.max(0.08, 12.38 * pct / 100), h: 0.28,
+        rectRadius: 0.04, fill: { color: HEX(acc) }, line: { width: 0 } });
+      if (k.body) sl.addText(k.body, { x: 0.48, y: y + 0.6, w: 11, h: 0.24, margin: 0, fontFace: "Calibri",
+        fontSize: 11.5, color: HEX(S.mist) });
+    });
+    pVerdict(sl, S, c, P);
+  }
+},
+
+/* ---- 10. closing ---- */
+"std-closing": {
+  label: "Closing",
+  svg: (c, S) => {
+    let s = chrome(S);
+    s += sq(0.46, 2.5, 0.12, 0.12, { fill: S.pink });
+    s += ln(0.66, 2.56, 1.4, 2.56, S.pink, 2.4);
+    s += tx(1.52, 2.62, (c.eyebrow || "Next step").toUpperCase(), { color: S.pink, size: 10, bold: true, track: 2.4 });
+    s += tx(0.46, 3.7, c.title, { color: S.ink, size: 46, bold: true });
+    s += ln(0.48, 4.1, 6.6, 4.1, S.ink, 2);
+    s += wrapT(0.48, 4.55, c.sub, 7, { color: S.mist, size: 15.5 });
+    (c.asks || []).slice(0, 3).forEach((k, i) => {
+      const x = 8.4, y = 2.6 + i * 1.25;
+      s += sq(x, y, 4.46, 1.05, { stroke: i === 0 ? S.cyan : S.faint, fill: S.panel, r: 6, sw: i === 0 ? 1.8 : 1.2 });
+      s += tx(x + 0.24, y + 0.44, k.head, { color: S.ink, size: 14.5, bold: true });
+      s += tx(x + 0.24, y + 0.78, k.body, { color: S.mist, size: 12 });
+    });
+    return s;
+  },
+  pptx: (sl, c, S, P) => {
+    sl.addShape(P.ShapeType.rect, { x: 0.46, y: 2.42, w: 0.12, h: 0.12, fill: { color: HEX(S.pink) }, line: { width: 0 } });
+    sl.addShape(P.ShapeType.line, { x: 0.66, y: 2.48, w: 0.74, h: 0, line: { color: HEX(S.pink), width: 2.4 } });
+    sl.addText((c.eyebrow || "Next step").toUpperCase(), { x: 1.5, y: 2.33, w: 5, h: 0.3, margin: 0,
+      fontFace: "Calibri", fontSize: 10, bold: true, charSpacing: 2.4, color: HEX(S.pink), valign: "middle" });
+    sl.addText(c.title || "", { x: 0.44, y: 2.85, w: 7.6, h: 1, margin: 0, fontFace: "Calibri",
+      fontSize: 46, bold: true, color: HEX(S.ink), valign: "middle" });
+    sl.addShape(P.ShapeType.line, { x: 0.48, y: 4.0, w: 6.1, h: 0, line: { color: HEX(S.ink), width: 2 } });
+    sl.addText(c.sub || "", { x: 0.46, y: 4.2, w: 7.2, h: 1.2, margin: 0, fontFace: "Calibri",
+      fontSize: 15.5, color: HEX(S.mist) });
+    (c.asks || []).slice(0, 3).forEach((k, i) => {
+      const x = 8.4, y = 2.5 + i * 1.25;
+      pCard(sl, S, P, x, y, 4.46, 1.05, i === 0 ? S.cyan : null);
+      sl.addText(k.head || "", { x: x + 0.22, y: y + 0.14, w: 4, h: 0.34, margin: 0, fontFace: "Calibri",
+        fontSize: 14.5, bold: true, color: HEX(S.ink), valign: "middle" });
+      sl.addText(k.body || "", { x: x + 0.22, y: y + 0.5, w: 4, h: 0.42, margin: 0, fontFace: "Calibri",
+        fontSize: 12, color: HEX(S.mist) });
+    });
+  }
+}
+};
+
+const STD_KEYS = Object.keys(STD);
+const stdSvg  = (layout, c, S, bg) => { BG = bg || null;
+  const body = STD[layout].svg(c, S); BG = null;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1376 768" width="1376" height="768">${body}</svg>`; };
+const stdPptx = (layout, sl, c, S, P) => STD[layout].pptx(sl, c, S, P);
+
+
+
+/* ============================================================
+   SIGNAL SLIDES  v3
+   The unit is not an icon. It is a SLIDE THAT ARGUES ONE THING.
+   1376 x 768, full bleed, dense, with a hero device, callouts on
+   leader lines, and a verdict bar.
+
+   Palette measured from the source deck, not invented:
+     paper  #F5F4EF   ink   #203048   emerald #188860
+     orange #F07028   rose  #C0504A   sidebar #C5CCD2
+   Target ink coverage 25 to 40 percent. Sparse reads as unfinished.
+
+   Unlike the raster track, CODE CAN CARRY TYPE. Text here is real
+   vector type in Carlito, so it is crisp, editable and translatable.
+   ============================================================ */
+
+
+
+
+
+
+const W = 1376, H = 768;
+
+const SKIN = {
+  light: {
+    ground:"#F5F4EF", panel:"#FFFFFF", sidebar:"#C5CCD2", grid:"#E2E4E1",
+    ink:"#203048", white:"#203048", mist:"#8A939E", faint:"#B6BDC5",
+    hatch:"#DCE0E3", cyan:"#188860", pink:"#C0504A", hot:"#F07028",
+    glow:false, rule:"#203048"
+  },
+  dark: {
+    ground:"#0B0C10", panel:"#15171F", sidebar:"#1E2230", grid:"#1A1D26",
+    ink:"#FFFFFF", white:"#FFFFFF", mist:"#B9C0CE", faint:"#7A828F",
+    hatch:"#2A2E3A", cyan:"#21E0DC", pink:"#F0245C", hot:"#FF7A3D",
+    glow:true, rule:"#2A2E3A"
+  }
+};
+
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const T = (x,y,txt,o={}) => txt ? `<text x="${n(x)}" y="${n(y)}" fill="${o.fill}" font-family="Carlito, Calibri, sans-serif" font-size="${o.size||16}" font-weight="${o.weight||400}" text-anchor="${o.anchor||"start"}" letter-spacing="${o.track||0}">${esc(txt)}</text>` : "";
+
+// wrap a string to N chars per line, emit stacked <text>
+function TW(x,y,txt,width,o={}){
+  if(!txt) return "";
+  const words=String(txt).split(/\s+/); const lines=[]; let cur="";
+  const cpl=Math.floor(width/((o.size||14)*0.48));
+  for(const w of words){ if((cur+" "+w).trim().length>cpl){lines.push(cur.trim());cur=w;} else cur+=" "+w; }
+  if(cur.trim()) lines.push(cur.trim());
+  return lines.map((l,i)=>T(x,y+i*((o.size||14)*1.28),l,o)).join("");
+}
+
+/* ---------- ground furniture: this is what makes it read as a set ---------- */
+function ground(S, o){
+  o = o || {};
+  const gridSize = o.grid == null ? 24 : o.grid;
+  const cornerN = o.corners == null ? 7 : o.corners;
+  const grain = o.texture == null ? 0 : o.texture;
+  let s = `<rect width="${W}" height="${H}" fill="${S.ground}"/>`;
+  // drafting grid
+  s += `<defs>${shadeDefs(S)}<pattern id="g24" width="${gridSize||24}" height="${gridSize||24}" patternUnits="userSpaceOnUse">
+    <path d="M${gridSize||24} 0 L0 0 0 ${gridSize||24}" fill="none" stroke="${S.grid}" stroke-width="0.9"/></pattern>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="9" stroke="${S.hatch}" stroke-width="1.3"/></pattern>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+    <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="currentColor" flood-opacity="0.9"/>
+    <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="currentColor" flood-opacity="0.5"/></filter>
+    </defs>`;
+  if (gridSize) s += `<rect width="${W}" height="${H}" fill="url(#g24)"/>`;
+  if (grain) {
+    let g = "";
+    let sd = 7;
+    const rr = () => (sd = (sd * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    for (let i = 0; i < grain * 120; i++) g += `<circle cx="${n(rr()*W)}" cy="${n(rr()*H)}" r="${n(0.6+rr()*0.9)}" fill="${S.faint}"/>`;
+    s += `<g opacity="0.35">${g}</g>`;
+  }
+  // circuit flourishes bleeding in from the corners: the deck's signature texture
+  const E={...S,glow:false};
+  const F=(ox,oy,fx,fy)=>{let t="";
+    for(let i=0;i<cornerN;i++){
+      const y=oy+fy*(20+i*26), x0=ox, x1=ox+fx*(90+((i*57)%150));
+      t+=trace([[x0,y],[x1,y],[x1+fx*30,y+fy*30],[x1+fx*30,y+fy*(70+((i*31)%60))]],S.faint,E,{sw:1.1,tokens:false});
+      t+=C(x1+fx*30,y+fy*(70+((i*31)%60)),3.5,{stroke:S.faint,sw:1,glow:false},E);
+      t+=R(x0+fx*(30+i*18),y-4,8,8,{fill:S.faint,glow:false},E);
+    }
+    return t;};
+  if (cornerN) s += `<g opacity="0.55">`+F(0,0,1,1)+F(W,0,-1,1)+F(0,H,1,-1)+F(W,H,-1,-1)+`</g>`;
+  return s;
+}
+
+// panel with corner brackets: the recurring container
+function card(x,y,w,h,S,o={}){
+  const c=o.accent||S.ink, E={...S,glow:o.glow||false};
+  let s=R(x,y,w,h,{fill:o.fill||S.panel,stroke:c,sw:o.sw||2.4,rx:6,glow:o.glow||false},E);
+  const k=18;
+  [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(([px,py,sx,sy])=>{
+    s+=P(`M${n(px+sx*k)} ${n(py)} L${n(px+sx*4)} ${n(py)} L${n(px)} ${n(py+sy*4)} L${n(px)} ${n(py+sy*k)}`,{stroke:c,sw:o.sw||2.4},E);
+  });
+  if(o.hatchTop) s+=R(x+2,y+2,w-4,10,{fill:"url(#hatch)",glow:false},E);
+  return s;
+}
+
+// callout: numbered chip + heading + body + leader line back to the hero
+function callout(x,y,w,S,idx,head,body,ax,ay,accent){
+  const c=accent||S.pink, E={...S,glow:false};
+  const h=body?96:56;
+  let s=card(x,y,w,h,S,{accent:c,fill:S.panel});
+  s+=R(x+12,y+12,26,26,{fill:c,rx:4,glow:false},E);
+  s+=T(x+25,y+31,String(idx),{fill:S.ground,size:15,weight:700,anchor:"middle"});
+  s+=T(x+48,y+31,head,{fill:S.ink,size:16,weight:700});
+  s+=TW(x+14,y+58,body,w-28,{fill:S.mist,size:12.5});
+  if(ax!=null){
+    const sx=(ax>x+w/2)?x+w:x, sy=y+h/2;
+    s+=P(`M${n(sx)} ${n(sy)} L${n((sx+ax)/2)} ${n(sy)} L${n((sx+ax)/2)} ${n(ay)} L${n(ax)} ${n(ay)}`,{stroke:c,sw:1.4,dash:"6 4"},E);
+    s+=C(ax,ay,4.5,{fill:c,glow:false},E)+C(sx,sy,3.5,{fill:c,glow:false},E);
+  }
+  return s;
+}
+
+// verdict bar: the line the audience should leave with
+function verdict(S,txt,sub){
+  if(!txt) return "";
+  const E={...S,glow:false};
+  let s=card(40,H-96,W-80,72,S,{accent:S.ink,fill:S.ink,sw:3});
+  s+=T(W/2,H-52,txt,{fill:S.ground,size:24,weight:700,anchor:"middle"});
+  if(sub) s+=T(W/2,H-32,sub,{fill:S.faint,size:14,anchor:"middle"});
+  return s;
+}
+
+function title(S,txt,eyebrow){
+  let s="";
+  if(eyebrow){
+    s+=R(48,36,10,10,{fill:S.pink,glow:false},{...S,glow:false});
+    s+=L(64,41,110,41,S.pink,2,false,{...S,glow:false});
+    s+=T(120,46,String(eyebrow).toUpperCase(),{fill:S.pink,size:11,weight:700,track:2.4});
+  }
+  s+=T(48,eyebrow?86:70,txt,{fill:S.ink,size:34,weight:700});
+  return s;
+}
+
+// place a hero device inside a box, scaled to fit
+function hero(id,box,S,params={},detail=2,zoom=1){
+  const Hh=HEROES[id]; if(!Hh) return "";
+  const [cw,ch]=Hh.canvas;
+  const sc=Math.min(box.w/cw, box.h/ch)*zoom;
+  const p={}; for(const k in Hh.params) p[k]=(k in params)?params[k]:Hh.params[k].d;
+  const body=enrich(Hh.draw(p,S), S, detail, {seed:99});
+  return G(body, `translate(${n(box.x+(box.w-cw*sc)/2)},${n(box.y+(box.h-ch*sc)/2)}) scale(${n(sc)})`);
+}
+
+function svg(body,S){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><g color="${S.cyan}">${body}</g></svg>`;
+}
+
+/* ============================================================
+   THE EIGHT SLIDE ARCHETYPES
+   Each takes content and returns a finished 1376x768 slide.
+   ============================================================ */
+const LAYOUTS = {
+
+/* L1: hero device with numbered callouts around it. The workhorse. */
+"hero-callouts": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  s+=hero(c.hero,{x:300,y:110,w:780,h:400},S,c.params,c.detail,c.heroScale);
+  const slots=[[48,150],[48,330],[48,510],[1008,150],[1008,330],[1008,510]];
+  const anchors=[[420,220],[430,380],[440,470],[960,220],[950,380],[940,470]];
+  (c.callouts||[]).slice(0,6).forEach((k,i)=>{
+    const acc=[S.pink,S.hot,S.cyan,S.pink,S.hot,S.cyan][i];
+    s+=callout(slots[i][0],slots[i][1],320,S,i+1,k.head,k.body,anchors[i][0],anchors[i][1],k.accent||acc);
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L2: dead versus live. The most persuasive slide in any deck. */
+"compare": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  const E={...S,glow:false};
+  // left: the old way, greyed and hatched
+  s+=card(48,120,600,520,S,{accent:S.faint,fill:S.ground});
+  s+=R(50,122,596,34,{fill:"url(#hatch)",glow:false},E);
+  s+=T(348,146,(c.leftTitle||"").toUpperCase(),{fill:S.faint,size:14,weight:700,anchor:"middle",track:1.8});
+  s+=hero(c.leftHero,{x:70,y:170,w:556,h:210},{...S,ink:S.faint,white:S.faint,cyan:S.faint,pink:S.faint,hatch:S.grid,glow:false},c.leftParams,Math.max(1,(c.detail||2)-1),c.heroScale);
+  (c.leftRows||[]).forEach((r,i)=>{
+    const y=420+i*44;
+    s+=L(72,y-14,624,y-14,S.grid,1,false,E);
+    s+=C(84,y-20,7,{stroke:S.faint,sw:1.6,glow:false},E)+L(80,y-24,88,y-16,S.faint,1.4,false,E)+L(88,y-24,80,y-16,S.faint,1.4,false,E);
+    s+=T(104,y-15,r,{fill:S.mist,size:14});
+  });
+  // right: the new way, lit
+  s+=card(728,120,600,520,S,{accent:S.cyan,fill:S.panel,glow:S.glow,sw:3});
+  s+=R(730,122,596,34,{fill:S.cyan,glow:false},E);
+  s+=T(1028,146,(c.rightTitle||"").toUpperCase(),{fill:S.ground,size:14,weight:700,anchor:"middle",track:1.8});
+  s+=hero(c.rightHero,{x:750,y:170,w:556,h:210},S,c.rightParams,c.detail,c.heroScale);
+  (c.rightRows||[]).forEach((r,i)=>{
+    const y=420+i*44;
+    s+=L(752,y-14,1304,y-14,S.grid,1,false,E);
+    s+=C(764,y-20,7,{stroke:S.cyan,sw:1.6},S);
+    s+=P(`M760 ${n(y-20)} l3 4 l6 -8`,{stroke:S.cyan,sw:1.8},S);
+    s+=T(784,y-15,r,{fill:S.ink,size:14,weight:600});
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L3: the number slide. Two panels, one verdict. */
+"metrics": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  const E={...S,glow:false};
+  const cells=(c.cells||[]).slice(0,3);
+  const w=(W-96-(cells.length-1)*28)/cells.length;
+  cells.forEach((k,i)=>{
+    const x=48+i*(w+28), acc=k.accent||(i===cells.length-1?S.cyan:S.ink);
+    s+=card(x,130,w,420,S,{accent:acc,fill:S.panel,sw:i===cells.length-1?3.4:2.4,glow:i===cells.length-1&&S.glow});
+    s+=R(x+2,132,w-4,10,{fill:"url(#hatch)",glow:false},E);
+    s+=T(x+w/2,190,(k.label||"").toUpperCase(),{fill:S.mist,size:13,weight:700,anchor:"middle",track:1.6});
+    s+=T(x+w/2,300,k.value,{fill:acc,size:70,weight:700,anchor:"middle"});
+    if(k.unit) s+=T(x+w/2,338,k.unit,{fill:S.mist,size:17,anchor:"middle"});
+    s+=L(x+40,368,x+w-40,368,S.grid,1.4,false,E);
+    s+=TW(x+30,398,k.body,w-60,{fill:S.mist,size:13.5});
+    // a small chart skeleton so the panel is not empty air
+    if(k.spark!=="none"){
+      const cx=x+w/2, cy=500;
+      if(i===0){ for(let b=0;b<5;b++) s+=R(cx-90+b*40,cy-((b*9)%36)-12,24,((b*9)%36)+12,{stroke:acc,sw:1.6,glow:false},E); }
+      else if(i===1){ s+=trace([[cx-90,cy-6],[cx-40,cy-30],[cx+10,cy-14],[cx+60,cy-44],[cx+90,cy-52]],acc,E,{sw:2,tokens:false}); }
+      else { s+=C(cx,cy-24,30,{stroke:acc,sw:2},S)+P(`M${cx} ${cy-54} A30 30 0 0 1 ${cx+26} ${cy-9}`,{stroke:acc,sw:6},S); }
+    }
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L4: a process running left to right, with a caption under each station. */
+"flow": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  const E={...S,glow:false};
+  const st=(c.stations||[]).slice(0,5), N=st.length;
+  s+=hero(c.hero||"H27",{x:60,y:110,w:1256,h:300},S,c.params,c.detail,c.heroScale);
+  const w=(W-96-(N-1)*20)/N;
+  st.forEach((k,i)=>{
+    const x=48+i*(w+20), acc=k.accent||(i===N-1?S.cyan:S.ink);
+    s+=card(x,440,w,180,S,{accent:acc,fill:S.panel});
+    s+=R(x+14,454,24,24,{fill:acc,rx:3,glow:false},E);
+    s+=T(x+26,472,String(i+1),{fill:S.ground,size:14,weight:700,anchor:"middle"});
+    s+=T(x+48,472,k.head,{fill:S.ink,size:15,weight:700});
+    s+=L(x+14,490,x+w-14,490,S.grid,1.2,false,E);
+    s+=TW(x+14,510,k.body,w-28,{fill:S.mist,size:12.5});
+    if(i<N-1) s+=arrow(x+w+2,530,x+w+16,530,S.faint,E,2,9);
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L5: system map with a governed register down the right. */
+"map-sidebar": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  const E={...S,glow:false};
+  s+=hero(c.hero,{x:40,y:110,w:1000,h:530},S,c.params,c.detail,c.heroScale);
+  s+=card(1064,110,264,530,S,{accent:S.ink,fill:S.sidebar});
+  s+=R(1066,112,260,44,{fill:S.ink,glow:false},E);
+  s+=T(1196,140,(c.registerTitle||"").toUpperCase(),{fill:S.ground,size:13,weight:700,anchor:"middle",track:1.4});
+  (c.register||[]).slice(0,6).forEach((r,i)=>{
+    const y=176+i*72;
+    s+=R(1080,y,232,60,{fill:S.panel,stroke:S.faint,sw:1.4,rx:4,glow:false},E);
+    s+=R(1080,y,5,60,{fill:r.accent||S.cyan,glow:false},E);
+    s+=T(1096,y+24,r.head,{fill:S.ink,size:14,weight:700});
+    s+=T(1096,y+44,r.body,{fill:S.mist,size:12});
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L6: escalating tiers with callouts. Severity as height. */
+"escalation": (c,S)=>{
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  s+=hero(c.hero||"H15",{x:40,y:120,w:900,h:480},S,c.params,c.detail,c.heroScale);
+  (c.tiers||[]).slice(0,4).forEach((k,i)=>{
+    const acc=[S.cyan,S.ink,S.hot,S.pink][i];
+    s+=callout(940,130+i*128,396,S,i+1,k.head,k.body,760-i*40,540-i*105,acc);
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+},
+
+/* L7: the cover. One device, one claim, nothing else. */
+"cover": (c,S)=>{
+  const E={...S,glow:false};
+  let s=ground(S,c);
+  s+=hero(c.hero,{x:700,y:60,w:640,h:640},S,c.params,c.detail,c.heroScale);
+  s+=R(64,300,10,10,{fill:S.pink,glow:false},E)+L(80,305,150,305,S.pink,2.4,false,E);
+  s+=T(160,311,(c.eyebrow||"").toUpperCase(),{fill:S.pink,size:12,weight:700,track:2.6});
+  s+=T(64,392,c.title,{fill:S.ink,size:56,weight:700});
+  if(c.title2) s+=T(64,452,c.title2,{fill:S.ink,size:56,weight:700});
+  s+=L(64,486,620,486,S.rule,2,false,E);
+  s+=TW(64,520,c.sub,560,{fill:S.mist,size:17});
+  s+=T(64,700,(c.footer||"").toUpperCase(),{fill:S.faint,size:11,weight:700,track:2});
+  return svg(s,S);
+},
+
+/* L8: the close. One decision, drawn as a physical act. */
+"decision": (c,S)=>{
+  const E={...S,glow:false};
+  let s=ground(S,c)+title(S,c.title,c.eyebrow);
+  s+=hero(c.hero||"H51",{x:430,y:110,w:520,h:470},S,c.params,c.detail,c.heroScale);
+  (c.options||[]).slice(0,2).forEach((k,i)=>{
+    const x=i?968:48, acc=i?S.cyan:S.faint;
+    s+=card(x,150,360,400,S,{accent:acc,fill:i?S.panel:S.ground,sw:i?3.2:2,glow:i&&S.glow});
+    s+=R(x+2,152,356,32,{fill:i?acc:"url(#hatch)",glow:false},E);
+    s+=T(x+180,174,(k.head||"").toUpperCase(),{fill:i?S.ground:S.faint,size:13,weight:700,anchor:"middle",track:1.6});
+    (k.rows||[]).forEach((r,j)=>{
+      const y=224+j*54;
+      s+=C(x+26,y-4,7,{stroke:acc,sw:1.6,glow:false},E);
+      if(i) s+=P(`M${x+22} ${y-4} l3 4 l6 -8`,{stroke:acc,sw:1.8},S);
+      else { s+=L(x+22,y-8,x+30,y,S.faint,1.4,false,E)+L(x+30,y-8,x+22,y,S.faint,1.4,false,E); }
+      s+=TW(x+46,y+1,r,290,{fill:i?S.ink:S.mist,size:13.5,weight:i?600:400});
+    });
+  });
+  s+=verdict(S,c.verdict,c.sub);
+  return svg(s,S);
+}
+};
+
+function slide(layout, content, edition="light", opts={}){
+  const S0 = SKIN[edition];
+  const S = { ...S0, ...(opts.palette||{}) };
+  content = { detail:2, heroScale:1, grid:24, corners:7, texture:0, ...content, ...opts };
+  if (STD[layout]) return stdSvg(layout, content, S, ground(S, content));
+  const fn = LAYOUTS[layout];
+  if(!fn) throw new Error("unknown layout: "+layout+". Have: "+Object.keys(LAYOUTS).join(", "));
+  return fn(content, S);
+}
+
+const ALL = () => [...Object.keys(LAYOUTS), ...STD_KEYS];
+/* chrome only: the grid, the corner circuitry, the paper. Used as the
+   background image behind native PowerPoint shapes, so a native slide and
+   an artwork slide sit in the same design language. */
+function chromeSvg(edition="light", opts={}){
+  const S = { ...SKIN[edition], ...(opts.palette||{}) };
+  const c = { grid:24, corners:7, texture:0, ...opts };
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${ground(S,c)}</svg>`;
+}
+
+
+</script>
+<script>
+const layoutSel=document.getElementById('layout'), heroSel=document.getElementById('hero');
+Object.keys(LAYOUTS).forEach(k=>layoutSel.innerHTML+=`<option value="${k}">artwork · ${k}</option>`);
+  Object.keys(STD).forEach(k=>layoutSel.innerHTML+=`<option value="${k}">standard · ${STD[k].label}</option>`);
+const HL=manifest();
+HL.forEach(h=>heroSel.innerHTML+=`<option value="${h.id}">${h.id} · ${h.name}</option>`);
+heroSel.value='H11';
+let hp={};
+
+function buildParams(){
+  const H=HL.find(x=>x.id===heroSel.value); const box=document.getElementById('hparams');
+  box.innerHTML=''; hp={};
+  for(const k in H.params){
+    const p=H.params[k]; if(k==='detail') continue;
+    hp[k]=p.default;
+    const step=(p.max-p.min)<=2?1:(Number.isInteger(p.default)?1:0.1);
+    box.innerHTML+=`<label>${k} <span id="hv_${k}">${p.default}</span></label>
+      <input type="range" class="hpar" data-k="${k}" min="${p.min}" max="${p.max}" step="${step}" value="${p.default}">`;
+  }
+  box.querySelectorAll('.hpar').forEach(el=>el.addEventListener('input',e=>{
+    hp[e.target.dataset.k]=parseFloat(e.target.value);
+    document.getElementById('hv_'+e.target.dataset.k).textContent=e.target.value; draw();
+  }));
+  const enc=document.createElement('div'); enc.className='hint'; enc.textContent=H.encodes; box.appendChild(enc);
+}
+
+function num(id){const v=parseFloat(document.getElementById(id).value);
+  const s=document.getElementById('v_'+id); if(s) s.textContent=(id==='heroScale')?v.toFixed(2):v; return v;}
+
+function content(){
+  const pts=document.getElementById('points').value.split('\n').filter(Boolean).map(l=>{
+    const [h,...b]=l.split('|'); return {head:(h||'').trim(), body:(b.join('|')||'').trim()};
+  });
+  return {eyebrow:document.getElementById('eyebrow').value, title:document.getElementById('title').value,
+    verdict:document.getElementById('verdict').value, sub:document.getElementById('sub').value,
+    hero:heroSel.value, params:hp, callouts:pts, tiers:pts, stations:pts,
+    register:pts.map(p=>({head:p.head,body:p.body.slice(0,34)})),
+    cells:pts.map((p,i)=>({label:p.head, value:['49k','945k','3-4'][i]||'0', unit:'', body:p.body})),
+    options:[{head:'Do nothing',rows:pts.map(p=>p.body)},{head:'Commit',rows:pts.map(p=>p.head)}],
+    leftTitle:'Ad hoc', rightTitle:'Governed', leftHero:'H01', rightHero:'H13',
+    leftRows:pts.map(p=>p.body), rightRows:pts.map(p=>p.head),
+    title2:'', footer:'Signal', registerTitle:'Register'};
+}
+function opts(){
+  return {detail:num('detail'), heroScale:num('heroScale'), grid:num('grid'),
+    corners:num('corners'), texture:num('texture'),
+    palette:{cyan:document.getElementById('c_cyan').value, pink:document.getElementById('c_pink').value,
+             hot:document.getElementById('c_hot').value, ground:document.getElementById('c_ground').value}};
+}
+function draw(){
+  const lay=layoutSel.value, ed=document.getElementById('edition').value;
+  const svg=slide(lay,content(),ed,opts());
+  document.getElementById('stage').innerHTML=svg;
+  const els=(svg.match(/<(path|rect|circle|line|polygon|text)/g)||[]).length;
+  document.getElementById('lbl').textContent=lay+' · '+ed+' · '+els+' elements';
+  document.getElementById('call').textContent='slide("'+lay+'", content, "'+ed+'", {detail:'+num('detail')+'})';
+  window._svg=svg;
+}
+['layout','edition','eyebrow','title','points','verdict','sub','detail','heroScale','grid','corners','texture','c_cyan','c_pink','c_hot','c_ground']
+  .forEach(i=>document.getElementById(i).addEventListener('input',draw));
+document.getElementById('edition').addEventListener('change',e=>{
+  const d=e.target.value==='dark';
+  document.getElementById('c_ground').value=d?'#0B0C10':'#F5F4EF';
+  document.getElementById('c_cyan').value=d?'#21E0DC':'#188860';
+  document.getElementById('c_pink').value=d?'#F0245C':'#C0504A';
+  document.getElementById('c_hot').value=d?'#FF7A3D':'#F07028';
+  draw();
+});
+heroSel.addEventListener('change',()=>{buildParams();draw();});
+document.getElementById('rnd').onclick=()=>{heroSel.value=HL[Math.floor(Math.random()*HL.length)].id;buildParams();draw();};
+function dl(name,blob){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
+document.getElementById('svgb').onclick=()=>dl('slide.svg',new Blob([window._svg],{type:'image/svg+xml'}));
+document.getElementById('pngb').onclick=()=>{const img=new Image();
+  img.onload=()=>{const c=document.createElement('canvas');c.width=2752;c.height=1536;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>dl('slide.png',b));};
+  img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(window._svg)));};
+/* ---------- deck assembly and PPTX export ---------- */
+let DECK=[], selIdx=-1;
+const listEl=document.getElementById('decklist');
+
+function snapshot(){
+  return {layout:layoutSel.value, edition:document.getElementById('edition').value,
+          content:content(), opts:opts(), hero:heroSel.value};
+}
+function renderList(){
+  listEl.innerHTML='';
+  DECK.forEach((s,i)=>{
+    const li=document.createElement('li'); if(i===selIdx) li.className='sel';
+    li.innerHTML=`<span class="n">${i+1}</span><span>${s.layout} · ${s.edition} · ${s.hero}</span><span class="x">&times;</span>`;
+    li.onclick=e=>{ if(e.target.classList.contains('x')){DECK.splice(i,1);if(selIdx>=DECK.length)selIdx=-1;renderList();return;}
+      selIdx=i; load(s); renderList(); };
+    listEl.appendChild(li);
+  });
+  document.getElementById('deckhint').textContent = DECK.length
+    ? DECK.length+' slide'+(DECK.length>1?'s':'')+' queued. Talking points go into the speaker notes.'
+    : 'Talking points also go into the speaker notes.';
+}
+function load(s){
+  layoutSel.value=s.layout; document.getElementById('edition').value=s.edition;
+  heroSel.value=s.hero; buildParams();
+  const c=s.content, o=s.opts;
+  document.getElementById('eyebrow').value=c.eyebrow||''; document.getElementById('title').value=c.title||'';
+  document.getElementById('verdict').value=c.verdict||''; document.getElementById('sub').value=c.sub||'';
+  document.getElementById('points').value=(c.callouts||[]).map(p=>p.head+' | '+p.body).join('\n');
+  ['detail','heroScale','grid','corners','texture'].forEach(k=>{ if(o[k]!=null){document.getElementById(k).value=o[k];
+    const sp=document.getElementById('v_'+k); if(sp) sp.textContent=o[k];} });
+  hp=c.params||{}; draw();
+}
+document.getElementById('add').onclick=()=>{ DECK.push(snapshot()); selIdx=DECK.length-1; renderList(); };
+document.getElementById('upd').onclick=()=>{ if(selIdx>=0){DECK[selIdx]=snapshot(); renderList();} };
+document.getElementById('clear').onclick=()=>{ DECK=[]; selIdx=-1; renderList(); };
+
+function svgToPng(svgStr, w, h){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>{ const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h); res(cv.toDataURL('image/png')); };
+    img.onerror=rej;
+    img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgStr)));
+  });
+}
+document.getElementById('pptx').onclick=async()=>{
+  if(!DECK.length){ alert('Add at least one slide to the deck first.'); return; }
+  const btn=document.getElementById('pptx'); btn.textContent='Rendering...'; btn.disabled=true;
+  try{
+    const pres=new PptxGenJS();
+    pres.layout='LAYOUT_WIDE';                    // 13.3 x 7.5in. Must be set before adding slides.
+    pres.title='Signal deck';
+    for(const s of DECK){
+      const svg=slide(s.layout, s.content, s.edition, s.opts);
+      const png=await svgToPng(svg, 2752, 1536);
+      const sl=pres.addSlide();
+      sl.background={ color: s.edition==='dark' ? '0B0C10' : 'F5F4EF' };   // no '#', never 8 digits
+      sl.addImage({ data:png, x:0, y:0, w:13.3, h:7.5 });
+      const notes=[];
+      if(s.content.title) notes.push(s.content.title.toUpperCase());
+      (s.content.callouts||[]).forEach((k,j)=>notes.push(`${j+1}. ${k.head}${k.body?' — '+k.body:''}`));
+      if(s.content.verdict) notes.push('', 'VERDICT: '+s.content.verdict);
+      if(s.content.sub) notes.push(s.content.sub);
+      if(notes.length) sl.addNotes(notes.join('\n'));
+    }
+    await pres.writeFile({ fileName:'signal-deck.pptx' });
+  } catch(e){ alert('Export failed: '+e.message); }
+  btn.textContent='Export PPTX'; btn.disabled=false;
+};
+
+buildParams(); draw(); renderList();
+</script></body></html>
