@@ -64,13 +64,14 @@ const DETECTORS = [
 const MARKETS = ['ALL', 'GLOBAL', 'NL', 'BE', 'FR'] as const;
 const CATEGORIES = [
   'ALL',
-  'Formats_and_Tools',
+  'Campaigns',
   'Verticals',
   'Policies',
-  'Templates',
-  'Campaigns',
-  'Lifecycle',
   'Markets',
+  'Formats_and_Tools',
+  'Templates',
+  'Lifecycle',
+  'Onboarding',
 ] as const;
 
 const SSOT_CHAT_PROVIDERS: Array<{ id: string; label: string; lane: 'safe' | 'general' }> = [

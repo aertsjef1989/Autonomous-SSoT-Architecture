@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
       cleaned.push({
+        docId: typeof r.docId === 'string' ? r.docId : undefined,
         driveFileId: r.driveFileId,
         title: r.title,
         parentFolderName: typeof r.parentFolderName === 'string' ? r.parentFolderName : undefined,

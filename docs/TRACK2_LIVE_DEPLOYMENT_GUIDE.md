@@ -41,20 +41,22 @@ In Vercel, set **Root Directory** to `balaerion-app` and add the variables from 
 
 ---
 
-## 3. Bulk Import Connected Google Drive SSoT Corpus (Zero Git Commits)
+## 3. Bulk Stage & Import Connected Google Drive SSoT Corpus (Zero Public Git Leaks)
 
-Once `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (or `WORKSPACE_SYNC_URL` + `OWNER_ACCESS_SECRET`) are populated in `balaerion-app/.env.local` or shell environment:
+All `265` unique active SSoT playbooks (`01_Campaigns` through `08_Onboarding` across `GLOBAL: 55`, `NL: 70`, `BE: 70`, `FR: 70`, automatically excluding `*_DELETE_*` and `Archive` entries, deduplicating duplicate Drive uploads, and preserving full platform/ad-product terminology inside private storage) are staged locally under git-ignored `.dev/ssot-corpus/`:
 
-1. **Dry-Run Verification (0 writes, 0 titles printed):**
+1. **Stage All Active Google Docs Locally (`.dev/ssot-corpus/markdown/` + `ssot_corpus_bundle.json`):**
    ```bash
-   node scripts/import_connected_gdrive_to_supabase.mjs --folder-id <DRIVE_ROOT_FOLDER_ID> --dry-run
+   node scripts/import_connected_gdrive_to_supabase.mjs --folder-id <DRIVE_ROOT_FOLDER_ID> --stage-local
    ```
-2. **Live In-Memory Sync to Supabase (`ssot_documents` + `ssot_chunks`):**
+   * Local `next dev` (or `LOAD_LOCAL_SSOT_BUNDLE=1`) automatically hydrates `/ssot` and `/balaerion` (`ProspectHub`) from `.dev/ssot-corpus/ssot_corpus_bundle.json` even before Supabase is wired.
+2. **Push Pre-Staged Bundle Straight to Supabase EU (CLI, ~5s):**
    ```bash
    set -a && source balaerion-app/.env.local && set +a
-   node scripts/import_connected_gdrive_to_supabase.mjs --folder-id <DRIVE_ROOT_FOLDER_ID>
+   node scripts/import_connected_gdrive_to_supabase.mjs --from-bundle .dev/ssot-corpus/ssot_corpus_bundle.json
    ```
-   * Streams every Google Doc and Markdown file in RAM (`GLOBAL`, `NL`, `BE`, `FR`), skips Archive folders, chunks Markdown, computes optional 1024-dim free embeddings, and upserts idempotently into Supabase with zero files written to the Git working tree.
+3. **Or 1-Click Browser Upload on `/admin` (Zero CLI Required):**
+   * Unlock `/admin` -> **Section 2** -> click **Upload Corpus Bundle (.json) or Markdown (.md)** and select `.dev/ssot-corpus/ssot_corpus_bundle.json`. The UI automatically chunks all `265` documents into `20`-doc batches (`14` batches total) so serverless payload limits are never exceeded.
 
 ---
 

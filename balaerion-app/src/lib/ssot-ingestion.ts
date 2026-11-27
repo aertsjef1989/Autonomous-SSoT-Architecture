@@ -6,6 +6,7 @@ export type SsotMarket = 'NL' | 'BE' | 'FR' | 'GLOBAL';
 export type SsotStatus = 'VERIFIED' | 'REVIEW_DUE' | 'DRAFT';
 
 export interface RawDriveDocInput {
+  docId?: string;
   driveFileId: string;
   title: string;
   parentFolderName?: string;
@@ -27,13 +28,100 @@ export interface SsotDocumentRecord {
 
 const ALLOWED_MARKETS = new Set<SsotMarket>(['NL', 'BE', 'FR', 'GLOBAL']);
 
+import fs from 'fs';
+import path from 'path';
+
 const globalSsotMem = globalThis as unknown as {
   __balaerionEphemeralSsotByDriveId?: Map<string, SsotDocumentRecord>;
+  __balaerionLocalBundleLoaded?: boolean;
 };
+
+function shouldAutoLoadLocalBundle(): boolean {
+  if (process.env.VERCEL) return false;
+  if (process.env.LOAD_LOCAL_SSOT_BUNDLE === '0') return false;
+  if (process.env.LOAD_LOCAL_SSOT_BUNDLE === '1') return true;
+  return process.env.NODE_ENV === 'development';
+}
+
+function isEphemeralEnabled(): boolean {
+  return !process.env.VERCEL && (process.env.ALLOW_LOCAL_EPHEMERAL_STORE === '1' || shouldAutoLoadLocalBundle());
+}
+
+export function dedupeAndDisambiguateParsedDocs(docs: SsotDocumentRecord[]): SsotDocumentRecord[] {
+  // 1. Deduplicate exact same (market, category, normalized title) keeping newest drive_modified_at
+  const byTitleKey = new Map<string, SsotDocumentRecord>();
+  for (const d of docs) {
+    const tKey = `${d.market}::${d.category}::${d.title.trim().toLowerCase()}`;
+    const prev = byTitleKey.get(tKey);
+    if (!prev) {
+      byTitleKey.set(tKey, d);
+      continue;
+    }
+    const prevTs = prev.drive_modified_at ? Date.parse(prev.drive_modified_at) : 0;
+    const curTs = d.drive_modified_at ? Date.parse(d.drive_modified_at) : 0;
+    if (curTs >= prevTs) {
+      byTitleKey.set(tKey, d);
+    }
+  }
+
+  // 2. Ensure 100% unique doc_id PK when two distinct topics share a numeric counter (e.g., POL_BE_001)
+  const deduplicated = Array.from(byTitleKey.values()).sort((a, b) =>
+    `${a.doc_id}:${a.title}`.localeCompare(`${b.doc_id}:${b.title}`)
+  );
+  const usedIds = new Set<string>();
+  return deduplicated.map((d) => {
+    if (!usedIds.has(d.doc_id)) {
+      usedIds.add(d.doc_id);
+      return d;
+    }
+    const firstWord = d.title
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .split('_')
+      .slice(0, 2)
+      .join('_')
+      .slice(0, 14);
+    let candidate = `${d.doc_id}_${firstWord || 'B'}`;
+    let seq = 2;
+    while (usedIds.has(candidate)) {
+      candidate = `${d.doc_id}_${seq++}`;
+    }
+    usedIds.add(candidate);
+    return { ...d, doc_id: candidate };
+  });
+}
 
 function getEphemeralSsotMap(): Map<string, SsotDocumentRecord> {
   if (!globalSsotMem.__balaerionEphemeralSsotByDriveId) {
     globalSsotMem.__balaerionEphemeralSsotByDriveId = new Map();
+  }
+  if (!globalSsotMem.__balaerionLocalBundleLoaded && shouldAutoLoadLocalBundle()) {
+    globalSsotMem.__balaerionLocalBundleLoaded = true;
+    const candidates = [
+      path.resolve(process.cwd(), '../.dev/ssot-corpus/ssot_corpus_bundle.json'),
+      path.resolve(process.cwd(), '.dev/ssot-corpus/ssot_corpus_bundle.json'),
+    ];
+    for (const bundleFile of candidates) {
+      if (fs.existsSync(bundleFile)) {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(bundleFile, 'utf8')) as {
+            docs?: RawDriveDocInput[];
+          };
+          const parsedList: SsotDocumentRecord[] = [];
+          for (const raw of parsed.docs ?? []) {
+            const res = parseDriveMarkdownDoc(raw);
+            if (!res.skipped) parsedList.push(res.doc);
+          }
+          for (const cleanDoc of dedupeAndDisambiguateParsedDocs(parsedList)) {
+            globalSsotMem.__balaerionEphemeralSsotByDriveId.set(cleanDoc.drive_file_id, cleanDoc);
+          }
+          break;
+        } catch {
+          /* ignore malformed local bundle */
+        }
+      }
+    }
   }
   return globalSsotMem.__balaerionEphemeralSsotByDriveId;
 }
@@ -42,11 +130,7 @@ export function getEphemeralSsotDocuments(): SsotDocumentRecord[] {
   return isEphemeralEnabled() ? Array.from(getEphemeralSsotMap().values()) : [];
 }
 
-function isEphemeralEnabled(): boolean {
-  return !process.env.VERCEL && process.env.ALLOW_LOCAL_EPHEMERAL_STORE === '1';
-}
-
-export function chunkMarkdownForSsot(contentMd: string, maxChars = 950): string[] {
+export function chunkMarkdownForSsot(contentMd: string, maxChars = 1200): string[] {
   const normalized = (contentMd || '').replace(/\r\n/g, '\n').trim();
   if (!normalized) return [];
   const paragraphs = normalized.split(/\n{2,}/);
@@ -63,7 +147,7 @@ export function chunkMarkdownForSsot(contentMd: string, maxChars = 950): string[
     }
   }
   if (current) chunks.push(current);
-  return chunks.slice(0, 40);
+  return chunks.slice(0, 60);
 }
 
 function parseSimpleFrontmatter(md: string): { meta: Record<string, string>; body: string } {
@@ -89,7 +173,8 @@ export function normalizeCategory(rawFolder?: string): string {
   if (lower.includes('campaign')) return 'Campaigns';
   if (lower.includes('lifecycle')) return 'Lifecycle';
   if (lower.includes('market')) return 'Markets';
-  return cleaned.replace(/\s+/g, '_') || 'General';
+  if (lower.includes('onboard')) return 'Onboarding';
+  return cleaned.split('/')[0].replace(/\s+/g, '_') || 'General';
 }
 
 export function normalizeMarketToken(raw?: string): SsotMarket | null {
@@ -109,7 +194,7 @@ function normalizeStatusToken(raw?: string): SsotStatus {
 
 /**
  * Parses a single exported Google Doc Markdown payload in memory.
- * Returns `{ skipped: true, reason }` if the document belongs to an Archive folder or an out-of-scope market.
+ * Returns `{ skipped: true, reason }` if the document belongs to an Archive folder, is marked _DELETE_, or is out-of-scope.
  */
 export function parseDriveMarkdownDoc(
   raw: RawDriveDocInput
@@ -125,25 +210,51 @@ export function parseDriveMarkdownDoc(
     return { skipped: true, reason: 'MISSING_REQUIRED_IDENTIFIERS' };
   }
 
-  // Extract doc_id from frontmatter or leading ID pattern (e.g., DOC_FMT_GLB_011, FMT_GLB_011, VRT_NL_006, POL_BE_001)
-  let docId = (meta.doc_id || meta.id || '').trim().toUpperCase();
-  let inferredMarketFromId: string | undefined;
-
-  const idMatch = /^(?:DOC_)?([A-Z]{2,5})_([A-Z]{2,6})_(\d{2,4})\b/i.exec(docId || cleanTitleInput);
-  if (idMatch) {
-    if (!docId) {
-      docId = `${idMatch[1].toUpperCase()}_${idMatch[2].toUpperCase()}_${idMatch[3]}`;
-    }
-    inferredMarketFromId = idMatch[2].toUpperCase();
+  if (/(?:^|[_-\s])DELETE(?:$|[_-\s])/i.test(raw.title) || /(?:^|[_-\s])DELETE(?:$|[_-\s])/i.test(cleanTitleInput)) {
+    return { skipped: true, reason: 'SKIPPED_MARKED_DELETE' };
   }
 
-  // Explicit market resolution: frontmatter -> ID token -> folder token -> title bracket/prefix
+  // Extract doc_id and human title from 3-part (DOC_FMT_GLB_011 / FMT_GLB_011) or 4-part (<ORG>_CMP_BE_003_Topic) prefixes
+  const explicitDocId = (raw.docId || meta.doc_id || meta.id || '').trim().toUpperCase();
+  let docId = explicitDocId;
+  let inferredMarketFromId: string | undefined;
+  let extractedTopicTail = '';
+
+  const fourPartMatch = /^([A-Z]{2,5})_([A-Z]{2,5})_(GLOBAL|GLB|NL|BE|FR|DE|UK|ES|IT|US)_(\d{2,4})(?:[_\s:-]+(.+))?$/i.exec(
+    cleanTitleInput
+  );
+  const threePartMatch = /^(?:DOC_)?([A-Z]{2,5})_([A-Z]{2,6})_(\d{2,4})(?:[_\s:-]+(.+))?$/i.exec(
+    cleanTitleInput
+  );
+
+  if (fourPartMatch && fourPartMatch[1].toUpperCase() !== 'DOC') {
+    const catCode = fourPartMatch[2].toUpperCase();
+    const mktCode = fourPartMatch[3].toUpperCase();
+    const numCode = fourPartMatch[4];
+    if (!docId) {
+      docId = `${catCode}_${mktCode}_${numCode}`;
+    }
+    inferredMarketFromId = mktCode;
+    extractedTopicTail = (fourPartMatch[5] || '').trim();
+  } else if (threePartMatch) {
+    if (!docId) {
+      docId = `${threePartMatch[1].toUpperCase()}_${threePartMatch[2].toUpperCase()}_${threePartMatch[3]}`;
+    }
+    inferredMarketFromId = threePartMatch[2].toUpperCase();
+    extractedTopicTail = (threePartMatch[4] || '').trim();
+  } else if (docId) {
+    const idMkt = /^([A-Z]{2,5})_(GLOBAL|GLB|NL|BE|FR|DE|UK|ES|IT|US)_(\d{2,4})/i.exec(docId);
+    if (idMkt) inferredMarketFromId = idMkt[2].toUpperCase();
+  }
+
+  // Delimiter-aware market resolution (works cleanly around underscores, slashes, spaces, and hyphens)
+  const MKT_DELIM_RE = /(?:^|[^A-Z0-9])(GLOBAL|GLB|NL|BE|FR|DE|UK|ES|IT|US)(?:$|[^A-Z0-9])/i;
   const explicitCandidate =
     meta.market ||
     meta.market_code ||
     inferredMarketFromId ||
-    (/\b(GLOBAL|GLB|NL|BE|FR|DE|UK|ES|IT|US)\b/.exec(cleanTitleInput)?.[1] ?? undefined) ||
-    (/\b(GLOBAL|GLB|NL|BE|FR|DE|UK|ES|IT|US)\b/.exec(folderRaw)?.[1] ?? undefined);
+    (MKT_DELIM_RE.exec(cleanTitleInput)?.[1] ?? undefined) ||
+    (MKT_DELIM_RE.exec(folderRaw)?.[1] ?? undefined);
 
   let market: SsotMarket | null = null;
   if (explicitCandidate) {
@@ -152,7 +263,6 @@ export function parseDriveMarkdownDoc(
       return { skipped: true, reason: `OUT_OF_SCOPE_MARKET(${explicitCandidate})` };
     }
   } else {
-    // Root-level shared docs without a country tag default to GLOBAL
     market = 'GLOBAL';
   }
 
@@ -171,9 +281,13 @@ export function parseDriveMarkdownDoc(
 
   const category = meta.category ? normalizeCategory(meta.category) : normalizeCategory(folderRaw);
   const status = normalizeStatusToken(meta.status);
-  const humanTitle = cleanTitleInput
-    .replace(/^(?:DOC_)?[A-Z]{2,5}_[A-Z]{2,6}_\d{2,4}[\s:_-]*/i, '')
-    .trim() || cleanTitleInput;
+  const rawTopic =
+    extractedTopicTail ||
+    cleanTitleInput
+      .replace(/^(?:[A-Z]{2,5}_)?[A-Z]{2,5}_[A-Z]{2,6}_\d{2,4}[\s:_-]*/i, '')
+      .trim() ||
+    cleanTitleInput;
+  const humanTitle = rawTopic.includes('_') && !rawTopic.includes(' ') ? rawTopic.replace(/_/g, ' ') : rawTopic;
 
   const isoMod =
     raw.driveModifiedAt && !Number.isNaN(new Date(raw.driveModifiedAt).getTime())
@@ -205,16 +319,33 @@ export interface UpsertBatchSummary {
   error?: string;
 }
 
+function buildDisambiguatedDocId(baseId: string, title: string, occupiedIds: Set<string>): string {
+  const firstWord = title
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .split('_')
+    .slice(0, 2)
+    .join('_')
+    .slice(0, 14);
+  let candidate = `${baseId}_${firstWord || 'B'}`;
+  let seq = 2;
+  while (occupiedIds.has(candidate)) {
+    candidate = `${baseId}_${seq++}`;
+  }
+  return candidate;
+}
+
 /**
  * Idempotently upserts parsed SSoT documents into Supabase `ssot_documents` keyed on `drive_file_id`.
- * Skips unchanged documents whose `drive_modified_at` matches unless `force === true`.
+ * Skips unchanged documents whose `drive_modified_at` matches unless `force === true`, and protects `doc_id` PK uniqueness across batches.
  */
 export async function upsertSsotDocumentsBatch(
   rawDocs: RawDriveDocInput[],
   opts?: { force?: boolean }
 ): Promise<UpsertBatchSummary> {
   const force = Boolean(opts?.force);
-  const parsedDocs: SsotDocumentRecord[] = [];
+  const rawParsedDocs: SsotDocumentRecord[] = [];
   let outOfScopeSkipped = 0;
 
   for (const item of rawDocs) {
@@ -222,9 +353,11 @@ export async function upsertSsotDocumentsBatch(
     if (res.skipped) {
       outOfScopeSkipped += 1;
     } else {
-      parsedDocs.push(res.doc);
+      rawParsedDocs.push(res.doc);
     }
   }
+
+  const parsedDocs = dedupeAndDisambiguateParsedDocs(rawParsedDocs);
 
   if (parsedDocs.length === 0) {
     return { ok: true, upserted: 0, unchangedSkipped: 0, outOfScopeSkipped, docIds: [] };
@@ -232,11 +365,9 @@ export async function upsertSsotDocumentsBatch(
 
   const sb = getSupabaseServer();
   if (sb) {
-    const driveIds = parsedDocs.map((d) => d.drive_file_id);
     const { data: existingRows, error: fetchErr } = await sb
       .from('ssot_documents')
-      .select('drive_file_id, drive_modified_at')
-      .in('drive_file_id', driveIds);
+      .select('doc_id, drive_file_id, title, market, category, drive_modified_at');
 
     if (fetchErr) {
       return {
@@ -249,23 +380,35 @@ export async function upsertSsotDocumentsBatch(
       };
     }
 
-    const existingModByDriveId = new Map<string, string | null>();
+    const existingByDriveId = new Map<string, { doc_id: string; mod: string | null }>();
+    const ownerDriveByDocId = new Map<string, string>();
+    const occupiedIds = new Set<string>();
+
     for (const r of existingRows ?? []) {
-      existingModByDriveId.set(
-        r.drive_file_id,
-        r.drive_modified_at ? new Date(r.drive_modified_at).toISOString() : null
-      );
+      existingByDriveId.set(r.drive_file_id, {
+        doc_id: r.doc_id,
+        mod: r.drive_modified_at ? new Date(r.drive_modified_at).toISOString() : null,
+      });
+      ownerDriveByDocId.set(r.doc_id, r.drive_file_id);
+      occupiedIds.add(r.doc_id);
     }
 
     const toUpsert: SsotDocumentRecord[] = [];
     let unchangedSkipped = 0;
     for (const d of parsedDocs) {
-      const prevMod = existingModByDriveId.get(d.drive_file_id);
-      if (!force && prevMod && d.drive_modified_at && prevMod === d.drive_modified_at) {
+      const prev = existingByDriveId.get(d.drive_file_id);
+      if (!force && prev && prev.mod && d.drive_modified_at && prev.mod === d.drive_modified_at) {
         unchangedSkipped += 1;
         continue;
       }
-      toUpsert.push(d);
+      let resolvedDocId = prev?.doc_id || d.doc_id;
+      const existingOwner = ownerDriveByDocId.get(resolvedDocId);
+      if (existingOwner && existingOwner !== d.drive_file_id) {
+        resolvedDocId = buildDisambiguatedDocId(d.doc_id, d.title, occupiedIds);
+      }
+      occupiedIds.add(resolvedDocId);
+      ownerDriveByDocId.set(resolvedDocId, d.drive_file_id);
+      toUpsert.push({ ...d, doc_id: resolvedDocId });
     }
 
     if (toUpsert.length > 0) {
@@ -319,6 +462,13 @@ export async function upsertSsotDocumentsBatch(
 
   if (isEphemeralEnabled()) {
     const map = getEphemeralSsotMap();
+    const occupiedIds = new Set<string>();
+    const ownerDriveByDocId = new Map<string, string>();
+    for (const existing of Array.from(map.values())) {
+      occupiedIds.add(existing.doc_id);
+      ownerDriveByDocId.set(existing.doc_id, existing.drive_file_id);
+    }
+
     let upserted = 0;
     let unchangedSkipped = 0;
     const ids: string[] = [];
@@ -329,9 +479,17 @@ export async function upsertSsotDocumentsBatch(
         unchangedSkipped += 1;
         continue;
       }
-      map.set(d.drive_file_id, d);
+      let resolvedDocId = prev?.doc_id || d.doc_id;
+      const existingOwner = ownerDriveByDocId.get(resolvedDocId);
+      if (existingOwner && existingOwner !== d.drive_file_id) {
+        resolvedDocId = buildDisambiguatedDocId(d.doc_id, d.title, occupiedIds);
+      }
+      occupiedIds.add(resolvedDocId);
+      ownerDriveByDocId.set(resolvedDocId, d.drive_file_id);
+      const finalDoc = { ...d, doc_id: resolvedDocId };
+      map.set(d.drive_file_id, finalDoc);
       upserted += 1;
-      ids.push(d.doc_id);
+      ids.push(finalDoc.doc_id);
     }
     return { ok: true, upserted, unchangedSkipped, outOfScopeSkipped, docIds: ids };
   }

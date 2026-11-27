@@ -108,42 +108,80 @@ export default function AdminGrantsAndSyncPage() {
     setSyncResult('');
     try {
       const batch: Array<{
+        docId?: string;
         driveFileId: string;
         title: string;
-        parentFolderName: string;
+        parentFolderName?: string;
         contentMd: string;
-        driveModifiedAt: string;
+        driveModifiedAt?: string | null;
       }> = [];
 
-      for (let i = 0; i < fileList.length; i++) {
-        const f = fileList[i];
-        const text = await f.text();
-        const relPath = (f as File & { webkitRelativePath?: string }).webkitRelativePath || f.name;
-        const parts = relPath.split('/');
-        const folderName = parts.length >= 2 ? parts[parts.length - 2] : syncCategoryHint;
-        const baseTitle = f.name.replace(/\.(md|markdown|txt)$/i, '');
-        batch.push({
-          driveFileId: `mem-${baseTitle.toLowerCase().replace(/[^a-z0-9_-]+/g, '-')}`,
-          title: baseTitle,
-          parentFolderName: folderName,
-          contentMd: text,
-          driveModifiedAt: new Date(f.lastModified || Date.now()).toISOString(),
-        });
+      // Support both 1-click ssot_corpus_bundle.json AND multi-file .md uploads
+      if (fileList.length === 1 && fileList[0].name.toLowerCase().endsWith('.json')) {
+        const parsed = JSON.parse(await fileList[0].text()) as {
+          docs?: Array<{
+            docId?: string;
+            driveFileId: string;
+            title: string;
+            parentFolderName?: string;
+            contentMd: string;
+            driveModifiedAt?: string | null;
+          }>;
+        };
+        if (Array.isArray(parsed.docs)) {
+          batch.push(...parsed.docs);
+        }
+      } else {
+        for (let i = 0; i < fileList.length; i++) {
+          const f = fileList[i];
+          const text = await f.text();
+          const relPath = (f as File & { webkitRelativePath?: string }).webkitRelativePath || f.name;
+          const parts = relPath.split('/');
+          const folderName = parts.length >= 2 ? parts[parts.length - 2] : syncCategoryHint;
+          const baseTitle = f.name.replace(/\.(md|markdown|txt)$/i, '');
+          batch.push({
+            driveFileId: `mem-${baseTitle.toLowerCase().replace(/[^a-z0-9_-]+/g, '-')}`,
+            title: baseTitle,
+            parentFolderName: folderName,
+            contentMd: text,
+            driveModifiedAt: new Date(f.lastModified || Date.now()).toISOString(),
+          });
+        }
       }
 
-      const res = await fetch('/api/admin/sync-drive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'push_batch', force: syncForce, docs: batch }),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setSyncResult(json.error || 'In-memory batch upsert failed.');
-      } else {
-        setSyncResult(
-          `In-memory upsert complete: ${json.upserted} upserted (${(json.docIds || []).join(', ') || 'none'}), ${json.unchangedSkipped} unchanged, ${json.outOfScopeSkipped} out-of-scope skipped.`
-        );
+      if (batch.length === 0) {
+        setSyncResult('No valid SSoT documents found in selected file(s).');
+        return;
       }
+
+      // Chunk uploads in batches of 20 docs so large corpora (278 docs ~8 MB) stay safely under serverless body limits
+      const CHUNK_SIZE = 20;
+      let totalUpserted = 0;
+      let totalUnchanged = 0;
+      let totalSkipped = 0;
+      const totalChunks = Math.ceil(batch.length / CHUNK_SIZE);
+
+      for (let c = 0; c < totalChunks; c++) {
+        const slice = batch.slice(c * CHUNK_SIZE, (c + 1) * CHUNK_SIZE);
+        setSyncResult(`Uploading batch ${c + 1} / ${totalChunks} (${slice.length} docs)...`);
+        const res = await fetch('/api/admin/sync-drive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'push_batch', force: syncForce, docs: slice }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setSyncResult(json.error || `Batch ${c + 1}/${totalChunks} failed.`);
+          return;
+        }
+        totalUpserted += Number(json.upserted || 0);
+        totalUnchanged += Number(json.unchangedSkipped || 0);
+        totalSkipped += Number(json.outOfScopeSkipped || 0);
+      }
+
+      setSyncResult(
+        `Corpus sync complete (${batch.length} input docs across ${totalChunks} batch(es)): ${totalUpserted} upserted, ${totalUnchanged} unchanged, ${totalSkipped} skipped.`
+      );
     } finally {
       setSyncBusy(false);
       e.target.value = '';
@@ -252,9 +290,9 @@ export default function AdminGrantsAndSyncPage() {
           2. Sync SSoT Corpus to Supabase (Zero-Commit Memory Pipeline)
         </h2>
         <p style={{ color: '#B9C0CE', fontSize: 13, lineHeight: 1.55, marginTop: 0 }}>
-          Pushes from <code>docs/google-apps-script-sync.gs</code> (zero GCP Console needed) hit{' '}
-          <code>POST /api/admin/sync-drive</code> automatically. You can also upload exported <code>.md</code> files
-          directly in browser memory below, or trigger Service Account sync if configured.
+          Upload the pre-staged <code>ssot_corpus_bundle.json</code> (265 deduplicated Drive docs, auto-chunked in
+          20-doc batches) or individual <code>.md</code> files directly in browser memory below, push via{' '}
+          <code>docs/google-apps-script-sync.gs</code>, or trigger Service Account sync.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 12 }}>
@@ -272,6 +310,7 @@ export default function AdminGrantsAndSyncPage() {
               <option value="Campaigns">Campaigns</option>
               <option value="Lifecycle">Lifecycle</option>
               <option value="Markets">Markets</option>
+              <option value="Onboarding">Onboarding</option>
             </select>
           </label>
 
@@ -296,10 +335,10 @@ export default function AdminGrantsAndSyncPage() {
               color: '#21E0DC',
             }}
           >
-            {syncBusy ? 'Syncing in RAM...' : 'Upload Markdown Files (RAM -> Supabase)'}
+            {syncBusy ? 'Syncing Batches...' : 'Upload Corpus Bundle (.json) or Markdown (.md)'}
             <input
               type="file"
-              accept=".md,.markdown,.txt"
+              accept=".json,.md,.markdown,.txt"
               multiple
               disabled={syncBusy}
               onChange={handleInMemoryFilesUpload}

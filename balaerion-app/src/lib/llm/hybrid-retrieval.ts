@@ -203,7 +203,7 @@ export async function retrieveWorkspaceContext(opts: {
         .from('ssot_documents')
         .select('doc_id, title, market, category, status, content_md')
         .in('market', targetMarkets)
-        .limit(80);
+        .limit(350);
       if (Array.isArray(docRows) && docRows.length > 0) {
         const scored = docRows
           .flatMap((d) =>

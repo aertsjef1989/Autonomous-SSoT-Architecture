@@ -1,37 +1,52 @@
 #!/usr/bin/env node
 /**
- * Recursive Connected Google Drive -> Supabase SSoT Bulk Importer (Zero-Commit Pipeline).
+ * Recursive Connected Google Drive -> Local Staged Corpus & Supabase SSoT Bulk Importer.
  *
- * Streams Google Docs and Markdown files from a connected Google Drive root folder
- * (`GOOGLE_DRIVE_ROOT_FOLDER_ID` or `--folder-id <ID>`) directly in RAM using the VM's `gdrive` CLI,
- * filters strictly to `NL`, `BE`, `FR`, and `GLOBAL` (skipping Archive/Trash), and either:
- *   1. Prints a dry-run count breakdown (`--dry-run`, zero file titles or contents written to disk), OR
- *   2. Upserts directly into Supabase (`ssot_documents` + `ssot_chunks`) via `upsertSsotDocumentsBatch`, OR
- *   3. Pushes batches to `WORKSPACE_SYNC_URL` (`/api/admin/sync-drive`) using `Authorization: Bearer <OWNER_ACCESS_SECRET>`.
+ * Modes:
+ *   1. `--dry-run`: Audits Drive folder structure, market/category breakdown, and skip counts (0 writes).
+ *   2. `--stage-local`: Exports all admitted Google Docs / Markdown files via `gdrive` CLI (8 parallel workers)
+ *      into git-ignored `.dev/ssot-corpus/markdown/` + compiles `.dev/ssot-corpus/ssot_corpus_bundle.json`
+ *      for immediate local VM hydration and 1-click `/admin` or `--from-bundle` Supabase upload.
+ *   3. `--from-bundle <path>` (or live Drive export without `--stage-local`): Upserts directly into Supabase
+ *      (`ssot_documents` + `ssot_chunks`) or pushes 20-doc batches to `WORKSPACE_SYNC_URL`.
  *
- * Hard Constraint: Never writes any Drive file content into the git repository.
+ * Hard Constraint: Never writes any Drive file content into Git-tracked paths; `.dev/` is git-ignored.
  */
 
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
+const execFileAsync = promisify(execFile);
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEV_DIR = path.join(ROOT, '.dev');
+const CORPUS_DIR = path.join(DEV_DIR, 'ssot-corpus');
 fs.mkdirSync(DEV_DIR, { recursive: true });
 
 const argv = process.argv.slice(2);
 const isDryRun = argv.includes('--dry-run');
+const isStageLocal = argv.includes('--stage-local');
 const forceOverwrite = argv.includes('--force');
 const folderIdx = argv.indexOf('--folder-id');
-const rootFolderId =
-  (folderIdx >= 0 && argv[folderIdx + 1] ? argv[folderIdx + 1] : process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID || '').trim();
+const bundleIdx = argv.indexOf('--from-bundle');
 
-if (!rootFolderId) {
-  console.error('Usage: node scripts/import_connected_gdrive_to_supabase.mjs --folder-id <DRIVE_FOLDER_ID> [--dry-run] [--force]');
+const fromBundlePath =
+  bundleIdx >= 0 && argv[bundleIdx + 1] ? path.resolve(process.cwd(), argv[bundleIdx + 1]) : '';
+const rootFolderId = (
+  folderIdx >= 0 && argv[folderIdx + 1] ? argv[folderIdx + 1] : process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID || ''
+).trim();
+
+if (!fromBundlePath && !rootFolderId) {
+  console.error(
+    'Usage:\n' +
+      '  node scripts/import_connected_gdrive_to_supabase.mjs --folder-id <DRIVE_FOLDER_ID> [--dry-run | --stage-local | --force]\n' +
+      '  node scripts/import_connected_gdrive_to_supabase.mjs --from-bundle .dev/ssot-corpus/ssot_corpus_bundle.json [--force]'
+  );
   process.exit(1);
 }
 
@@ -60,21 +75,19 @@ function listDriveChildren(folderId) {
   return Array.isArray(parsed) ? parsed : Array.isArray(parsed.files) ? parsed.files : [];
 }
 
-function exportDriveDocMarkdownInRam(fileId, mimeType) {
+async function exportDriveDocMarkdownAsync(fileId, mimeType) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ssot-ram-'));
   try {
     if (mimeType === 'application/vnd.google-apps.document') {
       const outPath = path.join(tmpDir, 'doc.md');
-      execFileSync('gdrive', ['readonly', 'export', fileId, '--mime', 'text/markdown', '-o', outPath], {
-        stdio: 'pipe',
+      await execFileAsync('gdrive', ['readonly', 'export', fileId, outPath, '--format', 'md'], {
         maxBuffer: 32 * 1024 * 1024,
       });
       return fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
     }
     if (mimeType === 'text/markdown' || mimeType === 'text/plain') {
       const outPath = path.join(tmpDir, 'raw.md');
-      execFileSync('gdrive', ['readonly', 'download', fileId, '-o', outPath], {
-        stdio: 'pipe',
+      await execFileAsync('gdrive', ['readonly', 'download', fileId, '--out', outPath], {
         maxBuffer: 32 * 1024 * 1024,
       });
       return fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
@@ -85,47 +98,107 @@ function exportDriveDocMarkdownInRam(fileId, mimeType) {
   }
 }
 
-const collectedRaw = [];
+let collectedRaw = [];
 
-function walkDriveFolder(folderId, folderTrail) {
-  if (/archive|deprecated|trash/i.test(folderTrail)) return;
-  const entries = listDriveChildren(folderId);
-  for (const item of entries) {
-    const id = item.id || item.fileId;
-    const name = item.name || item.title || '';
-    const mime = item.mimeType || '';
-    const mod = item.modifiedTime || item.modifiedAt || null;
-    if (!id || !name) continue;
+if (fromBundlePath) {
+  const rawBundle = JSON.parse(fs.readFileSync(fromBundlePath, 'utf8'));
+  collectedRaw = Array.isArray(rawBundle.docs) ? rawBundle.docs : [];
+} else {
+  const manifestEntries = [];
 
-    if (mime === 'application/vnd.google-apps.folder') {
-      const nextTrail = folderTrail ? `${folderTrail}/${name}` : name;
-      walkDriveFolder(id, nextTrail);
-      continue;
-    }
+  function walkDriveFolder(folderId, folderTrail) {
+    if (/archive|deprecated|trash/i.test(folderTrail)) return;
+    const entries = listDriveChildren(folderId);
+    for (const item of entries) {
+      const id = item.id || item.fileId;
+      const name = item.name || item.title || '';
+      const mime = item.mimeType || '';
+      const mod = item.modifiedTime || item.modifiedAt || null;
+      if (!id || !name) continue;
 
-    if (
-      mime === 'application/vnd.google-apps.document' ||
-      mime === 'text/markdown' ||
-      /\.(md|markdown|txt)$/i.test(name)
-    ) {
-      const md = isDryRun ? '# Dry-run placeholder\n' : exportDriveDocMarkdownInRam(id, mime || 'text/markdown');
-      if (md && md.trim().length > 0) {
-        collectedRaw.push({
+      if (mime === 'application/vnd.google-apps.folder') {
+        const nextTrail = folderTrail ? `${folderTrail}/${name}` : name;
+        walkDriveFolder(id, nextTrail);
+        continue;
+      }
+
+      if (
+        mime === 'application/vnd.google-apps.document' ||
+        mime === 'text/markdown' ||
+        /\.(md|markdown|txt)$/i.test(name)
+      ) {
+        manifestEntries.push({
           driveFileId: id,
+          rawName: name,
           title: name.replace(/\.(md|markdown|txt)$/i, ''),
+          mimeType: mime || 'text/markdown',
           parentFolderName: folderTrail || 'General',
-          contentMd: md,
           driveModifiedAt: mod,
         });
       }
     }
   }
+
+  walkDriveFolder(rootFolderId, '');
+
+  if (isDryRun) {
+    collectedRaw = manifestEntries.map((m) => ({
+      driveFileId: m.driveFileId,
+      title: m.title,
+      parentFolderName: m.parentFolderName,
+      contentMd: '# Dry-run placeholder\n',
+      driveModifiedAt: m.driveModifiedAt,
+    }));
+  } else {
+    // Pre-filter skipped entries (e.g., _DELETE_ or Archive/out-of-scope) before network export
+    const eligibleEntries = manifestEntries.filter((m) => {
+      const probe = ssotIngestion.parseDriveMarkdownDoc({
+        driveFileId: m.driveFileId,
+        title: m.title,
+        parentFolderName: m.parentFolderName,
+        contentMd: '# Probe\n',
+        driveModifiedAt: m.driveModifiedAt,
+      });
+      return !probe.skipped;
+    });
+
+    const skippedPreCount = manifestEntries.length - eligibleEntries.length;
+    console.error(
+      `[Drive Export] Exporting ${eligibleEntries.length} active SSoT docs (${skippedPreCount} _DELETE_/out-of-scope skipped) with 8 parallel workers...`
+    );
+
+    const results = new Array(eligibleEntries.length);
+    let cursor = 0;
+    let completed = 0;
+
+    async function worker() {
+      while (true) {
+        const idx = cursor++;
+        if (idx >= eligibleEntries.length) break;
+        const entry = eligibleEntries[idx];
+        const md = await exportDriveDocMarkdownAsync(entry.driveFileId, entry.mimeType);
+        results[idx] = {
+          driveFileId: entry.driveFileId,
+          rawName: entry.rawName,
+          title: entry.title,
+          parentFolderName: entry.parentFolderName,
+          contentMd: md,
+          driveModifiedAt: entry.driveModifiedAt,
+        };
+        completed++;
+        if (completed % 40 === 0 || completed === eligibleEntries.length) {
+          console.error(`  -> Exported ${completed} / ${eligibleEntries.length} documents...`);
+        }
+      }
+    }
+
+    await Promise.all(Array.from({ length: 8 }, () => worker()));
+    collectedRaw = results.filter((r) => r && r.contentMd && r.contentMd.trim().length > 0);
+  }
 }
 
-walkDriveFolder(rootFolderId, '');
-
-const byMarket = { GLOBAL: 0, NL: 0, BE: 0, FR: 0 };
-const byCategory = {};
+const rawByDriveId = new Map();
+const rawParsedList = [];
 let skippedCount = 0;
 
 for (const raw of collectedRaw) {
@@ -133,18 +206,94 @@ for (const raw of collectedRaw) {
   if (parsed.skipped) {
     skippedCount += 1;
   } else {
-    byMarket[parsed.doc.market] = (byMarket[parsed.doc.market] || 0) + 1;
-    byCategory[parsed.doc.category] = (byCategory[parsed.doc.category] || 0) + 1;
+    rawByDriveId.set(parsed.doc.drive_file_id, raw);
+    rawParsedList.push(parsed.doc);
   }
+}
+
+const cleanDocs = ssotIngestion.dedupeAndDisambiguateParsedDocs(rawParsedList);
+const duplicateUploadsRemoved = rawParsedList.length - cleanDocs.length;
+
+const byMarket = { GLOBAL: 0, NL: 0, BE: 0, FR: 0 };
+const byCategory = {};
+const admittedRaw = [];
+const docIdSet = new Set();
+let duplicateDocIds = 0;
+let totalBytes = 0;
+
+for (const doc of cleanDocs) {
+  if (docIdSet.has(doc.doc_id)) {
+    duplicateDocIds += 1;
+  }
+  docIdSet.add(doc.doc_id);
+  byMarket[doc.market] = (byMarket[doc.market] || 0) + 1;
+  byCategory[doc.category] = (byCategory[doc.category] || 0) + 1;
+  totalBytes += Buffer.byteLength(doc.content_md || '', 'utf8');
+  const orig = rawByDriveId.get(doc.drive_file_id) || {};
+  admittedRaw.push({
+    docId: doc.doc_id,
+    driveFileId: doc.drive_file_id,
+    title: orig.title || doc.title,
+    parentFolderName: orig.parentFolderName || doc.category,
+    contentMd: doc.content_md,
+    driveModifiedAt: doc.drive_modified_at,
+  });
+}
+
+if (isStageLocal) {
+  const mdRoot = path.join(CORPUS_DIR, 'markdown');
+  fs.rmSync(mdRoot, { recursive: true, force: true });
+  fs.mkdirSync(mdRoot, { recursive: true });
+
+  for (const item of admittedRaw) {
+    const safeTrail = (item.parentFolderName || 'General')
+      .split('/')
+      .map((seg) => seg.replace(/[^a-zA-Z0-9._-]+/g, '_'))
+      .join(path.sep);
+    const dir = path.join(mdRoot, safeTrail);
+    fs.mkdirSync(dir, { recursive: true });
+    const safeBase = `${item.docId}__${item.title}`.replace(/[^a-zA-Z0-9._-]+/g, '_');
+    const filePath = path.join(dir, `${safeBase}.md`);
+    fs.writeFileSync(filePath, item.contentMd, 'utf8');
+  }
+
+  const bundleOutPath = path.join(CORPUS_DIR, 'ssot_corpus_bundle.json');
+  const summaryOutPath = path.join(CORPUS_DIR, 'manifest_summary.json');
+  const summaryObj = {
+    stagedAt: new Date().toISOString(),
+    scannedActiveDocs: rawParsedList.length,
+    duplicateUploadsRemoved,
+    admittedTotal: admittedRaw.length,
+    uniqueDocIds: docIdSet.size,
+    duplicateDocIds,
+    totalMarkdownBytes: totalBytes,
+    byMarket,
+    byCategory,
+    bundlePath: '.dev/ssot-corpus/ssot_corpus_bundle.json',
+    markdownTreePath: '.dev/ssot-corpus/markdown/',
+  };
+
+  fs.writeFileSync(
+    bundleOutPath,
+    JSON.stringify({ schemaVersion: 'ssot-corpus-bundle-v1', ...summaryObj, docs: admittedRaw }, null, 2),
+    'utf8'
+  );
+  fs.writeFileSync(summaryOutPath, JSON.stringify(summaryObj, null, 2), 'utf8');
+
+  console.log(JSON.stringify({ mode: 'stage-local', ...summaryObj }, null, 2));
+  process.exit(0);
 }
 
 console.log(
   JSON.stringify(
     {
-      mode: isDryRun ? 'dry-run' : 'live-sync',
+      mode: isDryRun ? 'dry-run' : fromBundlePath ? 'from-bundle-sync' : 'live-sync',
       scannedCandidateDocs: collectedRaw.length,
-      admittedTotal: collectedRaw.length - skippedCount,
-      outOfScopeOrArchiveSkipped: skippedCount,
+      duplicateUploadsRemoved,
+      admittedTotal: admittedRaw.length,
+      uniqueDocIds: docIdSet.size,
+      duplicateDocIds,
+      outOfScopeOrDeleteSkipped: skippedCount,
       byMarket,
       byCategory,
     },
@@ -163,8 +312,8 @@ const ownerSecret = (process.env.OWNER_ACCESS_SECRET || '').trim();
 if (syncUrl && ownerSecret) {
   let totalUpserted = 0;
   let totalUnchanged = 0;
-  for (let i = 0; i < collectedRaw.length; i += 20) {
-    const slice = collectedRaw.slice(i, i + 20);
+  for (let i = 0; i < admittedRaw.length; i += 20) {
+    const slice = admittedRaw.slice(i, i + 20);
     const resp = await fetch(syncUrl, {
       method: 'POST',
       headers: {
@@ -184,7 +333,7 @@ if (syncUrl && ownerSecret) {
   process.exit(0);
 }
 
-const result = await ssotIngestion.upsertSsotDocumentsBatch(collectedRaw, { force: forceOverwrite });
+const result = await ssotIngestion.upsertSsotDocumentsBatch(admittedRaw, { force: forceOverwrite });
 if (!result.ok) {
   console.error(`Upsert halted: ${result.error}`);
   process.exit(1);
